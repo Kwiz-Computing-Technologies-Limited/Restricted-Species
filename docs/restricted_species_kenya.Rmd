@@ -1,0 +1,855 @@
+---
+title: "Restricted and Prohibited Species in Kenya"
+subtitle: "A Comprehensive Legal and Taxonomic Reference"
+author: "Kwiz Computing"
+date: "`r format(Sys.Date(), '%d %B %Y')`"
+output:
+  html_document:
+    toc: true
+    toc_float:
+      collapsed: false
+      smooth_scroll: true
+    toc_depth: 3
+    number_sections: true
+    theme: flatly
+    highlight: tango
+    df_print: paged
+    code_folding: hide
+    css: style.css
+bibliography: references.bib
+csl: https://raw.githubusercontent.com/citation-style-language/styles/master/apa.csl
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+  echo       = FALSE,
+  warning    = FALSE,
+  message    = FALSE,
+  fig.align  = "center",
+  fig.width  = 9,
+  fig.height = 5,
+  out.width  = "100%"
+)
+
+suppressPackageStartupMessages({
+  library(tidyverse)
+  library(kableExtra)
+  library(glue)
+  library(janitor)
+})
+
+# ── Load kwizbranding (watermark + footer) ────────────────────────────────────
+.kqb_pkg <- "/Users/kwizera.jvk/Desktop/Kwiz Computing Comes to Life/Kwiz Quants/libs/kwizbranding"
+suppressMessages(devtools::load_all(.kqb_pkg, quiet = TRUE))
+kqb_co  <- kqb_company()
+kqb_co$name    <- "Kwiz Research"
+kqb_col <- kqb_colours()
+
+# Pre-populate logo caches with explicit paths so kqb_watermark_uri() and
+# kqb_logo_img() work regardless of what getwd() returns during knitting.
+# Try multiple candidate directories and ALWAYS overwrite the cache to avoid
+# stale empty values from earlier failed attempts.
+.kqb_logo_candidates <- c(
+  file.path(here::here(), "docs", "www"),
+  file.path(getwd(), "www"),
+  file.path(getwd()),
+  file.path(here::here())
+)
+.kqb_load_logo <- function(filename, cache_key) {
+  for (d in .kqb_logo_candidates) {
+    p <- file.path(d, filename)
+    if (file.exists(p)) {
+      raw  <- readBin(p, "raw", file.size(p))
+      b64  <- base64enc::base64encode(raw)
+      assign(cache_key, paste0("data:image/svg+xml;base64,", b64), envir = .GlobalEnv)
+      message("[kwizbranding] Loaded ", filename, " from ", d)
+      return(invisible(TRUE))
+    }
+  }
+  warning("[kwizbranding] Could not find ", filename, " in any candidate directory")
+}
+.kqb_load_logo("Kwiz Black Logo Transparent bg.svg",    ".kqb_wm_cache")
+.kqb_load_logo("Kwiz Inverted Color Transparent bg.svg", ".kqb_display_cache")
+
+# ── Run data pipeline if processed files don't exist yet ──────────────────────
+proj_root <- here::here()
+data_proc <- file.path(proj_root, "data", "processed")
+
+if (!file.exists(file.path(data_proc, "laws_clean.rds"))) {
+  source(file.path(proj_root, "R", "01_scrape_laws.R"))
+}
+if (!file.exists(file.path(data_proc, "institutions_clean.rds"))) {
+  source(file.path(proj_root, "R", "02_institutions.R"))
+}
+if (!file.exists(file.path(data_proc, "species_master.rds"))) {
+  source(file.path(proj_root, "R", "03_species_listing.R"))
+}
+
+# ── Load processed data ────────────────────────────────────────────────────────
+laws         <- readRDS(file.path(data_proc, "laws_clean.rds"))
+institutions <- readRDS(file.path(data_proc, "institutions_clean.rds"))
+species      <- readRDS(file.path(data_proc, "species_master.rds"))
+species_law  <- readRDS(file.path(data_proc, "species_by_law.rds"))
+
+# ── Helper: styled kable ───────────────────────────────────────────────────────
+styled_kable <- function(df, caption = NULL, scroll = TRUE, height = "450px") {
+  k <- df |>
+    kbl(caption = caption, escape = FALSE, align = "l") |>
+    kable_styling(
+      bootstrap_options = c("striped", "hover", "condensed", "responsive"),
+      full_width        = TRUE,
+      font_size         = 12
+    )
+  if (scroll) k <- scroll_box(k, height = height)
+  k
+}
+
+# ── Counts for inline use ──────────────────────────────────────────────────────
+n_species    <- nrow(species)
+n_laws       <- nrow(laws)
+n_inst       <- nrow(institutions)
+n_cites_i    <- sum(species$cites_appendix == "Appendix I",  na.rm = TRUE)
+n_cites_ii   <- sum(species$cites_appendix == "Appendix II", na.rm = TRUE)
+n_cr         <- sum(as.character(species$iucn_status) == "Critically Endangered", na.rm = TRUE)
+n_en         <- sum(as.character(species$iucn_status) == "Endangered", na.rm = TRUE)
+```
+
+```{r kqb-watermark, results='asis', echo=FALSE}
+# Inject watermark CSS (.kqb-body / .kqb-page class-based selectors)
+cat(kqb_watermark_css(opacity = 0.08, size = "280px auto"))
+
+# Reliable full-page watermark: fixed overlay using the same logo URI
+uri <- kqb_watermark_uri()
+if (nzchar(uri)) {
+  cat(paste0(
+    '<style>\n',
+    'body::after {\n',
+    '  content: "";\n',
+    '  position: fixed;\n',
+    '  top: 0; left: 0; width: 100%; height: 100%;\n',
+    '  z-index: 9000;\n',
+    '  pointer-events: none;\n',
+    '  background-image: url("', uri, '");\n',
+    '  background-repeat: repeat;\n',
+    '  background-size: 280px auto;\n',
+    '  opacity: 0.08;\n',
+    '}\n',
+    '</style>\n'
+  ))
+}
+```
+
+---
+
+# Executive Summary {.unnumbered}
+
+Kenya is one of the world's most biodiversity-rich countries, home to over **35,000 species** of animals, plants, and other organisms, including numerous endemics found nowhere else on Earth. Protecting this natural heritage requires a comprehensive legal framework that spans multiple sectors — wildlife, forestry, fisheries, agriculture, and biosafety.
+
+This report catalogues **`r n_laws` major laws and regulations** that restrict or prohibit activities involving specific species in Kenya. It maps **`r n_inst` regulatory institutions** with species-management mandates and compiles a master listing of **`r n_species` species** — spanning mammals, birds, reptiles, amphibians, fish, invertebrates, and plants — for which Kenya law imposes restrictions. Of these, **`r n_cites_i`** are listed on CITES Appendix I (international commercial trade prohibited) and **`r n_cites_ii`** on Appendix II (trade regulated). **`r n_cr`** are Critically Endangered and **`r n_en`** are Endangered on the IUCN Red List.
+
+---
+
+# Methodology {#methodology}
+
+## Data Sources
+
+The species and legislative data compiled in this report draw from:
+
+- **Kenya Law Reform Commission** ([kenyalaw.org](https://new.kenyalaw.org)) — full texts of all Acts, subsidiary legislation, and Legal Notices
+- **Kenya Wildlife Service (KWS)** ([kws.go.ke](https://www.kws.go.ke)) — Sixth Schedule protected species lists; CITES authority records
+- **CITES Appendices** ([cites.org](https://cites.org/eng/app/appendices.php)) — current (post-CoP19) appendix listings for all species traded internationally
+- **IUCN Red List** ([iucnredlist.org](https://www.iucnredlist.org)) — global conservation status assessments
+- **BirdLife International DataZone** ([birdlife.org](https://www.birdlife.org/species)) — avian threat status and range data
+- **Kenya Invasive Species Platform** ([invasivespecieskenyaplatform.go.ke](https://www.invasivespecieskenyaplatform.go.ke)) — invasive alien species records
+
+## Analytical Approach
+
+1. **Laws catalogue** (`01_scrape_laws.R`): All major Kenyan statutes and subsidiary regulations governing species trade, collection, and movement were identified through Kenya Law and corroborating agency websites. Each law was classified by: restriction category, enforcement institution, species scope, and amendment history.
+
+2. **Institutions mapping** (`02_institutions.R`): Regulatory bodies were linked to their parent ministries, legal mandates, and the specific laws they enforce. A jurisdiction matrix was constructed showing which institutions operate in which regulatory domains.
+
+3. **Species listing** (`03_species_listing.R`): Species records were drawn from the Wildlife Conservation and Management Act (No. 47 of 2013) Sixth Schedule, CITES appendices as applied in Kenya, the Fisheries Management and Development Act, Forest Conservation and Management Act, and associated subsidiary legislation. Each species record carries: common name, scientific name, taxonomic group, IUCN status, CITES appendix, domestic legal status, governing law(s), and managing institution(s).
+
+4. **Merge and export** (`04_merge_and_export.R`): All datasets were joined to produce a single master listing, thematic sub-tables, and formatted HTML outputs.
+
+## Scope and Limitations
+
+- The WCMA 2013 Sixth Schedule lists **245 nationally threatened species**; this report includes a representative but non-exhaustive selection of the most ecologically significant and commonly referenced species.
+- Protected tree species under the Forest Conservation and Management Act are designated by Cabinet Secretary Gazette orders — this list changes over time and a current, authoritative list requires direct consultation with KFS.
+- Invasive species data reflects Kenya's documented invasive species as of 2024; new invasive threats emerge regularly.
+- CITES appendix statuses reflect CoP19 (2022) decisions; verify current listings at [checklist.cites.org](https://checklist.cites.org).
+
+---
+
+# Legal Framework {#legal-framework}
+
+Kenya's species-protection framework is multi-layered, comprising primary legislation passed by Parliament and subsidiary legislation (regulations, legal notices, and gazette orders) made under those Acts. The table below summarises the `r n_laws` key instruments.
+
+```{r laws-table}
+laws |>
+  arrange(restriction_category, year_enacted) |>
+  select(
+    `ID`            = law_id,
+    `Law / Regulation` = law_name,
+    `Act No.`       = act_number,
+    `Enacted`       = year_enacted,
+    `Last Amended`  = year_last_amended,
+    `Category`      = restriction_category,
+    `Enforcement`   = enforcement_institution
+  ) |>
+  styled_kable(
+    caption = "Table 1. Kenyan Laws and Regulations Governing Restricted/Prohibited Species",
+    height  = "520px"
+  )
+```
+
+## Wildlife Conservation and Management Act, 2013 {#wcma}
+
+The **Wildlife Conservation and Management Act, No. 47 of 2013** (WCMA) is Kenya's primary wildlife legislation. Enacted on 10 January 2014, it replaced the former Wildlife (Conservation and Management) Act (Cap. 376). The WCMA provides the broadest domestic framework for species protection.
+
+Key provisions include:
+
+- **Section 47 — Endangered and Threatened Species:** Establishes the *Sixth Schedule* as the national list of critically endangered, endangered, vulnerable, near-threatened, and protected species (245 species in total). The Cabinet Secretary must review the list every five years. All species in CITES Appendices are automatically protected under this section.
+- **Section 48 — Restricted Activities:** No person may kill, injure, capture, sell, buy, import, export, or deal in any listed species without a permit from KWS.
+- **Section 92 — Offences:** Killing or injuring an endangered or threatened species carries a minimum **3 years imprisonment** (no fine option). Dealing in wildlife trophies carries a minimum **5 years** (no fine). Poisoning wildlife (s. 95A, added 2019) carries a minimum **KES 5 million fine or 5 years imprisonment**. The maximum penalty is **life imprisonment** — the harshest wildlife penalties in Africa.
+- **Part XII (ss. 97–103) — International Obligations:** Operationalises Kenya's treaty commitments including CITES, the Convention on Biological Diversity (CBD), and the Ramsar Convention.
+
+Full text: [Kenya Law — WCMA 2013](https://new.kenyalaw.org/akn/ke/act/2013/47/eng@2025-11-04)
+
+<div class="alert alert-warning" role="alert">
+**⚠ Implementation Gap** — The Sixth Schedule contains no mandatory review timeline and is not automatically synchronised with IUCN Red List updates; a species uplisted by IUCN may remain unprotected indefinitely unless KWS proactively moves. Critically, **recovery plans under Section 30 are triggered only by the *Seventh* Schedule** — species listed as endangered in the Sixth Schedule face no legally mandated recovery programme. A new Wildlife Conservation and Management Bill 2025 is under development to address these structural gaps. ([WildlifeDirect Guide to WCMA 2013](https://wildlifedirect.org/wp-content/uploads/2017/02/A-Guide-to-the-Wildlife-Act-of-Kenya-2013.pdf); [WCMA 2025 Bill overview](https://bonganagava.com/wcmb-2025/)) → *See Section 5.2 for full analysis.*
+</div>
+
+## Environmental Management and Co-ordination Act, 1999 (EMCA) {#emca}
+
+The **EMCA (No. 8 of 1999)** is Kenya's framework environmental law. Its **Part V** governs the conservation of biological diversity, requiring in-situ and ex-situ conservation measures and regulating access to genetic resources.
+
+Key provisions affecting species:
+
+- **Section 55:** Prohibits introduction of any animal or plant (alien or indigenous) into rivers, lakes, or the sea without authorisation — the primary legal tool against invasive alien species introduction.
+- **Biodiversity Regulations 2023 ([NEMA](https://nema.go.ke/wp-content/uploads/2024/10/Biodiversity-Regulations-2023.pdf)):** Require NEMA to maintain an inventory of all threatened and endangered species and authorise NEMA to impose bans or restrictions on access.
+- **Access and Benefit Sharing Regulations 2025 (L.N. 19/2025):** Updated Nagoya Protocol-aligned framework for access to genetic resources.
+
+<div class="alert alert-warning" role="alert">
+**⚠ Implementation Gap** — The NEMA Biodiversity Regulations 2023 require a **national species inventory** to be prepared within 24 months and published as a public record. As of early 2026, no such standalone searchable database has been published. The Wildlife Research and Training Institute (WRTI) separately acknowledges: *"Currently, no integrated wildlife database can provide data and information at the click of a button."* ([WRTI Biodiversity Information Systems](https://wrti.go.ke/?page_id=6904)) Kenya also lacks a standalone Access and Benefit Sharing (ABS) law; reliance on EMCA subsidiary regulations has been described as inadequate by multiple stakeholder processes. ([Kenya CBD Clearing House — ABS](https://ke.chm-cbd.net/access-and-benefit-sharing)) → *See Sections 5.1 and 5.9 for full analysis.*
+</div>
+
+## Fisheries Management and Development Act, 2016 (FMDA) {#fmda}
+
+The **FMDA (No. 35 of 2016)** governs fisheries in Kenya's freshwater and marine environments. Its definition of "fish" is intentionally broad, encompassing marine mammals, sea turtles, corals, and marine plants.
+
+Key provisions:
+
+- **Section 45:** Empowers the Director-General of Kenya Fisheries Service to declare any fish species as **endangered** and restrict trade in it.
+- **Section 46:** Prohibits **directed fishing for marine mammals** in any Kenyan fishery waters. Any marine mammal incidentally caught must be **immediately released**.
+- The Act carries forward the predecessor Fisheries Act's declaration of all Kenyan maritime zones as a **marine mammal and turtle sanctuary**.
+
+<div class="alert alert-warning" role="alert">
+**⚠ Implementation Gap** — Despite the FMDA coming into force in 2016, **no fish species has ever been formally declared endangered** under the Section 45 declaratory power in nearly a decade of the Act's operation. Unlike the WCMA, the FMDA contains no built-in species schedule. Kenya has 769 recorded fish species (CBD 6th National Report, 2020); multiple Lake Victoria endemics are IUCN Critically Endangered yet have no domestic legal protection status under this Act. → *See Section 5.4 for full analysis.*
+</div>
+
+## Forest Conservation and Management Act, 2016 (FCMA) {#fcma}
+
+The **FCMA (No. 34 of 2016)** governs Kenya's public forests, which cover approximately 1.68 million hectares of gazetted forest. **Section 40** empowers the Cabinet Secretary to gazette any tree species as **protected** on the advice of the Kenya Forestry Research Institute (KEFRI).
+
+Notable application: East African sandalwood (*Osyris lanceolata*) has been subjected to export bans under this framework due to massive illegal trafficking. Prunus africana (African cherry), used in prostate medication, is regulated under both the FCMA and CITES Appendix II.
+
+<div class="alert alert-warning" role="alert">
+**⚠ Implementation Gap** — The FCMA s.40 protection mechanism is entirely reactive: it requires a Cabinet Secretary Gazette order on KEFRI advice, with **no statutory programme obliging KFS to systematically assess and gazette threatened species**. BGCI has documented that Kenya has **over 120 tree species** meeting IUCN threatened criteria, including 34 endemics, yet most receive no specific gazette protection. A 2020 BGCI/KFS planning workshop resulted in formation of the Kenya Threatened Trees Consortium — but this body has no binding legal authority. ([BGCI — Planning Conservation Action for Kenya's Threatened Trees, 2020](https://www.bgci.org/wp/wp-content/uploads/2021/08/Planning-Conservation-Action-for-Kenyas-threatened-tree-species-1.pdf)) → *See Section 5.5 for full analysis.*
+</div>
+
+## Seeds and Plant Varieties Act (Cap. 326) & Plant Protection Act (Cap. 324) {#seeds}
+
+These companion laws govern the importation, quality, and movement of seeds and plant material. The **Plant Protection Act** empowers the Cabinet Secretary to prohibit or restrict importation of any plants and associated materials — providing the primary legal tool for keeping out invasive plant species and plant pests. Administered by **KEPHIS** ([kephis.go.ke](https://www.kephis.go.ke)).
+
+## Biosafety Act, 2009 {#biosafety}
+
+The **Biosafety Act (No. 2 of 2009)** governs all activities involving **genetically modified organisms (GMOs)**. All import, export, transit, contained use, environmental release, and commercialisation of GMOs requires prior approval from the **National Biosafety Authority** (NBA). The Government of Kenya's Cabinet decision of November 2012 instituted a ban on importation of GM food. That ban was **lifted by the Kenya Kwanza Cabinet on 3 October 2022** citing food security concerns; legal challenges were dismissed by the Environment and Land Court in October 2023 and the High Court in November 2024. As of 2024, the NBA has approved 58 GMO projects including commercial cultivation of Bt cotton and Bt corn. Unauthorised handling of GMOs carries fines up to **KES 20 million or up to 10 years imprisonment**.
+
+<div class="alert alert-warning" role="alert">
+**⚠ Implementation Gap** — The Biosafety Act and EMCA **duplicate environmental risk assessment requirements**: NBA requires an Environmental Risk Assessment (ERA) while NEMA requires a separate Environmental Impact Assessment (EIA) for the same GMO release activity, creating a bottleneck described by ISAAA Africa Center (2020) as *"stifling GMO research, development and deployment."* ([ISAAA Africa Center — EMCA/Biosafety Overlap, 2020](https://africenter.isaaa.org/wp-content/uploads/2020/10/Overlap-between-EMCA-Act-and-Biosafety-Act.pdf)) Additionally, Kenya has **not ratified the Nagoya-Kuala Lumpur Supplementary Protocol** on Liability and Redress, leaving no legal framework to address accidental GMO releases or cross-border harm. Once commercial cultivation begins, NBA faces a **20-year statutory monitoring obligation** across potentially thousands of farms — capacity for which is unverified. → *See Section 5.7 for full analysis.*
+</div>
+
+## CITES Implementation in Kenya {#cites}
+
+Kenya ratified the **Convention on International Trade in Endangered Species of Wild Fauna and Flora (CITES)** in 1978 and is one of the convention's most active parties. Kenya hosts the CITES Secretariat in Nairobi.
+
+**Kenya Wildlife Service** is the designated CITES Management Authority. CITES implementation in Kenya is operationalised through:
+
+- **L.N. 241/2017** — Wildlife Conservation and Management (Implementation of Treaties) Regulations
+- **L.N. 242/2017** — Wildlife Conservation and Management (Protection of Endangered and Threatened Ecosystems, Habitats and Species) Regulations
+
+CITES currently has three appendices:
+
+| Appendix | Trade Restriction Level | Example Kenya Species |
+|----------|------------------------|-----------------------|
+| **I** | Commercial trade prohibited; non-commercial requires permits from both importing and exporting countries | African elephant, Black rhino, Cheetah, Grevy's zebra, Hirola |
+| **II** | Trade permitted with CITES export permit from country of origin | Lion, Hippopotamus, Whale shark, Prunus africana, all Aloe spp. |
+| **III** | Species protected in at least one country; import requires CITES certificate of origin | Various |
+
+CITES appendices (current): [cites.org/eng/app/appendices.php](https://cites.org/eng/app/appendices.php)
+
+<div class="alert alert-warning" role="alert">
+**⚠ Implementation Gap** — TRAFFIC's comprehensive Kenya assessment found that since 2009 **more ivory has passed through Mombasa (Kilindini Port) than any other trade route out of Africa** — equivalent to the tusks of over 6,900 elephants — with near-zero resulting convictions. 72% of ivory and pangolin scales are trafficked by sea in containerised cargo specifically because the interdiction risk is minimal. A peer-reviewed 2024 study (Kilonzo, Heinen & Byakagaba, *Diversity*) found **over 60% of personnel from KWS, Police, Fisheries, Judiciary, and other enforcement agencies reported only *moderate* capacity** for CITES implementation. ([TRAFFIC — Wildlife Trafficking Assessment in Kenya, 2016](https://www.traffic.org/site/assets/files/2410/kenya-wildlife-trafficking-report.pdf); [MDPI *Diversity* 16(3):183, 2024](https://www.mdpi.com/1424-2818/16/3/183)) → *See Section 5.8 for full analysis.*
+</div>
+
+---
+
+# Regulatory Institutions {#institutions}
+
+`r n_inst` institutions have mandates related to species restriction in Kenya. They are distributed across several ministries, reflecting the cross-sectoral nature of biodiversity governance.
+
+```{r institutions-table}
+institutions |>
+  arrange(parent_ministry, institution_name) |>
+  select(
+    `Abbrev.`     = abbreviation,
+    `Institution` = institution_name,
+    `Ministry`    = parent_ministry,
+    `Est.`        = establishment_year,
+    `Mandate`     = mandate_summary
+  ) |>
+  styled_kable(
+    caption = "Table 2. Institutions with Species Regulatory Mandates in Kenya",
+    height  = "500px"
+  )
+```
+
+## Jurisdiction by Sector
+
+```{r jurisdiction-fig, fig.cap="Regulatory institutions and their primary sectors of jurisdiction."}
+inst_sector_data <- institutions |>
+  select(abbreviation, laws_enforced) |>
+  mutate(
+    sector = case_when(
+      str_detect(laws_enforced, regex("Wildlife|WCMA|CITES", ignore_case = TRUE)) ~ "Wildlife",
+      str_detect(laws_enforced, regex("Forest|FCMA", ignore_case = TRUE))          ~ "Forestry",
+      str_detect(laws_enforced, regex("Fisheries|FMDA", ignore_case = TRUE))       ~ "Fisheries",
+      str_detect(laws_enforced, regex("Biosafety|GMO|NBA", ignore_case = TRUE))    ~ "Biosafety",
+      str_detect(laws_enforced, regex("EMCA|Environment|NEMA", ignore_case = TRUE))~ "Environment",
+      str_detect(laws_enforced, regex("Seeds|Plant|KEPHIS", ignore_case = TRUE))   ~ "Plant Health",
+      TRUE                                                                          ~ "Other"
+    )
+  )
+
+inst_sector_data |>
+  count(sector) |>
+  mutate(sector = fct_reorder(sector, n)) |>
+  ggplot(aes(x = n, y = sector, fill = sector)) +
+  geom_col(width = 0.7, show.legend = FALSE) +
+  geom_text(aes(label = n), hjust = -0.2, size = 4) +
+  scale_fill_brewer(palette = "Set2") +
+  scale_x_continuous(expand = expansion(mult = c(0, 0.15))) +
+  labs(
+    title    = "Regulatory Institutions by Primary Sector",
+    subtitle = "Kenya species protection framework",
+    x        = "Number of institutions",
+    y        = NULL
+  ) +
+  theme_minimal(base_size = 13) +
+  theme(panel.grid.major.y = element_blank())
+```
+
+---
+
+# Comprehensive Species Listing {#species}
+
+The master listing below covers `r n_species` species across all taxonomic groups that are subject to some form of restriction under Kenyan law. Species are grouped by restriction severity, then by taxonomic group.
+
+```{r species-overview-fig, fig.cap="Species count by taxonomic group."}
+species |>
+  count(taxonomic_group, kingdom) |>
+  mutate(taxonomic_group = fct_reorder(taxonomic_group, n)) |>
+  ggplot(aes(x = n, y = taxonomic_group, fill = kingdom)) +
+  geom_col(width = 0.7) +
+  geom_text(aes(label = n), hjust = -0.2, size = 3.5) +
+  scale_fill_brewer(palette = "Pastel1", name = "Kingdom") +
+  scale_x_continuous(expand = expansion(mult = c(0, 0.15))) +
+  labs(
+    title = "Restricted / Protected Species by Taxonomic Group",
+    subtitle = glue("Total: {n_species} species across all groups"),
+    x = "Number of species",
+    y = NULL
+  ) +
+  theme_minimal(base_size = 12) +
+  theme(panel.grid.major.y = element_blank())
+```
+
+```{r iucn-cites-fig, fig.cap="IUCN status × CITES appendix listing for restricted species."}
+species |>
+  filter(!is.na(iucn_status)) |>
+  mutate(
+    iucn_cat = as.character(iucn_status),
+    iucn_cat = fct_relevel(
+      iucn_cat,
+      "Critically Endangered", "Endangered", "Vulnerable",
+      "Near Threatened", "Least Concern", "Data Deficient",
+      "Not assessed (invasive)", "Not assessed"
+    )
+  ) |>
+  ggplot(aes(x = iucn_cat, fill = cites_appendix)) +
+  geom_bar(position = "stack", width = 0.7) +
+  scale_fill_manual(
+    name   = "CITES Appendix",
+    values = c(
+      "Appendix I"  = "#d73027",
+      "Appendix II" = "#fc8d59",
+      "Not listed"  = "#91bfdb"
+    )
+  ) +
+  labs(
+    title    = "IUCN Status vs. CITES Listing of Kenya's Restricted Species",
+    subtitle = "Many Critically Endangered species also hold CITES Appendix I status",
+    x        = "IUCN Red List Status",
+    y        = "Number of species"
+  ) +
+  theme_minimal(base_size = 12) +
+  theme(
+    axis.text.x      = element_text(angle = 30, hjust = 1),
+    panel.grid.major.x = element_blank()
+  )
+```
+
+## Master Species Table
+
+```{r master-species-table}
+species |>
+  arrange(cites_appendix, iucn_status, taxonomic_group) |>
+  mutate(`Scientific Name` = paste0("*", scientific_name, "*")) |>
+  select(
+    `Common Name`        = common_name,
+    `Scientific Name`,
+    `Group`              = taxonomic_group,
+    `Order`              = taxonomic_order,
+    `IUCN Status`        = iucn_status,
+    `CITES Appendix`     = cites_appendix,
+    `Kenya Legal Status` = legal_status_kenya,
+    `Restriction Type`   = restriction_type,
+    `Managing Inst.`     = managing_institutions,
+    `Sources`            = sources_html
+  ) |>
+  styled_kable(
+    caption = "Table 3. Comprehensive Master Listing of Restricted/Protected Species in Kenya",
+    height  = "600px"
+  )
+```
+
+## Mammals {#mammals}
+
+Kenya's mammal fauna includes some of the world's most iconic and critically threatened species. The WCMA 2013 Sixth Schedule lists all of Kenya's large mammals as protected, with the highest penalties reserved for elephants, rhinos, and pangolins.
+
+```{r mammals-table}
+species |>
+  filter(taxonomic_group == "Mammalia") |>
+  arrange(cites_appendix, iucn_status, common_name) |>
+  mutate(`Scientific Name` = paste0("*", scientific_name, "*")) |>
+  select(
+    `Common Name`    = common_name,
+    `Scientific Name`,
+    `IUCN`           = iucn_status,
+    `CITES`          = cites_appendix,
+    `Kenya Status`   = legal_status_kenya,
+    `Notes`          = notes,
+    `Sources`        = sources_html
+  ) |>
+  styled_kable(caption = "Table 4. Restricted/Protected Mammals in Kenya")
+```
+
+## Birds {#birds}
+
+Kenya has recorded approximately **1,136 bird species**, representing over 10% of the world's bird species. The WCMA 2013 Sixth Schedule lists 28 avian species as threatened. Kenya also hosts important populations of Palearctic migratory species in winter, including several raptors listed on CITES Appendix I.
+
+```{r birds-table}
+species |>
+  filter(taxonomic_group == "Aves") |>
+  arrange(iucn_status, common_name) |>
+  mutate(`Scientific Name` = paste0("*", scientific_name, "*")) |>
+  select(
+    `Common Name`    = common_name,
+    `Scientific Name`,
+    `IUCN`           = iucn_status,
+    `CITES`          = cites_appendix,
+    `Kenya Status`   = legal_status_kenya,
+    `Notes`          = notes,
+    `Sources`        = sources_html
+  ) |>
+  styled_kable(caption = "Table 5. Restricted/Protected Birds in Kenya")
+```
+
+## Reptiles {#reptiles}
+
+All sea turtles found in Kenyan waters are protected under both the WCMA 2013 and the FMDA 2016, which declares all Kenyan maritime zones a **marine mammal and turtle sanctuary**. Kenya's freshwater and terrestrial reptiles include several chameleon species that are heavily traded in the international pet market.
+
+```{r reptiles-table}
+species |>
+  filter(taxonomic_group == "Reptilia") |>
+  arrange(iucn_status, common_name) |>
+  mutate(`Scientific Name` = paste0("*", scientific_name, "*")) |>
+  select(
+    `Common Name`    = common_name,
+    `Scientific Name`,
+    `IUCN`           = iucn_status,
+    `CITES`          = cites_appendix,
+    `Kenya Status`   = legal_status_kenya,
+    `Notes`          = notes,
+    `Sources`        = sources_html
+  ) |>
+  styled_kable(caption = "Table 6. Restricted/Protected Reptiles in Kenya")
+```
+
+## Fish and Marine Species {#fish}
+
+Kenya's freshwater bodies — especially Lake Victoria — have experienced catastrophic biodiversity loss due to introduced species (particularly Nile perch). The Fisheries Act protects endangered fish species and all marine mammals.
+
+```{r fish-table}
+species |>
+  filter(taxonomic_group %in% c("Actinopterygii", "Chondrichthyes", "Bivalvia", "Gastropoda")) |>
+  arrange(iucn_status, common_name) |>
+  mutate(`Scientific Name` = paste0("*", scientific_name, "*")) |>
+  select(
+    `Common Name`    = common_name,
+    `Scientific Name`,
+    `Group`          = taxonomic_group,
+    `IUCN`           = iucn_status,
+    `CITES`          = cites_appendix,
+    `Kenya Status`   = legal_status_kenya,
+    `Notes`          = notes,
+    `Sources`        = sources_html
+  ) |>
+  styled_kable(caption = "Table 7. Restricted/Protected Fish and Marine Invertebrates in Kenya")
+```
+
+## Plants {#plants}
+
+Kenya's plant species receive legal protection primarily through the FCMA 2016 (protected trees), the Seeds and Plant Varieties Act (seed imports/exports), and through CITES. Many species are additionally protected under EMCA and the Plant Protection Act.
+
+```{r plants-table}
+species |>
+  filter(kingdom == "Plantae") |>
+  arrange(iucn_status, common_name) |>
+  mutate(`Scientific Name` = paste0("*", scientific_name, "*")) |>
+  select(
+    `Common Name`    = common_name,
+    `Scientific Name`,
+    `Group`          = taxonomic_group,
+    `IUCN`           = iucn_status,
+    `CITES`          = cites_appendix,
+    `Kenya Status`   = legal_status_kenya,
+    `Notes`          = notes,
+    `Sources`        = sources_html
+  ) |>
+  styled_kable(caption = "Table 8. Restricted/Protected Plants in Kenya")
+```
+
+## Invasive and Prohibited Species {#invasive}
+
+Kenya has documented approximately **34 established invasive alien species** (11 arthropods, 10 micro-organisms, 9 plants, 4 vertebrates). Introduction into water bodies is prohibited under **EMCA s. 55**; plant import prohibitions are administered by **KEPHIS** under the Plant Protection Act.
+
+```{r invasive-table}
+species |>
+  filter(
+    str_detect(restriction_type, regex("prohibited introduction|invasive", ignore_case = TRUE)) |
+    str_detect(legal_status_kenya, regex("invasive|introduction prohibited", ignore_case = TRUE))
+  ) |>
+  arrange(common_name) |>
+  mutate(`Scientific Name` = paste0("*", scientific_name, "*")) |>
+  select(
+    `Common Name`      = common_name,
+    `Scientific Name`,
+    `Group`            = taxonomic_group,
+    `Kenya Status`     = legal_status_kenya,
+    `Restriction Type` = restriction_type,
+    `Notes`            = notes,
+    `Sources`          = sources_html
+  ) |>
+  styled_kable(caption = "Table 9. Invasive and Prohibited Species in Kenya")
+```
+
+---
+
+# Regulatory Gaps and Implementation Challenges {#gaps}
+
+Kenya's legal framework for species protection is, on paper, one of the most comprehensive in sub-Saharan Africa. Yet a persistent gap between legislative intent and on-the-ground reality undermines its effectiveness. This section systematically catalogues those gaps, drawing on government reports, peer-reviewed research, and monitoring data from 2016–2025.
+
+```{r gaps-summary-table, echo=FALSE}
+gaps_data <- tribble(
+  ~`#`, ~`Gap Area`,                             ~`Severity`, ~`Status (2025)`,
+  "5.1", "NEMA species inventory absent",          "High",    "Unresolved",
+  "5.2", "WCMA schedule update mechanism weak",    "High",    "Bill pending",
+  "5.3", "Inter-agency coordination failures",     "High",    "Unresolved",
+  "5.4", "Fisheries: no endangered species list",  "High",    "Unresolved",
+  "5.5", "Plant species under-protection",         "High",    "Partial (NGO-led)",
+  "5.6", "Enforcement & monitoring infrastructure","High",    "Partial improvement",
+  "5.7", "Biosafety Act regulatory duplication",   "Medium",  "Unresolved",
+  "5.8", "CITES port enforcement failures",        "High",    "Partial improvement",
+  "5.9", "Nagoya Protocol / ABS under-implemented","Medium",  "ABS Regs 2025 issued",
+  "5.10","Community conservancy legal gaps",       "High",    "5% revenue share pending",
+  "5.11","30x30 protected area coverage gap",      "High",    "NBSAP in progress"
+)
+
+gaps_data |>
+  kbl(caption = "Table 10. Summary of Regulatory Gaps in Kenya's Species Protection Framework",
+      escape = FALSE, align = "l") |>
+  kable_styling(
+    bootstrap_options = c("striped", "hover", "condensed", "responsive"),
+    full_width = TRUE, font_size = 12
+  ) |>
+  column_spec(3, bold = TRUE,
+              color = ifelse(gaps_data$Severity == "High", "white", "black"),
+              background = ifelse(gaps_data$Severity == "High", "#c0392b", "#e67e22")) |>
+  column_spec(4, color = ifelse(gaps_data$`Status (2025)` == "Unresolved", "#c0392b",
+                         ifelse(gaps_data$`Status (2025)` == "Bill pending", "#e67e22", "#27ae60")))
+```
+
+## NEMA Biodiversity Species Inventory — Mandate Without Database {#gap-nema}
+
+**Legal requirement:** The [Environmental Management and Coordination (Conservation of Biological Diversity) Regulations 2023](https://nema.go.ke/wp-content/uploads/2024/10/Biodiversity-Regulations-2023.pdf) (published October 2024) require NEMA to prepare a national inventory of biological diversity — specifically including threatened, endangered, and rare species — **within 24 months of commencement**, maintain it annually, and make it publicly accessible.
+
+**The gap:** As of early 2026, no standalone, searchable national species inventory database has been published. NEMA's Biodiversity Clearing House page ([nema.go.ke/services/biodiversity-clearing-house](https://nema.go.ke/services/biodiversity-clearing-house/)) exists but contains no downloadable inventory. The Wildlife Research and Training Institute (WRTI), which manages wildlife census data, explicitly acknowledges: *"Currently, no integrated wildlife database can provide data and information at the click of a button. The lack of appropriate research equipment and facilities has affected the generation and storage of scientific data and information."* ([WRTI Biodiversity Information Systems](https://wrti.go.ke/?page_id=6904))
+
+**Why it matters:** Kenya has recorded 4,623 plant species, 393 mammals, 260 reptiles and amphibians, 1,105 birds, and 769 fish species (CBD 6th National Report, 2020). Without a unified, updated public inventory, it is impossible to systematically identify which species require protection, to track population trends, or to evaluate whether legal protections are working. The absence also directly undermines Kenya's Kunming-Montreal Global Biodiversity Framework reporting obligations.
+
+**Underlying structural acknowledgement:** NEMA's own [Regulatory Impact Statement](https://nema.go.ke/wp-content/uploads/2024/10/REGULATORY-IMPACT-STATEMENT-BIO-DIVERSITY.pdf) accompanying the 2023 Regulations identifies *"lack of a coherent integrated conservation policy that unifies dispersed and often conflicting legislation"* as one of the largest challenges to biodiversity conservation in Kenya.
+
+**KBA monitoring data:** A 2023 assessment of Kenya's 56 Key Biodiversity Areas found that since 2004, **the state of KBAs has remained stable while pressure has continued to mount and the conservation response has been on a decline**. ([BirdLife DataZone — Kenya KBAs Status and Trends 2023](https://datazone.birdlife.org/publications/kenyas-key-biodiversity-areas-status-and-trends-2023))
+
+---
+
+## WCMA Sixth Schedule — Structural Weaknesses in the Listing Mechanism {#gap-wcma}
+
+**The legal structure:** The [WCMA 2013](https://new.kenyalaw.org/akn/ke/act/2013/47/eng@2025-11-04) places species in the Sixth Schedule and states that KWS *"shall amend the Sixth Schedule from time to time as necessary."* This permissive language — with no mandatory review interval — creates a structural lag between scientific knowledge and legal protection.
+
+**Three specific weaknesses:**
+
+1. **No synchronisation with the IUCN Red List.** When IUCN uplists a Kenyan species from Near Threatened to Endangered, no automatic process triggers a Sixth Schedule review. Species may be ecologically endangered yet remain unprotected pending KWS initiative.
+
+2. **Recovery plans do not follow from Sixth Schedule listing.** Section 30 mandates recovery plans only for the *Seventh Schedule*, not the Sixth. A species listed as Critically Endangered in Schedule 6 has no automatic entitlement to a government-funded recovery plan — a gap highlighted by [WildlifeDirect's Guide to the WCMA](https://wildlifedirect.org/wp-content/uploads/2017/02/A-Guide-to-the-Wildlife-Act-of-Kenya-2013.pdf).
+
+3. **Fauna-focused with near-absence of plant and invertebrate species.** The Schedule overwhelmingly lists vertebrate fauna; threatened plants, insects, and other invertebrate groups are substantially unrepresented despite Kenya's botanical and entomological richness.
+
+**Reform in progress:** A comprehensive [Wildlife Conservation and Management Bill 2025](https://bonganagava.com/wcmb-2025/) has been tabled to repeal and replace the 2013 Act. The [Wildlife Conservation and Management (Amendment) Act, 2025 (No. 24 of 2025)](https://new.kenyalaw.org/akn/ke/act/2013/47/eng@2025-11-04) entered force on 4 November 2025 with targeted amendments but did not overhaul the schedule mechanism.
+
+---
+
+## Inter-Agency Coordination Failures {#gap-coordination}
+
+Kenya's species-protection apparatus spans at least seven national institutions (KWS, NEMA, KFS, KEPHIS, NBA, KeFS, KMA) and 47 county governments, often with overlapping mandates and no clear coordination hierarchy.
+
+**Documented "turf wars":** The [Kenya National Wildlife Strategy 2030](https://ecotourismkenya.org/wp-content/uploads/ekdownloads/press_releases/NWS2030%20-%20FINAL%20JUNE%2012,%202018.pdf) (June 2018) identifies fragmentation as a *core governance problem*. Weru (2016), cited in WWF TNRC's 2022 Topic Brief, documents **"turf wars"** between environmental law enforcement agencies. Kenya's Constitution (Schedule 4) gives national government environmental policy authority while county governments implement — a structural ambiguity generating routine conflicts.
+
+**Inadequate inter-agency consultation:** A 2024 peer-reviewed study (Kilonzo, Heinen & Byakagaba, [*Diversity* 16(3):183](https://www.mdpi.com/1424-2818/16/3/183)) found that a key informant from Kenya's National Museums stated: *"There are often disharmonies witnessed during revision of species status and review. We usually experience inadequate consultations between agencies."* EMCA Section 52 provides for KWS/NEMA consultation on biological resource conservation — but in practice the mechanism is described as inadequate.
+
+**NBA/NEMA overlap:** Both the Biosafety Act and EMCA require environmental risk assessments for GMO releases, duplicating processes and creating bottlenecks without adding protection. ([ISAAA Africa Center — EMCA/Biosafety Overlap, 2020](https://africenter.isaaa.org/wp-content/uploads/2020/10/Overlap-between-EMCA-Act-and-Biosafety-Act.pdf))
+
+**WWF TNRC finding:** [Mbeche and Gargule (2022)](https://www.worldwildlife.org/pages/tnrc-topic-brief-anti-corruption-and-equitable-benefit-sharing-in-kenya-s-wildlife-and-forest-sectors-gaps-and-lessons), in a WWF anti-corruption analysis, conclude that *"poor synergies between agencies — including KFS, KWS, conservancies, and criminal justice systems — have limited the effectiveness of conservation and anti-corruption efforts."* Institutional silos are identified as a major barrier.
+
+---
+
+## Fisheries Act — No Endangered Species Schedule in a Decade of Operation {#gap-fisheries}
+
+**The legal gap:** The [FMDA 2016 Section 45](https://new.kenyalaw.org/akn/ke/act/2016/35/eng@2022-12-31) empowers the Director-General of Kenya Fisheries Service to declare fish species as endangered and restrict trade. **This power has never been exercised.** No gazette notice formally declaring any fish species as endangered under the FMDA has been identified in the Kenya Gazette or Kenya Law database in the nearly ten years since the Act entered force.
+
+**What this means in practice:**
+
+- Kenya has 769 recorded fish species, dozens of which are IUCN-listed as threatened.
+- Lake Victoria's endemic haplochromine cichlid complex suffered one of the greatest vertebrate extinction events in recorded history — hundreds of species lost to Nile perch — yet the remaining threatened endemics have no species-specific legal protection under the fisheries framework.
+- *Oreochromis esculentus* and *O. variabilis* (both Critically Endangered) are subject to restocking programmes, but their protection rests on fisheries management regulations rather than formal endangered species declarations.
+- The Marine Fisheries Regulations 2024 ([L.N. 125/2024](https://new.kenyalaw.org/akn/ke/act/ln/2024/125/eng@2024-08-02)) include habitat protections but contain no endangered species schedule.
+
+**Contrast with WCMA:** The wildlife framework has a 245-species Sixth Schedule, substantive permitting requirements, and minimum sentencing guidelines for listed species. The fisheries framework, governing an equally threatened ecological domain, has none of these elements operationalised. A Fisheries Management and Development Bill No. 18 of 2024 was tabled in the Senate ([Parliament of Kenya, May 2024](https://www.parliament.go.ke/sites/default/files/2024-05/The%20Fisheries%20Management%20and%20Development%20Bill,%20No.18%20of%202024.pdf)), potentially addressing this gap.
+
+---
+
+## Plant Species Under-Regulation {#gap-plants}
+
+**The scale of the problem:** Kenya has over 7,000 plant species. [BGCI and IUCN data](https://www.bgci.org/wp/wp-content/uploads/2021/08/Planning-Conservation-Action-for-Kenyas-threatened-tree-species-1.pdf) confirm **more than 120 Kenyan tree species meet IUCN threatened criteria**, including approximately 34 endemics. The Taita Hills alone — an area of roughly 20 × 20 km — contain 19 threatened tree species, 9 of which are Endangered, representing one of the world's highest endemic plant concentrations.
+
+**The legal protection deficit:** The WCMA Sixth Schedule overwhelmingly covers fauna. The FCMA Section 40 gazette mechanism exists but has no accompanying statutory programme to systematically survey, assess, and gazette threatened plant species. KFS has no active programme equivalent to KWS's wildlife census for threatened tree assessment. The result: the majority of Kenya's IUCN-threatened tree species have no specific domestic legal protection.
+
+**CITES plant enforcement — a documented court failure:** A [2024 peer-reviewed study](https://www.mdpi.com/1424-2818/16/3/183) documents that in 2014, Kenya seized 8,069 rosewood logs (CITES-regulated, Appendix II/III) illegally exported from Madagascar. Despite multiple trials and appeals, courts ordered the logs returned to shippers. CITES notifications arrived after final determinations. The case revealed that **Kenyan courts do not adequately understand CITES Appendix listings for plants**.
+
+**Coastal forest under-survey:** A [2020 annotated checklist](https://pmc.ncbi.nlm.nih.gov/articles/PMC7237506/) of Kenya's coastal forests — home to 2,489 plant species and 90 endemics — identifies many under-surveyed areas and estimates that without new surveys, the number of known threatened plant species substantially understates reality.
+
+**Civil society response:** The [Kenya Threatened Trees Consortium](https://www.bgci.org/wp/wp-content/uploads/2021/08/Planning-Workshop-Report_2023.pdf) (est. 2020, BGCI + KFS + 30 organisations) is building conservation plans for threatened trees — but this body has no binding legal authority and its work is donor-dependent.
+
+---
+
+## Enforcement and Monitoring Infrastructure Gaps {#gap-enforcement}
+
+**No national wildlife database:** The Wildlife Research and Training Institute has publicly acknowledged there is **no integrated national wildlife database** ([WRTI](https://wrti.go.ke/?page_id=6904)). The Kenya Wildlife Service conducted its most recent [National Wildlife Census](https://rhinoresourcecenter.com/wp-content/uploads/2026/01/2025-Kenya-National-Wildlife-Census-2025-Technical-Report-Abridged-Version-AA.pdf) in 2024–2025 using Earth Ranger real-time technology — a positive development — but between censuses, systematic population monitoring data at species level is fragmented.
+
+**Ranger understaffing and compensation:** KWS employs over 5,000 personnel managing 54 protected areas. However, a KWS Director has publicly cited **shortage of rangers and inadequate funding** as *"frustrating the war against poaching."* A 2023 KWS survey found **55% of rangers felt undercompensated**, with retention a chronic problem. ([Business Radar, March 2025](https://www.businessradar.co.ke/blog/2025/03/20/kws-salary-per-month-everything-you-need-to-know/))
+
+**Forensics capacity gap:** IFAW conducted four forensic training workshops between September 2023 and April 2024, training 80 wildlife rangers and investigators in crime scene response. The direct result: 32 wildlife crime cases with 77 exhibits that previously would have been dropped for lack of evidence were presented in court. ([IFAW Forensics Training, 2024](https://www.ifaw.org/international/journal/forensics-training-rangers-wildlife-crime-kenya)) This positive outcome simultaneously illustrates how deep the pre-existing capacity gap was.
+
+**Corruption as an enabling factor:** TRAFFIC identifies corruption as *"a key enabling factor of the illegal wildlife trade"* in Kenya. Case examples include a police officer arrested with a service rifle, ammunition, and 5 elephant tusks. Endemic corruption within KWS investigative arms is documented as contributing to the lack of major seizures in Mombasa despite high trafficking volumes. ([TRAFFIC — Kenya, 2016](https://www.traffic.org/site/assets/files/2410/kenya-wildlife-trafficking-report.pdf))
+
+**Court backlog and prosecutorial attrition:** [SEEJ-Africa's court monitoring programme](https://www.seej-africa.org/2025/07/29/following-the-ivory-monitoring-the-wildlife-crime-courts-of-kenya-interim-report-2023-2025/) attended 125 ivory cases at 21 courts over 2023–2025: 22 had exceeded 5 years in duration; over 200 witnesses testified across 57 cases. The UNODC [World Wildlife Crime Report 2024](https://www.unodc.org/documents/data-and-analysis/wildlife/2024/Wildlife_SpecialPoint_Final.pdf) concludes that despite two decades of concerted global action, there is *"no confidence that wildlife trafficking overall is being substantially reduced."*
+
+---
+
+## Biosafety Act — Regulatory Duplication and Monitoring Obligations {#gap-biosafety}
+
+**The core duplication:** Both the Biosafety Act (NBA) and EMCA (NEMA) require environmental risk assessment for GMO environmental releases — creating **parallel, mandatory bureaucratic processes** for the same activity without additional ecological protection. [ISAAA Africa Center (2020)](https://africenter.isaaa.org/wp-content/uploads/2020/10/Overlap-between-EMCA-Act-and-Biosafety-Act.pdf) characterises this as *"introducing a bottleneck in the biosafety framework, stifling GMO research, development and deployment."*
+
+**The GMO policy reversal and litigation:** Kenya's 2012 GMO import ban was lifted by Cabinet on 3 October 2022. Legal challenges were dismissed — by the Environment and Land Court in October 2023 and the High Court in November 2024 — clearing the path for commercial GMO cultivation. ([Alliance for Science, November 2024](https://allianceforscience.org/blog/2024/11/kenya-science-wins-again-as-high-court-dismisses-anti-gmo-petitions/)) As of 2024, NBA has approved 58 GMO projects including commercial cultivation of Bt cotton.
+
+**Long-term monitoring obligation unverified:** The Biosafety Act requires NBA to **monitor approved commercial GMO crops for 20 years post-approval**. The institutional capacity to sustain this obligation across potentially thousands of smallholder farms is not publicly documented. The NBA launched its 2023–2027 Strategic Plan in May 2025, signalling ongoing capacity-building need.
+
+**Liability gap:** Kenya has not ratified the [Nagoya-Kuala Lumpur Supplementary Protocol on Liability and Redress](https://bch.cbd.int/protocol/NKL_SuppProtocol.shtml), leaving no comprehensive domestic legal framework to respond to accidental GMO releases or cross-border GMO damage events.
+
+---
+
+## CITES Port Enforcement — The Mombasa Bottleneck {#gap-cites-ports}
+
+**The scale of failure:** [TRAFFIC's 2016 assessment](https://www.traffic.org/site/assets/files/2410/kenya-wildlife-trafficking-report.pdf) documented that since 2009, **more ivory has been exported through Mombasa (Kilindini Port) than any other route out of Africa**. Between 2011 and 2016 alone, approximately 20,083 kg was seized in Mombasa and 26,255 kg more was intercepted abroad after transiting through Mombasa — together representing the ivory of an estimated **6,916 elephants**. Despite this, prosecutions have been largely unsuccessful.
+
+**The 8-year acquittal:** In April–May 2015, Singapore and Thailand intercepted 7,727 kg of ivory in tea-leaf containers originating from Mombasa. Kenyan authorities charged nine people. The case ran for **8 years and 5 months** before all accused were acquitted in November 2023. [SEEJ-Africa's post-mortem analysis](https://www.seej-africa.org/2025/02/19/failed-or-failed-post-mortem-of-an-ivory-prosecution-pdf/) (February 2025) identifies systematic evidentiary, prosecutorial, and judicial failings.
+
+**Institutional capacity assessment:** The 2024 peer-reviewed study by [Kilonzo, Heinen and Byakagaba (*Diversity* 16(3):183)](https://www.mdpi.com/1424-2818/16/3/183) surveyed KWS, Police, Fisheries Service, Judiciary, National Museums, and other agencies. **Over 60% reported only moderate capacity** for CITES implementation and coordination. Judicial officers specifically lack adequate conservation science knowledge, hampering the quality of prosecutions.
+
+**Positive developments:** Kenya led development of new IMO Guidelines on wildlife smuggling (May 2022). An Africa Regional Workshop on e-CITES permitting ([Nairobi, October 2024](https://cites.org/eng/news/ecites-africa-regional-workshop-nairobi-2024)) brought together 44 participants from 24 countries to reduce fraudulent permits. These developments represent meaningful progress but do not yet close the fundamental enforcement gap at Mombasa port.
+
+**Key stat:** Between 2007 and 2017, Kenya reported **797 ivory seizures to ETIS** — more than any other African country — reflecting active trafficking activity rather than effective enforcement.
+
+---
+
+## Nagoya Protocol and Access and Benefit Sharing {#gap-nagoya}
+
+**Framework:** Kenya ratified the [Nagoya Protocol on Access and Benefit Sharing](https://absch.cbd.int/en/countries/KE) in 2014. Domestic implementation relies on EMCA and its subsidiary Biodiversity Regulations, most recently updated in 2025 (L.N. 19/2025 — ABS Regulations). No standalone ABS Act exists.
+
+**Implementation gaps identified by stakeholders:** Multiple forums, including Kenya's own CBD Clearing House consultation processes, conclude that the subsidiary regulation approach *"addresses ABS issues inadequately"* and that there is a need for a *"substantive National ABS framework or an inclusive biodiversity law."* Kenya's approach compares unfavourably with more comprehensive ABS legislation in Costa Rica, South Africa, and India. ([Kenya CBD Clearing House — ABS](https://ke.chm-cbd.net/access-and-benefit-sharing))
+
+**Traditional knowledge law: unenforced:** Kenya has enacted traditional knowledge (TK) legislation on paper, but systematic enforcement of Prior Informed Consent (PIC) requirements is absent in practice. A [UNDP project](https://www.undp.org/kenya/projects/strengthening-human-resources-legal-frameworks-and-institutional-capacities-implement-nagoya-protocol) supporting Kenya's Nagoya implementation capacity reflects international recognition that domestic capacity was insufficient.
+
+**Digital Sequence Information (DSI) gap:** Until 2024, there were no ABS rules covering Digital Sequence Information — companies freely used genetic sequence data from Kenyan biodiversity without compensation mechanisms. A new CBD DSI benefit-sharing framework was agreed at COP16 in 2024; implementation into Kenyan national law is pending.
+
+**10th anniversary global assessment:** A review of the Protocol's first decade ([Global Policy Watch, October 2024](https://www.globalpolicywatch.com/2024/10/the-nagoya-protocol-at-its-10th-anniversary-lessons-learned-and-new-challenges-from-access-and-benefit-sharing/)) found that *"lack of implementation at the national level"* was the most cited failure globally — Kenya is part of a systemic pattern, not an outlier.
+
+**Emerging positive case:** A 2025 agreement saw Maasai communities in Kenya negotiate a benefit-sharing deal providing 15% of profits from drugs derived from local plant knowledge — one of the first concrete ABS outcomes in the country.
+
+---
+
+## Community Conservancy Legal Gaps {#gap-community}
+
+Kenya has over **160 registered wildlife conservancies** occupying some 15% of the country, making community and private conservancies as important as the formal protected area network for biodiversity. Yet several structural legal gaps undermine their effectiveness.
+
+**The unimplemented 5% revenue share:** WCMA Section 76(4) provides that 5% of revenues from national parks will be shared with host communities. More than a decade after the Act's passage, this provision has not been operationalised through implementing regulations. The 2023 Amendment Bill sought again to address this — without resolution. ([WWF TNRC — Mbeche & Gargule, 2022](https://www.worldwildlife.org/pages/tnrc-topic-brief-anti-corruption-and-equitable-benefit-sharing-in-kenya-s-wildlife-and-forest-sectors-gaps-and-lessons))
+
+**Missing subsidiary regulations for community provisions:** The Ministry has not developed and gazetted the subsidiary regulations and guidelines needed to put WCMA community access, incentive, and benefit-sharing provisions into practice. ([PAPACO — Non-State PA Governance Kenya, 2017](https://papaco.org/wp-content/uploads/2017/11/Kenya-non-state-PA-governance-report-final.pdf))
+
+**Community Land Act 2016 — unimplemented foundation:** Community conservancies depend on secure community land tenure. The Community Land Act 2016 requires community land registration, but as of 2019, the Ministry of Lands had not appointed community land registrars or developed a community land inventory in most counties — blocking the foundational tenure security that makes conservancies viable. ([ScienceDirect — Land tenure in Northern Kenya conservancies, 2023](https://www.sciencedirect.com/science/article/pii/S0962629823001282))
+
+**Indigenous rights — the Ogiek precedent:** In May 2017, the African Court of Human and Peoples' Rights ruled that **conservation objectives cannot justify denial of indigenous peoples' land rights** (Ogiek v. Kenya). Despite this, government-ordered evictions of Ogiek from Mau Forest continued; homes were burned in November 2023. In late 2025, the African Court issued its first-ever compliance decision against Kenya, ordering reparations and land restitution. This landmark ruling — analysed in [Oryx (2023)](https://www.cambridge.org/core/journals/oryx/article/protected-areas-indigenous-rights-and-land-restitution-the-ogiek-judgment-of-the-african-court-of-human-and-peoples-rights-and-community-land-protection-in-kenya/9C0EAD81FA60D3C469C2F63C7D7390AE) — has direct implications for any future expansion of Kenya's protected area network.
+
+---
+
+## The 30×30 Coverage Gap and NBSAP Implementation {#gap-30x30}
+
+**Kenya's current protected area coverage:** KWS directly manages approximately **8% of Kenya's land area** across 23 national parks, 28 national reserves, 4 marine national parks, 6 marine national reserves, and 4 sanctuaries. Including forest reserves and other gazetted areas, total formal protection reaches approximately 10–14% (World Bank / Protected Planet estimates vary by methodology). Conservancies add significant effective coverage but are not uniformly counted.
+
+**The Kunming-Montreal target:** The [Global Biodiversity Framework (2022)](https://www.cbd.int/gbf) — the Kunming-Montreal agreement — requires **30% of terrestrial and inland water areas and 30% of marine and coastal areas** to be protected or effectively conserved by 2030. Kenya faces a substantial gap requiring near-doubling of its formally protected estate by 2030 — in approximately 4 years.
+
+**Funding mathematics:** A [2016 study (PubMed)](https://pubmed.ncbi.nlm.nih.gov/27346759/) estimated Kenya would need **50 times** more GEF funding than it had received to adequately fund even the earlier 17% terrestrial CBD target. The 30×30 target is considerably more ambitious.
+
+**NBSAP status:** Kenya is updating its National Biodiversity Strategy and Action Plan (NBSAP) to align with the GBF. A [National Biodiversity Coordination Mechanism](https://nbsapaccelerator.org/news_and_events/kenya-establishes-national-biodiversity-coordination-mechanism-to-accelerate-nbsap-implementation/) (NBCM) was formally launched in August 2024, bringing together national ministries, counties, civil society, indigenous peoples, and private sector. A [NBSAP draft](https://ke.chm-cbd.net/sites/ke/files/inline-files/KENYA%20NBSAPFINAL%20DRAFT.pdf) has been prepared; formal submission to the CBD Secretariat was pending as of early 2026. ([UNEP — Kenya's NBSAP Blueprint, 2024](https://www.unep.org/news-and-stories/story/kenyas-blueprint-turning-global-biodiversity-goals-national-action))
+
+**Bottom line:** Kenya has the legal architecture and political will in principle, but faces a funding gap, an implementation deficit, and unresolved human rights obligations that must all be addressed simultaneously for the 30×30 target to be achieved meaningfully.
+
+---
+
+# Species–Law Cross-Reference {#crossref}
+
+The chart below shows which laws govern the highest number of species in this dataset.
+
+```{r species-by-law-fig, fig.cap="Number of restricted species governed by each Kenyan law."}
+species_law |>
+  filter(!is.na(law_id)) |>
+  distinct(species_id, law_id) |>
+  left_join(laws |> select(law_id, short_name), by = "law_id") |>
+  count(short_name, sort = TRUE) |>
+  mutate(short_name = fct_reorder(short_name, n)) |>
+  ggplot(aes(x = n, y = short_name, fill = short_name)) +
+  geom_col(width = 0.7, show.legend = FALSE) +
+  geom_text(aes(label = n), hjust = -0.2, size = 4) +
+  scale_fill_brewer(palette = "Set3") +
+  scale_x_continuous(expand = expansion(mult = c(0, 0.15))) +
+  labs(
+    title    = "Species Governed by Each Kenyan Law",
+    subtitle = "Species may be governed by multiple laws",
+    x        = "Number of species in this dataset",
+    y        = NULL
+  ) +
+  theme_minimal(base_size = 12) +
+  theme(panel.grid.major.y = element_blank())
+```
+
+---
+
+# Key References and Links {#references}
+
+## Official Legal Texts
+
+| Law | Kenya Law Link |
+|-----|---------------|
+| Wildlife Conservation and Management Act, 2013 | [Link](https://new.kenyalaw.org/akn/ke/act/2013/47/eng@2025-11-04) |
+| Environmental Management and Co-ordination Act, 1999 | [Link](https://new.kenyalaw.org/akn/ke/act/1999/8/eng@2022-12-31) |
+| Fisheries Management and Development Act, 2016 | [Link](https://new.kenyalaw.org/akn/ke/act/2016/35/eng@2022-12-31) |
+| Forest Conservation and Management Act, 2016 | [Link](https://new.kenyalaw.org/akn/ke/act/2016/34/eng@2022-12-31) |
+| Seeds and Plant Varieties Act (Cap. 326) | [Link](http://kenyalaw.org:8181/exist/kenyalex/actview.xql?actid=CAP.+326) |
+| Plant Protection Act (Cap. 324) | [Link](https://new.kenyalaw.org/akn/ke/act/1937/24/eng@2022-12-31) |
+| Biosafety Act, 2009 | [Link](https://new.kenyalaw.org/akn/ke/act/2009/2/eng@2023-12-11) |
+| L.N. 241/2017 — CITES Implementation Regulations | [Link](https://new.kenyalaw.org/akn/ke/act/ln/2017/241) |
+| L.N. 242/2017 — Endangered Species Regulations | [Link](https://new.kenyalaw.org/akn/ke/act/ln/2017/242/eng@2017-09-22) |
+| NEMA Biodiversity Regulations 2023 | [Link](https://nema.go.ke/wp-content/uploads/2024/10/Biodiversity-Regulations-2023.pdf) |
+
+## Regulatory Agencies
+
+| Institution | Website |
+|-------------|---------|
+| Kenya Wildlife Service (KWS) | [kws.go.ke](https://www.kws.go.ke) |
+| Kenya Forest Service (KFS) | [kenyaforestservice.org](https://www.kenyaforestservice.org) |
+| NEMA | [nema.go.ke](https://www.nema.go.ke) |
+| KEPHIS | [kephis.go.ke](https://www.kephis.go.ke) |
+| National Biosafety Authority | [biosafetykenya.go.ke](https://www.biosafetykenya.go.ke) |
+| Kenya Fisheries Service | [agriculture.go.ke/fisheries](https://www.agriculture.go.ke/fisheries) |
+| Kenya Maritime Authority | [maritimeauthority.go.ke](https://www.maritimeauthority.go.ke) |
+
+## Species Databases
+
+| Resource | Link |
+|----------|------|
+| CITES Appendices (current) | [cites.org/eng/app/appendices.php](https://cites.org/eng/app/appendices.php) |
+| CITES Species+ Checklist | [checklist.cites.org](https://checklist.cites.org) |
+| IUCN Red List | [iucnredlist.org](https://www.iucnredlist.org) |
+| BirdLife DataZone | [birdlife.org/species](https://www.birdlife.org/species) |
+| Kenya Invasive Species Platform | [invasivespecieskenyaplatform.go.ke](https://www.invasivespecieskenyaplatform.go.ke) |
+
+---
+
+# Session Information {.appendix}
+
+```{r session-info}
+sessionInfo()
+```
+
+---
+
+*Report generated with R and knitr. Data pipeline: `R/01_scrape_laws.R` → `R/02_institutions.R` → `R/03_species_listing.R` → `R/04_merge_and_export.R`. Source data: `data/raw/`. Processed data: `data/processed/`.*
+
+*For corrections or additions — particularly regarding the WCMA Sixth Schedule species not included here — contact Kwiz Computing or raise an issue on the project repository.*
+
+```{r kqb-footer, results='asis', echo=FALSE}
+logo_sm <- kqb_logo_img(height = "28px")
+cat(paste0(
+  '<div class="kqb-report-footer">',
+  if (nzchar(logo_sm)) paste0(logo_sm, '<br/>') else "",
+  '<p style="font-weight:600;color:#0d2240;">', kqb_co$name, ' &mdash; ', kqb_co$tagline, '</p>',
+  '<p>', kqb_co$legal_name, ' | ', kqb_co$country, '</p>',
+  '<p style="margin-top:6px;font-size:10px;color:#aaa;">',
+  'Generated ', format(Sys.Date(), "%d %B %Y"),
+  ' &nbsp;&bull;&nbsp; For informational purposes only &nbsp;&bull;&nbsp; Verify current listings at Kenya Law, KWS, and CITES',
+  '</p>',
+  '</div>'
+))
+```

@@ -1,0 +1,22 @@
+# R
+.Rhistory
+.RData
+.Ruserdata
+*.Rproj.user/
+
+# renv — library is not committed; restore from renv.lock
+renv/library/
+renv/staging/
+renv/sandbox/
+renv/.cache/
+
+# Generated outputs (large files)
+data/processed/
+output/reports/
+output/tables/*.html
+
+# macOS
+.DS_Store
+
+# RStudio
+*.Rproj.user
