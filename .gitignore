@@ -12,7 +12,7 @@ renv/.cache/
 
 # Generated outputs (large files)
 data/processed/
-output/reports/
+# output/reports/
 output/tables/*.html
 
 # macOS
