@@ -41,8 +41,7 @@ suppressPackageStartupMessages({
 # ── Load kwizbranding (watermark + footer) ────────────────────────────────────
 .kqb_pkg <- "/Users/kwizera.jvk/Desktop/Kwiz Computing Comes to Life/Kwiz Quants/libs/kwizbranding"
 suppressMessages(devtools::load_all(.kqb_pkg, quiet = TRUE))
-kqb_co  <- kqb_company()
-kqb_co$name    <- "Kwiz Research"
+kqb_co  <- kqb_company("research")
 kqb_col <- kqb_colours()
 
 # Pre-populate logo caches with explicit paths so kqb_watermark_uri() and
@@ -116,7 +115,7 @@ n_en         <- sum(as.character(species$iucn_status) == "Endangered", na.rm = T
 
 ```{r kqb-watermark, results='asis', echo=FALSE}
 # Inject watermark CSS (.kqb-body / .kqb-page class-based selectors)
-cat(kqb_watermark_css(opacity = 0.08, size = "280px auto"))
+cat(kqb_watermark_css(opacity = 0.04, size = "280px auto"))
 
 # Reliable full-page watermark: fixed overlay using the same logo URI
 uri <- kqb_watermark_uri()
@@ -132,7 +131,7 @@ if (nzchar(uri)) {
     '  background-image: url("', uri, '");\n',
     '  background-repeat: repeat;\n',
     '  background-size: 280px auto;\n',
-    '  opacity: 0.08;\n',
+    '  opacity: 0.04;\n',
     '}\n',
     '</style>\n'
   ))
@@ -174,7 +173,7 @@ The species and legislative data compiled in this report draw from:
 
 ## Scope and Limitations
 
-- The WCMA 2013 Sixth Schedule lists **245 nationally threatened species**; this report includes a representative but non-exhaustive selection of the most ecologically significant and commonly referenced species.
+- The WCMA 2013 Sixth Schedule lists **245 nationally threatened species**; this report includes a comprehensive selection spanning the most ecologically significant fauna, all documented invasive alien species, and the full catalogue of IUCN-threatened tree species.
 - Protected tree species under the Forest Conservation and Management Act are designated by Cabinet Secretary Gazette orders — this list changes over time and a current, authoritative list requires direct consultation with KFS.
 - Invasive species data reflects Kenya's documented invasive species as of 2024; new invasive threats emerge regularly.
 - CITES appendix statuses reflect CoP19 (2022) decisions; verify current listings at [checklist.cites.org](https://checklist.cites.org).
@@ -521,7 +520,7 @@ species |>
 
 ## Plants {#plants}
 
-Kenya's plant species receive legal protection primarily through the FCMA 2016 (protected trees), the Seeds and Plant Varieties Act (seed imports/exports), and through CITES. Many species are additionally protected under EMCA and the Plant Protection Act.
+Kenya's plant species receive legal protection primarily through the FCMA 2016 (protected trees), the Seeds and Plant Varieties Act (seed imports/exports), and through CITES. Many species are additionally protected under EMCA and the Plant Protection Act. BGCI and IUCN data confirm that **over 120 Kenyan tree species** meet IUCN threatened criteria (CR, EN, or VU), including approximately 34 endemics — the full listing is included below.
 
 ```{r plants-table}
 species |>
@@ -538,12 +537,15 @@ species |>
     `Notes`          = notes,
     `Sources`        = sources_html
   ) |>
-  styled_kable(caption = "Table 8. Restricted/Protected Plants in Kenya")
+  styled_kable(
+    caption = "Table 8. Restricted/Protected Plants in Kenya (Complete Listing Including Threatened Trees)",
+    height  = "600px"
+  )
 ```
 
 ## Invasive and Prohibited Species {#invasive}
 
-Kenya has documented approximately **34 established invasive alien species** (11 arthropods, 10 micro-organisms, 9 plants, 4 vertebrates). Introduction into water bodies is prohibited under **EMCA s. 55**; plant import prohibitions are administered by **KEPHIS** under the Plant Protection Act.
+Kenya has documented approximately **34 established invasive alien species** (11 arthropods, 10 micro-organisms, 9 plants, 4 vertebrates), plus additional invasive species documented by NEMA and KEPHIS. Introduction into water bodies is prohibited under **EMCA s. 55**; plant import prohibitions are administered by **KEPHIS** under the Plant Protection Act. The table below lists all documented invasive and prohibited species in Kenya.
 
 ```{r invasive-table}
 species |>
@@ -551,7 +553,7 @@ species |>
     str_detect(restriction_type, regex("prohibited introduction|invasive", ignore_case = TRUE)) |
     str_detect(legal_status_kenya, regex("invasive|introduction prohibited", ignore_case = TRUE))
   ) |>
-  arrange(common_name) |>
+  arrange(kingdom, taxonomic_group, common_name) |>
   mutate(`Scientific Name` = paste0("*", scientific_name, "*")) |>
   select(
     `Common Name`      = common_name,
@@ -562,7 +564,10 @@ species |>
     `Notes`            = notes,
     `Sources`          = sources_html
   ) |>
-  styled_kable(caption = "Table 9. Invasive and Prohibited Species in Kenya")
+  styled_kable(
+    caption = "Table 9. Invasive and Prohibited Species in Kenya (Complete Listing)",
+    height  = "600px"
+  )
 ```
 
 ---
@@ -611,7 +616,7 @@ gaps_data |>
 
 **Underlying structural acknowledgement:** NEMA's own [Regulatory Impact Statement](https://nema.go.ke/wp-content/uploads/2024/10/REGULATORY-IMPACT-STATEMENT-BIO-DIVERSITY.pdf) accompanying the 2023 Regulations identifies *"lack of a coherent integrated conservation policy that unifies dispersed and often conflicting legislation"* as one of the largest challenges to biodiversity conservation in Kenya.
 
-**KBA monitoring data:** A 2023 assessment of Kenya's 56 Key Biodiversity Areas found that since 2004, **the state of KBAs has remained stable while pressure has continued to mount and the conservation response has been on a decline**. ([BirdLife DataZone — Kenya KBAs Status and Trends 2023](https://datazone.birdlife.org/publications/kenyas-key-biodiversity-areas-status-and-trends-2023))
+**KBA monitoring data:** A 2023 assessment of Kenya's 56 Key Biodiversity Areas found that since 2004, **the state of KBAs has remained stable while pressure has continued to mount and the conservation response has been on a decline**. ([BirdLife DataZone — Kenya KBAs Status and Trends 2023](https://naturekenya.org/kba-status-trends-reports/))
 
 ---
 
@@ -696,7 +701,7 @@ Kenya's species-protection apparatus spans at least seven national institutions 
 
 **Long-term monitoring obligation unverified:** The Biosafety Act requires NBA to **monitor approved commercial GMO crops for 20 years post-approval**. The institutional capacity to sustain this obligation across potentially thousands of smallholder farms is not publicly documented. The NBA launched its 2023–2027 Strategic Plan in May 2025, signalling ongoing capacity-building need.
 
-**Liability gap:** Kenya has not ratified the [Nagoya-Kuala Lumpur Supplementary Protocol on Liability and Redress](https://bch.cbd.int/protocol/NKL_SuppProtocol.shtml), leaving no comprehensive domestic legal framework to respond to accidental GMO releases or cross-border GMO damage events.
+**Liability gap:** Kenya has not ratified the [Nagoya-Kuala Lumpur Supplementary Protocol on Liability and Redress](https://bch.cbd.int/protocol/supplementary), leaving no comprehensive domestic legal framework to respond to accidental GMO releases or cross-border GMO damage events.
 
 ---
 
@@ -796,7 +801,7 @@ species_law |>
 | Environmental Management and Co-ordination Act, 1999 | [Link](https://new.kenyalaw.org/akn/ke/act/1999/8/eng@2022-12-31) |
 | Fisheries Management and Development Act, 2016 | [Link](https://new.kenyalaw.org/akn/ke/act/2016/35/eng@2022-12-31) |
 | Forest Conservation and Management Act, 2016 | [Link](https://new.kenyalaw.org/akn/ke/act/2016/34/eng@2022-12-31) |
-| Seeds and Plant Varieties Act (Cap. 326) | [Link](http://kenyalaw.org:8181/exist/kenyalex/actview.xql?actid=CAP.+326) |
+| Seeds and Plant Varieties Act (Cap. 326) | [Link](https://new.kenyalaw.org/akn/ke/act/1972/1/eng@2022-12-31) |
 | Plant Protection Act (Cap. 324) | [Link](https://new.kenyalaw.org/akn/ke/act/1937/24/eng@2022-12-31) |
 | Biosafety Act, 2009 | [Link](https://new.kenyalaw.org/akn/ke/act/2009/2/eng@2023-12-11) |
 | L.N. 241/2017 — CITES Implementation Regulations | [Link](https://new.kenyalaw.org/akn/ke/act/ln/2017/241) |

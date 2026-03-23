@@ -25,10 +25,9 @@ proj_root <- "/Users/kwizera.jvk/Desktop/Kwiz Computing Comes to Life/Restricted
 setwd(proj_root)
 
 # ── 2. Run scripts in order ───────────────────────────────────────────────────
-# 01 and 02 outputs are unchanged; only 03 and 04 need re-running for this update.
-# Uncomment below to force a full re-run:
-# source(file.path(proj_root, "R", "01_scrape_laws.R"))
-# source(file.path(proj_root, "R", "02_institutions.R"))
+# Force re-run of all scripts to pick up expanded species data
+source(file.path(proj_root, "R", "01_scrape_laws.R"))
+source(file.path(proj_root, "R", "02_institutions.R"))
 
 message("\n===== 03_species_listing.R =====")
 source(file.path(proj_root, "R", "03_species_listing.R"))
@@ -48,5 +47,17 @@ rmarkdown::render(
 )
 
 out_file <- file.path(output_dir, "restricted_species_kenya.html")
+message("\nMain report: ", out_file)
+
+# ── 4. Render Plant Species Report ───────────────────────────────────────────
+message("\n===== Rendering Plant Species Report =====")
+rmarkdown::render(
+  input      = file.path(proj_root, "docs", "plant_species_kenya.Rmd"),
+  output_dir = output_dir,
+  quiet      = FALSE
+)
+
+out_plant <- file.path(output_dir, "plant_species_kenya.html")
 message("\n===== DONE =====")
-message("HTML report: ", out_file)
+message("Main report:  ", out_file)
+message("Plant report: ", out_plant)
