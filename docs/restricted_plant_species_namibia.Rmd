@@ -1,0 +1,176 @@
+---
+title: "Restricted and Protected Plant Species in Namibia"
+subtitle: "Nature Conservation Ordinance No. 4 of 1975, Forest Act No. 12 of 2001 (GN 170/2015 Protected Plants) — Preliminary Reference"
+author: "Kwiz Research"
+date: "`r format(Sys.Date(), '%d %B %Y')`"
+output:
+  html_document:
+    toc: true
+    toc_float: {collapsed: false, smooth_scroll: true}
+    toc_depth: 3
+    number_sections: true
+    theme: flatly
+    highlight: tango
+    df_print: paged
+    code_folding: hide
+    css: style.css
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo=FALSE, warning=FALSE, message=FALSE,
+                      fig.align="center", fig.width=9, fig.height=5, out.width="100%")
+suppressPackageStartupMessages({
+  library(tidyverse); library(kableExtra); library(glue); library(janitor); library(rgbif)
+})
+.kqb_pkg <- "/Users/kwizera.jvk/Desktop/Kwiz Computing Comes to Life/Kwiz Quants/libs/kwizbranding"
+suppressMessages(devtools::load_all(.kqb_pkg, quiet=TRUE))
+kqb_co <- kqb_company("research"); kqb_col <- kqb_colours()
+.kqb_logo_candidates <- c(file.path(here::here(),"docs","www"),file.path(getwd(),"www"),file.path(getwd()),file.path(here::here()))
+.kqb_load_logo <- function(fn,ck){for(d in .kqb_logo_candidates){p<-file.path(d,fn);if(file.exists(p)){assign(ck,paste0("data:image/svg+xml;base64,",base64enc::base64encode(readBin(p,"raw",file.size(p)))),envir=.GlobalEnv);return(invisible(TRUE))}}}
+.kqb_load_logo("Kwiz Black Logo Transparent bg.svg",".kqb_wm_cache")
+.kqb_load_logo("Kwiz Inverted Color Transparent bg.svg",".kqb_display_cache")
+styled_kable <- function(df,caption=NULL,scroll=TRUE,height="450px"){k<-df|>kbl(caption=caption,escape=FALSE,align="l")|>kable_styling(bootstrap_options=c("striped","hover","condensed","responsive"),full_width=TRUE,font_size=12);if(scroll)k<-scroll_box(k,height=height);k}
+
+species <- tribble(
+  ~common_name,              ~scientific_name,            ~taxonomic_group, ~iucn_status,            ~cites_appendix,  ~legal_status_na,                              ~restriction_type,              ~governing_law,                    ~managing_institution,   ~notes,
+  "Welwitschia",             "Welwitschia mirabilis",      "Gnetopsida",     "Endangered",            "Appendix II",    "Strictly Protected (Forest Act GN 170/2015 / CITES App. II)","Collection/removal prohibited","Forest Act No. 12/2001 / CITES", "MET / NDF",             "Namibia national plant; living fossil; 1,500–2,000 yr lifespan; Namib Desert endemic; removal a criminal offence",
+  "Quiver tree",             "Aloidendron dichotomum",     "Magnoliopsida",  "Endangered",            "Appendix II",    "Protected (Forest Act GN 170/2015 / CITES App. II)",  "Collection/trade regulated",   "Forest Act No. 12/2001 / CITES",  "MET / NDF",             "Kokerboom; iconic Namib and Succulent Karoo tree; climate change causing population decline in Namibia",
+  "Pillans' aloe",           "Aloe pillansii",             "Magnoliopsida",  "Endangered",            "Appendix II",    "Protected (Forest Act GN 170/2015 / CITES App. II)",  "Collection/trade regulated",   "Forest Act No. 12/2001 / CITES",  "MET / NDF",             "Tree aloe; Richtersveld and southern Namibia; fewer than 600 mature plants; poaching for succulent trade",
+  "Hoodia",                  "Hoodia gordonii",            "Magnoliopsida",  "Vulnerable",            "Appendix II",    "Protected (Forest Act GN 170/2015 / CITES App. II)",  "Harvest/export regulated",     "Forest Act No. 12/2001 / CITES",  "MET / NDF",             "San people appetite suppressant; bioprospecting ABS controversy; Kalahari and Namib succulent karoo",
+  "Nara plant",              "Acanthosicyos horridus",     "Magnoliopsida",  "Least Concern",         "Not listed",     "Protected (Forest Act GN 170/2015)",          "Harvesting regulated",         "Forest Act No. 12/2001",          "MET / NDF",             "Namib Desert endemic; nut and melon; critical for San people and desert ecology; sand-dune stabiliser",
+  "Buffalo thorn",           "Ziziphus mucronata",         "Magnoliopsida",  "Least Concern",         "Not listed",     "Protected (Forest Act GN 170/2015)",          "Felling regulated",            "Forest Act No. 12/2001",          "NDF",                   "Wag-'n-bietjie; culturally significant; protected against unregulated felling in communal areas",
+  "Camphor bush",            "Tarchonanthus camphoratus",  "Magnoliopsida",  "Least Concern",         "Not listed",     "Protected (Forest Act GN 170/2015)",          "Harvest regulated",            "Forest Act No. 12/2001",          "NDF",                   "Multi-use savanna shrub; protected timber and medicinal use; found in communal conservancies",
+  "Mesquite",                "Prosopis glandulosa",        "Magnoliopsida",  "Least Concern",         "Not listed",     "Invasive — Category 1b (aligned with SA NEMBA)","Compulsory control",          "Nature Conservation Ordinance / MET policy","MET",           "Encroacher bush; 3+ million ha invaded in Namibia; blocks communal grazing; water table impacts",
+  "Prickly pear (spineless)", "Opuntia ficus-indica",     "Magnoliopsida",  "Least Concern",         "Not listed",     "Invasive — control required",                 "Control measures active",      "MET policy",                      "MET",                   "Invades communal farmland and drainage lines; thorny varieties block livestock access",
+  "Mountain aloe",           "Aloe marlothii",             "Magnoliopsida",  "Least Concern",         "Appendix II",    "Protected (CITES App. II)",                   "Collection/trade regulated",   "CITES / Forest Act",              "MET / NDF",             "Broad-leaved aloe; important nectarivore habitat in escarpment woodland zones; all Aloe spp. App. II"
+)
+
+n_species <- nrow(species)
+proj_root <- here::here()
+gbif_cache <- file.path(proj_root,"output","tables","namibia_regulated_plants_gbif.csv")
+if (!file.exists(gbif_cache)) {
+  cn <- function(nm) nm|>str_remove_all("\\s+spp\\.?$")|>str_remove_all("\\(.*?\\)")|>str_squish()
+  nd <- tibble(name=cn(species$scientific_name),kingdom="Plantae")
+  br <- tryCatch(name_backbone_checklist(nd),error=function(e) map_dfr(nd$name,function(nm) tryCatch(as_tibble(name_backbone(name=nm,kingdom="Plantae")),error=function(e2) tibble(usageKey=NA_integer_,canonicalName=nm,matchType="NONE"))))
+  gv <- function(k){if(is.na(k))return(NA_character_);tryCatch({vn<-name_usage(key=as.numeric(k),data="vernacularNames",limit=100);if(is.null(vn$data)||nrow(vn$data)==0)return(NA_character_);en<-vn$data|>filter(language%in%c("eng","en"))|>pull(vernacularName)|>unique();if(length(en)==0)NA_character_ else paste(en,collapse=", ")},error=function(e)NA_character_)}
+  gs <- function(k){if(is.na(k))return(NA_character_);tryCatch({syn<-name_usage(key=as.numeric(k),data="synonyms",limit=100);if(is.null(syn$data)||nrow(syn$data)==0)return(NA_character_);s<-syn$data|>pull(canonicalName)|>unique()|>na.omit();if(length(s)==0)NA_character_ else paste(s,collapse=", ")},error=function(e)NA_character_)}
+  bc <- br|>as_tibble()|>mutate(GBIFusageKey=as.character(usageKey),prefName=coalesce(species,canonicalName,verbatim_name),gbif_family=family)
+  sm <- species|>mutate(cs=cn(scientific_name))|>bind_cols(bc|>select(GBIFusageKey,prefName,gbif_family,gbif_matchType=matchType,gbif_confidence=confidence))
+  keys <- sm|>filter(!is.na(GBIFusageKey))|>distinct(GBIFusageKey)|>pull(GBIFusageKey)
+  vl<-list();sl<-list()
+  for(i in seq_along(keys)){k<-keys[i];vl[[k]]<-gv(k);sl[[k]]<-gs(k);if(i%%5==0)Sys.sleep(0.2)}
+  vd<-tibble(GBIFusageKey=names(vl),gbif_english=unlist(vl),gbif_synonyms=unlist(sl[names(vl)]))
+  en<-sm|>left_join(vd,by="GBIFusageKey")|>mutate(englishName=coalesce(gbif_english,common_name),synonyms=gbif_synonyms,family=gbif_family)
+  dir.create(file.path(proj_root,"output","tables"),recursive=TRUE,showWarnings=FALSE)
+  en|>select(GBIFusageKey,prefName,family,englishName,synonyms,legal_status_na,restriction_type,governing_law)|>write_csv(gbif_cache)
+}
+if(file.exists(gbif_cache)){plants_gbif<-read_csv(gbif_cache,col_types=cols(.default=col_character()),show_col_types=FALSE);n_gbif_resolved<-sum(!is.na(plants_gbif$GBIFusageKey)&plants_gbif$GBIFusageKey!="");n_gbif_families<-n_distinct(plants_gbif$family,na.rm=TRUE)}else{plants_gbif<-NULL;n_gbif_resolved<-0L;n_gbif_families<-0L}
+```
+
+```{r kqb-watermark, results='asis', echo=FALSE}
+cat(kqb_watermark_css(opacity=0.04,size="280px auto"))
+uri<-kqb_watermark_uri();if(nzchar(uri))cat(paste0('<style>\nbody::after{\ncontent:"";position:fixed;top:0;left:0;width:100%;height:100%;z-index:9000;pointer-events:none;background-image:url("',uri,'");background-repeat:repeat;background-size:280px auto;opacity:0.04;}\n</style>\n'))
+```
+
+---
+
+# Executive Summary {.unnumbered}
+
+Namibia hosts approximately **4,300 plant species**, with many adapted to its hyper-arid deserts, semi-arid savannas, and subtropical woodlands. The country contains portions of two global biodiversity hotspots — the **Succulent Karoo** and **Cape Floristic Region** — and is globally significant for desert-adapted succulents, aloes, and the unique **Welwitschia mirabilis**, Namibia's national plant and a botanical living fossil. Plant protection is administered primarily through the **Forest Act No. 12 of 2001** and Government Notice 170/2015, which establishes the Protected Plants List.
+
+<div class="alert alert-info" role="alert">
+**Preliminary Report** — Full species listing from Forest Act GN 170/2015 (Protected Plants List) to be completed. Current report covers `r n_species` representative species. The Namibia Biodiversity Bill (in progress) is expected to consolidate and strengthen plant protection legislation.
+</div>
+
+---
+
+# Legal Framework (Summary) {#legal-framework}
+
+| Law / Instrument | Year | Key Provision |
+|-----------------|------|---------------|
+| Nature Conservation Ordinance No. 4 | 1975 (amended) | Framework wildlife and plant protection; basis for national parks and game parks |
+| Forest Act No. 12 | 2001 | Forest management; Protected Plants List (GN 170/2015); permits for collection/felling |
+| GN 170/2015 — Protected Plants List | 2015 | Current gazetted list of protected plant species under Forest Act |
+| Environmental Management Act No. 7 | 2007 | EIA requirements; environmental governance framework |
+| Namibia Biodiversity Bill | In progress | Planned comprehensive biodiversity law; to consolidate NCO and Forest Act provisions |
+
+Full text: [MET Namibia](https://www.met.gov.na) | [FAOLEX Namibia](https://faolex.fao.org/namibia)
+
+---
+
+# Regulatory Institutions {#institutions}
+
+| Institution | Role |
+|-------------|------|
+| MET (Ministry of Environment, Tourism and Tourism) | Overall biodiversity policy; protected areas; CITES management authority |
+| NDF (Namibia Directorate of Forestry) | Forest Act administration; Protected Plants List; forestry permits |
+| NWR (Namibia Wildlife Resorts) | Management of national parks and resorts |
+| NBRI (National Botanical Research Institute) | Plant taxonomy; herbarium collections; floristic surveys |
+| Namibia Nature Foundation | NGO — community conservancy support; habitat monitoring |
+| NACSO | Communal conservancy coordination; wildlife and plant monitoring |
+
+---
+
+# Preliminary Species Listing {#species}
+
+```{r master-table}
+species|>arrange(iucn_status,common_name)|>mutate(`Scientific Name`=paste0("*",scientific_name,"*"))|>
+  select(`Common Name`=common_name,`Scientific Name`,`IUCN`=iucn_status,`CITES`=cites_appendix,
+         `Namibia Status`=legal_status_na,`Managing Inst.`=managing_institution,`Notes`=notes)|>
+  styled_kable(caption="Table 1. Preliminary — Protected Plant Species in Namibia",height="450px")
+```
+
+## GBIF Backbone Resolution
+
+```{r gbif-table}
+if(!is.null(plants_gbif)&&nrow(plants_gbif)>0){plants_gbif|>
+  mutate(gu=if_else(!is.na(GBIFusageKey)&GBIFusageKey!="",glue("https://www.gbif.org/species/{GBIFusageKey}"),NA_character_),
+         iu=paste0("https://www.iucnredlist.org/search?query=",URLencode(str_squish(coalesce(prefName,"")),reserved=TRUE)),
+         `Scientific Name`=if_else(!is.na(gu),glue("<a href='{gu}' target='_blank'><em>{prefName}</em></a>"),glue("<em>{coalesce(prefName,'')}</em>")),
+         `IUCN`=glue("<a href='{iu}' target='_blank'>IUCN &#x2197;</a>"))|>
+  transmute(`#`=row_number(),`Scientific Name`,`Common Name`=coalesce(englishName,""),`Family`=coalesce(family,""),
+            `GBIF Key`=coalesce(GBIFusageKey,""),`Namibia Status`=coalesce(legal_status_na,""),
+            `Synonyms`=str_trunc(coalesce(synonyms,""),80),`IUCN`)|>
+  styled_kable(caption=glue("Table 2. Namibia — GBIF Resolved ({n_gbif_resolved} of {n_species} | {n_gbif_families} fam.)"),height="450px")
+}else{cat("*GBIF data will be generated on first render.*")}
+```
+
+---
+
+# Regulatory Gaps (Summary) {#gaps}
+
+| # | Gap | Severity |
+|---|-----|----------|
+| 1 | Namibia Biodiversity Bill long delayed — legislative consolidation pending | High |
+| 2 | Bush encroachment (Prosopis, Dichrostachys) covers >45 million ha with inadequate control resources | High |
+| 3 | Welwitschia poaching and illegal collection by tourists despite criminal penalties | High |
+| 4 | Hoodia benefit-sharing agreement implementation inconsistent with San community rights | Medium |
+| 5 | Climate change impacts on Aloidendron populations inadequately addressed in current law | Medium |
+| 6 | GN 170/2015 protected plants list not comprehensively reviewed against current IUCN assessments | Medium |
+
+---
+
+# References {#references}
+
+| Resource | Link |
+|----------|------|
+| MET Namibia | [met.gov.na](https://www.met.gov.na) |
+| Namibia Directorate of Forestry | [met.gov.na/forestry](https://www.met.gov.na) |
+| NBRI — National Botanical Research Institute | [nbri.org.na](https://www.nbri.org.na) |
+| GBIF Namibia | [gbif.org/country/NA](https://www.gbif.org/country/NA/summary) |
+| CITES Namibia | [cites.org — Namibia](https://cites.org/eng/cms/index.php/component/cp/country/NA) |
+
+---
+
+```{r session-info}
+sessionInfo()
+```
+
+```{r kqb-footer, results='asis', echo=FALSE}
+logo_sm<-kqb_logo_img(height="28px")
+cat(paste0('<div class="kqb-report-footer">',if(nzchar(logo_sm))paste0(logo_sm,'<br/>')else"",
+  '<p style="font-weight:600;color:#0d2240;">',kqb_co$name,' &mdash; ',kqb_co$tagline,'</p>',
+  '<p>',kqb_co$legal_name,' | ',kqb_co$country,'</p>',
+  '<p style="margin-top:6px;font-size:10px;color:#aaa;">Generated ',format(Sys.Date(),"%d %B %Y"),
+  ' &nbsp;&bull;&nbsp; Preliminary — Verify at MET Namibia / NDF / CITES</p></div>'))
+```

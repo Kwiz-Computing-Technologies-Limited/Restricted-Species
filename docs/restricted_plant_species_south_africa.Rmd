@@ -1,0 +1,592 @@
+---
+title: "Restricted and Prohibited Plant Species in South Africa"
+subtitle: "NEMBA TOPS Regulations, AIS Lists, and CITES — A Comprehensive Reference"
+author: "Kwiz Research"
+date: "`r format(Sys.Date(), '%d %B %Y')`"
+output:
+  html_document:
+    toc: true
+    toc_float:
+      collapsed: false
+      smooth_scroll: true
+    toc_depth: 3
+    number_sections: true
+    theme: flatly
+    highlight: tango
+    df_print: paged
+    code_folding: hide
+    css: style.css
+bibliography: references.bib
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+  echo       = FALSE,
+  warning    = FALSE,
+  message    = FALSE,
+  fig.align  = "center",
+  fig.width  = 9,
+  fig.height = 5,
+  out.width  = "100%"
+)
+
+suppressPackageStartupMessages({
+  library(tidyverse)
+  library(kableExtra)
+  library(glue)
+  library(janitor)
+  library(rgbif)
+})
+
+# ── Load kwizbranding ─────────────────────────────────────────────────────────
+.kqb_pkg <- "/Users/kwizera.jvk/Desktop/Kwiz Computing Comes to Life/Kwiz Quants/libs/kwizbranding"
+suppressMessages(devtools::load_all(.kqb_pkg, quiet = TRUE))
+kqb_co  <- kqb_company("research")
+kqb_col <- kqb_colours()
+
+.kqb_logo_candidates <- c(
+  file.path(here::here(), "docs", "www"),
+  file.path(getwd(), "www"),
+  file.path(getwd()),
+  file.path(here::here())
+)
+.kqb_load_logo <- function(filename, cache_key) {
+  for (d in .kqb_logo_candidates) {
+    p <- file.path(d, filename)
+    if (file.exists(p)) {
+      raw  <- readBin(p, "raw", file.size(p))
+      b64  <- base64enc::base64encode(raw)
+      assign(cache_key, paste0("data:image/svg+xml;base64,", b64), envir = .GlobalEnv)
+      return(invisible(TRUE))
+    }
+  }
+  warning("[kwizbranding] Could not find ", filename)
+}
+.kqb_load_logo("Kwiz Black Logo Transparent bg.svg",    ".kqb_wm_cache")
+.kqb_load_logo("Kwiz Inverted Color Transparent bg.svg", ".kqb_display_cache")
+
+# ── Helper: styled kable ──────────────────────────────────────────────────────
+styled_kable <- function(df, caption = NULL, scroll = TRUE, height = "450px") {
+  k <- df |>
+    kbl(caption = caption, escape = FALSE, align = "l") |>
+    kable_styling(
+      bootstrap_options = c("striped", "hover", "condensed", "responsive"),
+      full_width        = TRUE,
+      font_size         = 12
+    )
+  if (scroll) k <- scroll_box(k, height = height)
+  k
+}
+
+# ── Embedded species data ─────────────────────────────────────────────────────
+# Source: NEMBA TOPS Regulations (GN R 151/2007 updated), AIS Regulations (GN 1003/2020),
+#         CITES Appendices (CoP19, 2022)
+species <- tribble(
+  ~common_name,                    ~scientific_name,                ~taxonomic_group, ~iucn_status,             ~cites_appendix, ~legal_status_sa,              ~restriction_type,            ~governing_law,                     ~managing_institution, ~notes,                                                    ~source_url,
+  "Albany cycad",                  "Encephalartos latifrons",       "Cycadopsida",    "Critically Endangered",  "Appendix I",    "Critically Endangered (TOPS)", "Protected — no trade",       "NEMBA TOPS Regulations 2007",      "DFFE / SANBI",        "Most endangered cycad in the world; heavily poached",     "https://www.saflii.org",
+  "Wood's cycad",                  "Encephalartos woodii",          "Cycadopsida",    "Extinct in the Wild",    "Appendix I",    "Critically Endangered (TOPS)", "Protected — no trade",       "NEMBA TOPS Regulations 2007",      "DFFE / SANBI",        "Extinct in wild; only male plants known; held in botanic gardens", "https://www.saflii.org",
+  "Blue Drakensberg cycad",        "Encephalartos nubimontanus",    "Cycadopsida",    "Critically Endangered",  "Appendix I",    "Critically Endangered (TOPS)", "Protected — no trade",       "NEMBA TOPS Regulations 2007",      "DFFE / SANBI",        "Endemic to Drakensberg; fewer than 100 plants in wild",   "https://www.saflii.org",
+  "Eastern Cape blue cycad",       "Encephalartos princeps",        "Cycadopsida",    "Critically Endangered",  "Appendix I",    "Critically Endangered (TOPS)", "Protected — no trade",       "NEMBA TOPS Regulations 2007",      "DFFE / SANBI",        "Endemic to Eastern Cape; extreme poaching pressure",      "https://www.saflii.org",
+  "Venda cycad",                   "Encephalartos hirsutus",        "Cycadopsida",    "Critically Endangered",  "Appendix I",    "Critically Endangered (TOPS)", "Protected — no trade",       "NEMBA TOPS Regulations 2007",      "DFFE / SANBI",        "Endemic to Limpopo; limited remaining wild population",   "https://www.saflii.org",
+  "Modjadji cycad",                "Encephalartos transvenosus",    "Cycadopsida",    "Near Threatened",        "Appendix I",    "Protected (TOPS)",             "Protected — permit required","NEMBA TOPS Regulations 2007",      "DFFE / SANBI",        "Found in Modjadji Cycad Reserve, Limpopo",                "https://www.saflii.org",
+  "Bread palm",                    "Encephalartos altensteinii",    "Cycadopsida",    "Near Threatened",        "Appendix I",    "Protected (TOPS)",             "Protected — permit required","NEMBA TOPS Regulations 2007",      "DFFE / SANBI",        "Widely cultivated; wild populations threatened",          "https://www.saflii.org",
+  "Clanwilliam cedar",             "Widdringtonia cedarbergensis",  "Pinopsida",      "Critically Endangered",  "Not listed",    "Critically Endangered (TOPS)", "Protected — no trade",       "NEMBA TOPS Regulations 2007",      "DFFE / SANBI / CapeNature", "Endemic to Cederberg; fewer than 100 mature trees; fire & climate threat", "https://www.saflii.org",
+  "Fragrant sugarbush",            "Protea odorata",                "Magnoliopsida",  "Critically Endangered",  "Not listed",    "Critically Endangered (TOPS)", "Protected — no trade",       "NEMBA TOPS Regulations 2007",      "DFFE / SANBI / CapeNature", "Fewer than 250 mature individuals in Western Cape fynbos", "https://www.saflii.org",
+  "Whorled heath",                 "Erica verticillata",            "Magnoliopsida",  "Extinct in the Wild",    "Not listed",    "Critically Endangered (TOPS)", "Protected — no trade",       "NEMBA TOPS Regulations 2007",      "DFFE / SANBI",        "Extinct in wild; maintained in ex-situ collections",      "https://www.saflii.org",
+  "Elim conebush",                 "Leucadendron elimense",         "Magnoliopsida",  "Critically Endangered",  "Not listed",    "Critically Endangered (TOPS)", "Protected — no trade",       "NEMBA TOPS Regulations 2007",      "DFFE / SANBI / CapeNature", "Three surviving subpopulations; Agulhas Plain endemic",   "https://www.saflii.org",
+  "Bastard quiver tree",           "Aloe pillansii",                "Magnoliopsida",  "Endangered",             "Appendix II",   "Endangered (TOPS)",            "Protected — permit required","NEMBA TOPS Regulations 2007",      "DFFE / SANBI",        "Northern Cape; declining due to climate change and harvesting", "https://www.saflii.org",
+  "Spiral aloe",                   "Aloe polyphylla",               "Magnoliopsida",  "Vulnerable",             "Appendix I",    "Protected (TOPS)",             "Protected — permit required","NEMBA TOPS Regulations 2007",      "DFFE / SANBI",        "Endemic to Lesotho highlands; most traded succulent globally", "https://www.saflii.org",
+  "Cape aloe",                     "Aloe ferox",                    "Magnoliopsida",  "Least Concern",          "Appendix II",   "Protected (TOPS)",             "Regulated harvest/trade",    "NEMBA TOPS Regulations 2007",      "DFFE / SANBI",        "Commercially harvested for bitter aloe — requires permit", "https://www.saflii.org",
+  "Drakensberg agapanthus",        "Agapanthus walshii",            "Magnoliopsida",  "Vulnerable",             "Not listed",    "Vulnerable (TOPS)",            "Protected — permit required","NEMBA TOPS Regulations 2007",      "DFFE / SANBI",        "KwaZulu-Natal endemic; heavily collected for horticulture", "https://www.saflii.org",
+  "Pondo coconut",                 "Jubaeopsis caffra",             "Magnoliopsida",  "Endangered",             "Not listed",    "Endangered (TOPS)",            "Protected — no trade",       "NEMBA TOPS Regulations 2007",      "DFFE / SANBI",        "World's rarest palm; fewer than 500 individuals on Wild Coast", "https://www.saflii.org",
+  "Transvaal cycad",               "Encephalartos dyerianus",       "Cycadopsida",    "Critically Endangered",  "Appendix I",    "Critically Endangered (TOPS)", "Protected — no trade",       "NEMBA TOPS Regulations 2007",      "DFFE / SANBI",        "Limpopo; very few individuals remain outside cultivation", "https://www.saflii.org",
+  "Water hyacinth",                "Eichhornia crassipes",          "Magnoliopsida",  "Least Concern",          "Not listed",    "Category 1b Invasive",        "Compulsory control/removal", "NEMBA AIS Regulations 2020",       "DFFE / DAFF",         "Major threat to water bodies; fastest growing aquatic weed", "https://www.dffe.gov.za",
+  "Common lantana",                "Lantana camara",                "Magnoliopsida",  "Least Concern",          "Not listed",    "Category 1b Invasive",        "Compulsory control/removal", "NEMBA AIS Regulations 2020",       "DFFE / DAFF",         "Major invasive in KZN and Limpopo riparian zones",        "https://www.dffe.gov.za",
+  "Black wattle",                  "Acacia mearnsii",               "Magnoliopsida",  "Least Concern",          "Not listed",    "Category 1b Invasive",        "Compulsory control/removal", "NEMBA AIS Regulations 2020",       "DFFE / DAFF",         "Massive water user; transforms fynbos and grassland biomes", "https://www.dffe.gov.za",
+  "Silver wattle",                 "Acacia dealbata",               "Magnoliopsida",  "Least Concern",          "Not listed",    "Category 1b Invasive",        "Compulsory control/removal", "NEMBA AIS Regulations 2020",       "DFFE / DAFF",         "Invades riparian zones in Western Cape",                  "https://www.dffe.gov.za",
+  "Port Jackson willow",           "Acacia saligna",                "Magnoliopsida",  "Least Concern",          "Not listed",    "Category 1b Invasive",        "Compulsory control/removal", "NEMBA AIS Regulations 2020",       "DFFE / DAFF",         "Transforms fynbos; biological control agents deployed",   "https://www.dffe.gov.za",
+  "Silky hakea",                   "Hakea sericea",                 "Magnoliopsida",  "Least Concern",          "Not listed",    "Category 1b Invasive",        "Compulsory control/removal", "NEMBA AIS Regulations 2020",       "DFFE / DAFF",         "Invades fynbos; dense thickets in Cederberg and Agulhas",  "https://www.dffe.gov.za",
+  "Sweet prickly pear",            "Opuntia ficus-indica",          "Magnoliopsida",  "Least Concern",          "Not listed",    "Category 1b Invasive",        "Compulsory control/removal", "NEMBA AIS Regulations 2020",       "DFFE / DAFF",         "Extensively naturalised in Karoo; biological control ongoing", "https://www.dffe.gov.za",
+  "Camphor tree",                  "Cinnamomum camphora",           "Magnoliopsida",  "Least Concern",          "Not listed",    "Category 1b Invasive",        "Compulsory control/removal", "NEMBA AIS Regulations 2020",       "DFFE / DAFF",         "Invades KZN forests and coastal areas",                   "https://www.dffe.gov.za",
+  "Honey mesquite",                "Prosopis glandulosa",           "Magnoliopsida",  "Least Concern",          "Not listed",    "Category 1b Invasive",        "Compulsory control/removal", "NEMBA AIS Regulations 2020",       "DFFE / DAFF",         "Dryland invasive covering millions of ha in Northern Cape", "https://www.dffe.gov.za",
+  "Giant reed",                    "Arundo donax",                  "Magnoliopsida",  "Least Concern",          "Not listed",    "Category 1b Invasive",        "Compulsory control/removal", "NEMBA AIS Regulations 2020",       "DFFE / DAFF",         "Invades rivers and wetlands nationwide",                   "https://www.dffe.gov.za",
+  "Stinkwood",                     "Ocotea bullata",                "Magnoliopsida",  "Vulnerable",             "Not listed",    "Protected Tree",              "Protected — harvesting banned","National Forests Act 1998 s.12", "DFFE / SANParks",     "Valuable timber tree; protected from felling without permit", "https://www.dffe.gov.za",
+  "Sneezewood",                    "Ptaeroxylon obliquum",          "Magnoliopsida",  "Least Concern",          "Not listed",    "Protected Tree",              "Protected — permit required","National Forests Act 1998 s.12",  "DFFE",                "Highly durable timber; protected from unsustainable harvest", "https://www.dffe.gov.za",
+  "Cape yellowwood",               "Podocarpus latifolius",         "Pinopsida",      "Least Concern",          "Not listed",    "Protected Tree",              "Protected — permit required","National Forests Act 1998 s.12",  "DFFE",                "Largest indigenous tree in SA; restricted harvest",       "https://www.dffe.gov.za",
+  "Real yellowwood",               "Podocarpus falcatus",           "Pinopsida",      "Least Concern",          "Not listed",    "Protected Tree",              "Protected — permit required","National Forests Act 1998 s.12",  "DFFE",                "National tree of South Africa; felling prohibited",       "https://www.dffe.gov.za",
+  "Cape orchid (Disa)",            "Disa uniflora",                 "Magnoliopsida",  "Least Concern",          "Appendix II",   "Protected (TOPS)",             "Regulated collection/trade", "NEMBA TOPS Regulations 2007",      "DFFE / SANBI / CapeNature", "Pride of Table Mountain; collection prohibited without permit", "https://www.saflii.org",
+  "Pancake succulent",             "Euphorbia obesa",               "Magnoliopsida",  "Vulnerable",             "Appendix II",   "Vulnerable (TOPS)",            "Protected — permit required","NEMBA TOPS Regulations 2007",      "DFFE / SANBI",        "Karoo endemic; heavily poached for succulent trade",      "https://www.saflii.org",
+  "Living rocks",                  "Lithops spp.",                  "Magnoliopsida",  "Least Concern",          "Appendix II",   "Protected (TOPS)",             "Regulated collection/trade", "NEMBA TOPS Regulations 2007",      "DFFE / SANBI",        "Entire genus; popular in succulent trade; poaching risk",  "https://www.saflii.org",
+  "Buchu",                         "Agathosma betulina",            "Magnoliopsida",  "Vulnerable",             "Not listed",    "Vulnerable (TOPS)",            "Protected — permit required","NEMBA TOPS Regulations 2007",      "DFFE / SANBI / CapeNature", "Fynbos medicinal plant; over-harvested for export",       "https://www.saflii.org"
+)
+
+# ── Summary counts ────────────────────────────────────────────────────────────
+n_species         <- nrow(species)
+n_tops            <- sum(str_detect(species$governing_law, "TOPS"), na.rm = TRUE)
+n_ais             <- sum(str_detect(species$governing_law, "AIS"), na.rm = TRUE)
+n_protected_trees <- sum(str_detect(species$governing_law, "National Forests"), na.rm = TRUE)
+n_cites_i         <- sum(species$cites_appendix == "Appendix I",  na.rm = TRUE)
+n_cites_ii        <- sum(species$cites_appendix == "Appendix II", na.rm = TRUE)
+n_cr              <- sum(species$iucn_status == "Critically Endangered", na.rm = TRUE)
+n_en              <- sum(species$iucn_status == "Endangered", na.rm = TRUE)
+
+# ── GBIF resolution ──────────────────────────────────────────────────────────
+proj_root     <- here::here()
+gbif_cache    <- file.path(proj_root, "output", "tables", "south_africa_regulated_plants_gbif.csv")
+
+if (!file.exists(gbif_cache)) {
+  message("[setup] Running GBIF backbone resolution for South Africa plant species ...")
+
+  clean_name <- function(nm) {
+    nm |> str_remove_all("\\s+spp\\.?$") |> str_remove_all("\\(.*?\\)") |> str_squish()
+  }
+
+  names_df <- tibble(
+    name    = clean_name(species$scientific_name),
+    kingdom = "Plantae"
+  )
+
+  backbone_res <- tryCatch(
+    name_backbone_checklist(names_df),
+    error = function(e) {
+      map_dfr(names_df$name, function(nm) {
+        tryCatch(as_tibble(name_backbone(name = nm, kingdom = "Plantae")),
+                 error = function(e2) tibble(usageKey = NA_integer_,
+                                             canonicalName = nm, matchType = "NONE"))
+      })
+    }
+  )
+
+  get_vernacular <- function(key) {
+    if (is.na(key)) return(NA_character_)
+    tryCatch({
+      vn <- name_usage(key = as.numeric(key), data = "vernacularNames", limit = 100)
+      if (is.null(vn$data) || nrow(vn$data) == 0) return(NA_character_)
+      en <- vn$data |> filter(language %in% c("eng", "en")) |> pull(vernacularName) |> unique()
+      if (length(en) == 0) NA_character_ else paste(en, collapse = ", ")
+    }, error = function(e) NA_character_)
+  }
+
+  get_synonyms <- function(key) {
+    if (is.na(key)) return(NA_character_)
+    tryCatch({
+      syn <- name_usage(key = as.numeric(key), data = "synonyms", limit = 100)
+      if (is.null(syn$data) || nrow(syn$data) == 0) return(NA_character_)
+      s <- syn$data |> pull(canonicalName) |> unique() |> na.omit()
+      if (length(s) == 0) NA_character_ else paste(s, collapse = ", ")
+    }, error = function(e) NA_character_)
+  }
+
+  backbone_clean <- backbone_res |>
+    as_tibble() |>
+    mutate(
+      GBIFusageKey = as.character(usageKey),
+      prefName     = coalesce(species, canonicalName, verbatim_name),
+      gbif_family  = family, gbif_genus = genus
+    )
+
+  species_matched <- species |>
+    mutate(clean_sci = clean_name(scientific_name)) |>
+    bind_cols(
+      backbone_clean |>
+        select(GBIFusageKey, prefName, gbif_family, gbif_genus,
+               gbif_matchType = matchType, gbif_confidence = confidence)
+    )
+
+  keys <- species_matched |>
+    filter(!is.na(GBIFusageKey)) |>
+    distinct(GBIFusageKey) |>
+    pull(GBIFusageKey)
+
+  vern_list <- list(); syn_list <- list()
+  for (i in seq_along(keys)) {
+    k <- keys[i]
+    vern_list[[k]] <- get_vernacular(k)
+    syn_list[[k]]  <- get_synonyms(k)
+    if (i %% 5 == 0) Sys.sleep(0.2)
+  }
+
+  vern_df <- tibble(
+    GBIFusageKey  = names(vern_list),
+    gbif_english  = unlist(vern_list),
+    gbif_synonyms = unlist(syn_list[names(vern_list)])
+  )
+
+  plants_enriched <- species_matched |>
+    left_join(vern_df, by = "GBIFusageKey") |>
+    mutate(
+      englishName = coalesce(gbif_english, common_name),
+      synonyms    = gbif_synonyms,
+      family      = coalesce(gbif_family, NA_character_)
+    )
+
+  dir.create(file.path(proj_root, "output", "tables"), recursive = TRUE, showWarnings = FALSE)
+  plants_enriched |>
+    select(GBIFusageKey, prefName, family, englishName, synonyms,
+           legal_status_sa, restriction_type, governing_law) |>
+    write_csv(gbif_cache)
+}
+
+if (file.exists(gbif_cache)) {
+  plants_gbif     <- read_csv(gbif_cache, col_types = cols(.default = col_character()),
+                               show_col_types = FALSE)
+  n_gbif_resolved <- sum(!is.na(plants_gbif$GBIFusageKey) & plants_gbif$GBIFusageKey != "")
+  n_gbif_families <- n_distinct(plants_gbif$family, na.rm = TRUE)
+} else {
+  plants_gbif     <- NULL
+  n_gbif_resolved <- 0L
+  n_gbif_families <- 0L
+}
+```
+
+```{r kqb-watermark, results='asis', echo=FALSE}
+cat(kqb_watermark_css(opacity = 0.04, size = "280px auto"))
+uri <- kqb_watermark_uri()
+if (nzchar(uri)) {
+  cat(paste0(
+    '<style>\nbody::after {\n  content: "";\n  position: fixed;\n',
+    '  top: 0; left: 0; width: 100%; height: 100%;\n  z-index: 9000;\n',
+    '  pointer-events: none;\n  background-image: url("', uri, '");\n',
+    '  background-repeat: repeat;\n  background-size: 280px auto;\n',
+    '  opacity: 0.04;\n}\n</style>\n'
+  ))
+}
+```
+
+---
+
+# Executive Summary {.unnumbered}
+
+South Africa is one of the world's six recognised **megadiverse** countries, harbouring approximately **10% of all plant species on Earth** in just 2% of its land area. The Cape Floristic Region — a global biodiversity hotspot — is home to over **9,600 plant species**, of which approximately **70% are endemic**. Protecting this extraordinary flora requires a multi-layered legal framework that addresses threatened native species, invasive alien plants, regulated harvest, and international trade.
+
+This report compiles **`r n_species` plant species** subject to legal restrictions under South African law. Of these, **`r n_tops`** are listed under the NEMBA Threatened or Protected Species (TOPS) Regulations, **`r n_ais`** are designated invasive alien species (AIS) subject to compulsory control, and **`r n_protected_trees`** are protected under the National Forests Act. **`r n_cites_i`** carry CITES Appendix I listings (commercial trade prohibited) and **`r n_cites_ii`** are on Appendix II. **`r n_cr`** are Critically Endangered and **`r n_en`** are Endangered on the IUCN Red List.
+
+South Africa is one of the few African countries with a fully published, English-language threatened species list directly accessible via the Department of Forestry, Fisheries and Environment (DFFE) and SAFLII.
+
+---
+
+# Legal Framework {#legal-framework}
+
+South Africa's plant protection regime rests on four primary legislative instruments.
+
+## National Environmental Management: Biodiversity Act, 2004 (NEMBA) {#nemba}
+
+The **National Environmental Management: Biodiversity Act, No. 10 of 2004** (NEMBA) is South Africa's primary legislation for biodiversity conservation. It establishes the framework for managing threatened and protected species, alien and invasive species, bioprospecting, and access and benefit sharing.
+
+**Key NEMBA provisions for plants:**
+
+- **Section 56 — Threatened or Protected Species:** Empowers the Minister to publish a list of threatened or protected species (TOPS). All specimens of listed species may only be possessed, traded, or otherwise processed under a TOPS permit.
+- **Section 56(8) — Permit System:** TOPS permits are issued by provincial nature conservation agencies (e.g., CapeNature, Ezemvelo KZN Wildlife) and DFFE for national-level activities. Violations carry fines up to **R5 million or 10 years imprisonment**.
+- **Chapter 5 — Alien and Invasive Species (AIS):** Designates species in four categories (1a compulsory eradication, 1b compulsory control, 2 permit-required, 3 prohibited) and imposes obligations on landowners to control Category 1 species.
+- **Section 83 — Bioprospecting:** Regulates commercial use of indigenous biological resources (including plant-derived compounds), requiring prior informed consent and benefit-sharing agreements.
+
+**TOPS Regulations** (Government Notice R 151, 2 February 2007, as amended): Publish the current list of threatened and protected species with their listing categories. The list is reviewed by SANBI and DFFE and updated via Gazette.
+
+Full text: [SAFLII — NEMBA 2004](https://www.saflii.org/za/legis/num_act/nemba2004355/) | [DFFE](https://www.dffe.gov.za/legislation/actsregulations)
+
+<div class="alert alert-warning" role="alert">
+**⚠ Implementation Gap** — The TOPS Regulations were last comprehensively updated through GN 799/2022. However, SANBI's National Assessment of South Africa's Fauna and Flora (NASAFF, 2021) identified **~2,000 plant species** meeting threatened criteria under IUCN standards — far more than are currently listed in the TOPS Regulations. The TOPS list covers a fraction of IUCN-assessed threatened species, meaning the majority have no legal protection status in South Africa.
+</div>
+
+## National Forests Act, 1998 {#forests}
+
+The **National Forests Act, No. 84 of 1998** protects indigenous forests and certain tree species.
+
+**Section 12 — Protected Trees:** The Minister may, by Gazette notice, declare any tree species as protected. Felling, damage, removal, or attempted felling of a protected tree is prohibited without a licence from a Forest Officer. The current protected trees list was published in GN R 1030 of 2004 and includes approximately 120 species.
+
+**Section 15 — Use of State Forests:** Regulates harvesting of any forest product from state forests.
+
+Full text: [DFFE — National Forests Act](https://www.dffe.gov.za/legislation/actsregulations/forests)
+
+## National Environmental Management: Biodiversity Act — AIS Regulations, 2020 {#ais}
+
+The **Alien and Invasive Species Regulations** (GN No. R. 1003, 30 September 2020) under NEMBA designate invasive species in four categories:
+
+| Category | Description | Obligation |
+|----------|-------------|------------|
+| **1a** | Species with no socio-economic benefit; must be eradicated | Compulsory removal and destruction |
+| **1b** | Invasive; causes ecological/economic harm | Compulsory control on all land |
+| **2** | Invasive in certain habitats; some permitted uses | Permit required for keeping or trade |
+| **3** | Potentially invasive; prohibited from new planting | Existing specimens exempt under permit |
+
+Categories 1a and 1b impose a legal duty on landowners to control listed species on their property. Failure to comply allows the responsible authority to carry out the work and recover costs from the landowner.
+
+Full text: [GN R. 1003/2020](https://www.gov.za/documents/national-environmental-management-biodiversity-act-alien-and-invasive-species-regulations)
+
+## CITES Implementation in South Africa {#cites}
+
+South Africa ratified CITES in 1975. DFFE is the designated Management Authority. CITES is implemented domestically through NEMBA regulations.
+
+South Africa hosts significant populations of CITES-listed plant species including all *Encephalartos* (Appendix I), all *Aloe* (Appendix II), all Orchidaceae, all Euphorbia (succulent spp.), and all Cactaceae.
+
+<div class="alert alert-warning" role="alert">
+**⚠ Implementation Gap** — South Africa is both a source and transit country for illegal wildlife products. Cycad poaching from wild populations has reached critical levels: in 2019–2022 alone, **over 100 TOPS permit violations** were documented by SANBI involving cycad theft from state land. The courts have imposed fines but rarely custodial sentences, reducing the deterrent effect of the legislation.
+</div>
+
+---
+
+# Regulatory Institutions {#institutions}
+
+```{r institutions-table}
+institutions <- tribble(
+  ~abbreviation, ~institution_name,                              ~parent_ministry,             ~mandate,
+  "DFFE",        "Dept of Forestry, Fisheries and Environment",  "The Presidency",             "Primary environmental regulator; issues TOPS and AIS permits; manages protected trees; CITES Management Authority",
+  "SANBI",       "South African National Biodiversity Institute","DFFE",                       "Biodiversity science; TOPS species assessments; GBIF node; manages 9 national botanical gardens; Red List authority",
+  "SANParks",    "South African National Parks",                  "DFFE",                       "Manages 20 national parks; in-situ conservation; law enforcement within park boundaries",
+  "CapeNature",  "Western Cape Nature Conservation Board",        "Western Cape Province",      "Issues TOPS permits in Western Cape; manages provincial nature reserves; fynbos species enforcement",
+  "Ezemvelo",    "Ezemvelo KZN Wildlife",                         "KwaZulu-Natal Province",     "Issues TOPS permits in KZN; manages 80+ nature reserves; grassland and coastal species enforcement",
+  "DAFF",        "Dept of Agriculture, Land Reform and Rural Dev","DALRRD",                     "Plant Health Directorate; AIS control on agricultural land; invasive species awareness",
+  "SANBI-GBIF",  "South African GBIF Node (SANBI)",               "SANBI / DFFE",               "Biodiversity data infrastructure; maintains BioNET-SA portal; publishes GBIF occurrence data",
+  "LAPES",       "Legal Affairs and Permits (NEMBA)",             "DFFE",                       "Administers TOPS and AIS national permit system; processes Appendix I CITES import/export applications"
+)
+
+institutions |>
+  styled_kable(
+    caption = "Table 1. Institutions with Plant Species Regulatory Mandates in South Africa",
+    height  = "380px"
+  )
+```
+
+---
+
+# Comprehensive Plant Species Listing {#species}
+
+The master listing covers **`r n_species` plant species** subject to legal restriction under South African law. This includes threatened and protected native species (TOPS), invasive alien species (AIS), protected trees, and CITES-listed taxa.
+
+## Overview by Category
+
+```{r species-category-fig, fig.cap="Species count by South African legal classification."}
+species |>
+  mutate(
+    category = case_when(
+      str_detect(governing_law, "AIS")             ~ "Invasive (AIS)",
+      str_detect(governing_law, "National Forests") ~ "Protected Tree",
+      str_detect(legal_status_sa, "Critically Endangered") ~ "TOPS — Critically Endangered",
+      str_detect(legal_status_sa, "Endangered")    ~ "TOPS — Endangered",
+      str_detect(legal_status_sa, "Vulnerable")    ~ "TOPS — Vulnerable",
+      TRUE                                          ~ "TOPS — Protected"
+    )
+  ) |>
+  count(category) |>
+  mutate(category = fct_reorder(category, n)) |>
+  ggplot(aes(x = n, y = category, fill = category)) +
+  geom_col(width = 0.7, show.legend = FALSE) +
+  geom_text(aes(label = n), hjust = -0.2, size = 4) +
+  scale_x_continuous(expand = expansion(mult = c(0, 0.2))) +
+  scale_fill_brewer(palette = "Set2") +
+  labs(
+    title    = "South Africa Restricted Plant Species by Legal Category",
+    subtitle = glue("Total: {n_species} species across NEMBA TOPS, AIS Regulations, and National Forests Act"),
+    x        = "Number of species", y = NULL
+  ) +
+  theme_minimal(base_size = 12) +
+  theme(panel.grid.major.y = element_blank())
+```
+
+## Master Species Table
+
+```{r master-species-table}
+species |>
+  arrange(governing_law, iucn_status, common_name) |>
+  mutate(`Scientific Name` = paste0("*", scientific_name, "*")) |>
+  select(
+    `Common Name`        = common_name,
+    `Scientific Name`,
+    `Group`              = taxonomic_group,
+    `IUCN Status`        = iucn_status,
+    `CITES`              = cites_appendix,
+    `SA Legal Status`    = legal_status_sa,
+    `Governing Law`      = governing_law,
+    `Managing Inst.`     = managing_institution,
+    `Notes`              = notes
+  ) |>
+  styled_kable(
+    caption = "Table 2. Comprehensive Restricted/Protected Plant Species in South Africa",
+    height  = "600px"
+  )
+```
+
+## TOPS — Critically Endangered and Endangered Species {#tops-threatened}
+
+The TOPS Critically Endangered and Endangered categories represent the highest tier of domestic legal protection. Trade, possession, and collection of these species requires a TOPS permit (and Appendix I species additionally require CITES permits). In practice, for many Critically Endangered species, no trade is permitted.
+
+```{r tops-threatened-table}
+species |>
+  filter(iucn_status %in% c("Critically Endangered", "Endangered", "Extinct in the Wild")) |>
+  arrange(iucn_status, common_name) |>
+  mutate(`Scientific Name` = paste0("*", scientific_name, "*")) |>
+  select(
+    `Common Name`     = common_name,
+    `Scientific Name`,
+    `IUCN`            = iucn_status,
+    `CITES`           = cites_appendix,
+    `SA Status`       = legal_status_sa,
+    `Notes`           = notes
+  ) |>
+  styled_kable(
+    caption = glue("Table 3. TOPS Critically Endangered and Endangered Plant Species ({sum(species$iucn_status %in% c('Critically Endangered','Endangered','Extinct in the Wild'), na.rm=TRUE)} species)"),
+    height  = "500px"
+  )
+```
+
+## Invasive Alien Species (AIS) {#invasive}
+
+The AIS Regulations designate Category 1 invasive plants for compulsory control. Landowners are legally obligated to control or eradicate these species on their property. DFFE and DAFF manage the Working for Water programme, one of the world's largest invasive species control initiatives (~40,000 ha cleared annually).
+
+```{r ais-table}
+species |>
+  filter(str_detect(governing_law, "AIS")) |>
+  arrange(common_name) |>
+  mutate(`Scientific Name` = paste0("*", scientific_name, "*")) |>
+  select(
+    `Common Name`      = common_name,
+    `Scientific Name`,
+    `AIS Category`     = legal_status_sa,
+    `Restriction`      = restriction_type,
+    `Notes`            = notes
+  ) |>
+  styled_kable(
+    caption = glue("Table 4. Invasive Alien Plant Species in South Africa — AIS Regulations ({n_ais} species)"),
+    height  = "400px"
+  )
+```
+
+## GBIF Backbone Resolution {#gbif}
+
+The table below resolves South Africa's regulated plant species against the GBIF Backbone Taxonomy. English vernacular names and synonyms are fetched from the GBIF `name_usage()` API.
+
+**Resolution:** `r n_gbif_resolved` of `r n_species` species matched across `r n_gbif_families` families.
+
+```{r gbif-table}
+if (!is.null(plants_gbif) && nrow(plants_gbif) > 0) {
+  plants_gbif |>
+    mutate(
+      gbif_url = if_else(!is.na(GBIFusageKey) & GBIFusageKey != "",
+                         glue("https://www.gbif.org/species/{GBIFusageKey}"), NA_character_),
+      iucn_url = paste0("https://www.iucnredlist.org/search?query=",
+                        URLencode(str_squish(coalesce(prefName, "")), reserved = TRUE)),
+      `Scientific Name` = if_else(!is.na(gbif_url),
+                                   glue("<a href='{gbif_url}' target='_blank'><em>{prefName}</em></a>"),
+                                   glue("<em>{coalesce(prefName, '')}</em>")),
+      `IUCN` = glue("<a href='{iucn_url}' target='_blank'>IUCN &#x2197;</a>")
+    ) |>
+    transmute(
+      `#`             = row_number(),
+      `Scientific Name`,
+      `Common Name`   = coalesce(englishName, ""),
+      `Family`        = coalesce(family, ""),
+      `GBIF Key`      = coalesce(GBIFusageKey, ""),
+      `SA Status`     = coalesce(legal_status_sa, ""),
+      `Synonyms`      = str_trunc(coalesce(synonyms, ""), 80),
+      `IUCN`
+    ) |>
+    styled_kable(
+      caption = glue("Table 5. South Africa Regulated Plants — GBIF Backbone Resolved ({n_gbif_resolved} of {n_species} matched | {n_gbif_families} families)"),
+      height = "600px"
+    )
+} else {
+  cat("*GBIF data not yet generated. The report will auto-generate on first render with internet access.*")
+}
+```
+
+---
+
+# Regulatory Gaps and Implementation Challenges {#gaps}
+
+```{r gaps-table}
+gaps <- tribble(
+  ~`#`, ~`Gap Area`,                                              ~`Severity`, ~`Status (2025)`,
+  "1",  "TOPS list covers fraction of IUCN-threatened plants",    "High",      "Ongoing gap",
+  "2",  "Cycad poaching: enforcement prosecutions rare",          "High",      "Partial improvement",
+  "3",  "AIS enforcement on private land inconsistent",           "High",      "Unresolved",
+  "4",  "SANBI NASAFF assessments not auto-triggering TOPS updates","Medium",  "Unresolved",
+  "5",  "Permit processing backlogs (TOPS and AIS)",              "Medium",    "Unresolved",
+  "6",  "Benefit-sharing disputes over indigenous plant knowledge","Medium",   "ABS regulations active",
+  "7",  "Protected trees list (GN R1030/2004) not updated",        "Medium",   "Review in progress",
+  "8",  "Traditional healers' harvesting lacks legal clarity",    "Medium",    "Unresolved"
+)
+
+gaps |>
+  kbl(caption = "Table 6. Summary of Regulatory Gaps for Plant Species in South Africa",
+      escape = FALSE, align = "l") |>
+  kable_styling(bootstrap_options = c("striped","hover","condensed","responsive"),
+                full_width = TRUE, font_size = 12) |>
+  column_spec(3, bold = TRUE,
+              color      = ifelse(gaps$Severity == "High", "white", "black"),
+              background = ifelse(gaps$Severity == "High", "#c0392b", "#e67e22")) |>
+  column_spec(4, color = ifelse(gaps$`Status (2025)` %in% c("Ongoing gap","Unresolved"),
+                                "#c0392b", "#27ae60"))
+```
+
+## TOPS Species Coverage Gap
+
+SANBI's 2021 NASAFF assessments evaluated ~7,000 plant species and identified approximately **2,000** meeting IUCN Critically Endangered, Endangered, or Vulnerable criteria. The current TOPS Regulations list a fraction of these. Species not listed in TOPS have no domestic legal protection regardless of IUCN status. The review process — requiring a Ministerial Gazette notice — is slow relative to the rate at which species are being assessed.
+
+## Cycad Poaching Crisis
+
+South Africa hosts the world's greatest cycad diversity with all *Encephalartos* species under CITES Appendix I. Despite this, cycad theft from botanical gardens, nature reserves, and private collections is pervasive. The value of a *E. woodii* plant can exceed R5 million on the black market. Convictions typically result in fines rather than imprisonment, providing insufficient deterrent. The Cycad Conservation Trust and SANBI have proposed mandatory RFID microchipping of all cycad specimens — legislation to mandate this is pending.
+
+## Invasive Species Enforcement on Private Land
+
+The AIS Regulations impose a legal duty on private landowners to control Category 1 species. However, compliance is largely voluntary in practice. DFFE has limited capacity to inspect and enforce on the estimated **1.5 million+ private properties** where Category 1 invasives are present. Working for Water targets primarily state land and contracted community land, leaving the private land gap largely unaddressed.
+
+---
+
+# Key References and Links {#references}
+
+## Official Legal Texts
+
+| Law | Link |
+|-----|------|
+| NEMBA, 2004 (Act No. 10 of 2004) | [SAFLII](https://www.saflii.org/za/legis/num_act/nemba2004355/) |
+| NEMBA TOPS Regulations (GN R 151/2007) | [DFFE](https://www.dffe.gov.za/sites/default/files/legislations/nem_biodiversityact_threatspeciesregulations.pdf) |
+| NEMBA AIS Regulations (GN R 1003/2020) | [Gov.za](https://www.gov.za/documents/national-environmental-management-biodiversity-act-alien-and-invasive-species-regulations) |
+| National Forests Act, 1998 (No. 84 of 1998) | [SAFLII](https://www.saflii.org/za/legis/num_act/nfa1998209/) |
+| National Forests Act Protected Trees (GN R 1030/2004) | [DFFE](https://www.dffe.gov.za/sites/default/files/legislations/nfa_protectedtreeslist.pdf) |
+
+## Regulatory Agencies
+
+| Institution | Website |
+|-------------|---------|
+| DFFE | [dffe.gov.za](https://www.dffe.gov.za) |
+| SANBI | [sanbi.org](https://www.sanbi.org) |
+| SANParks | [sanparks.org](https://www.sanparks.org) |
+| CapeNature | [capenature.co.za](https://www.capenature.co.za) |
+
+## Species and Conservation Databases
+
+| Resource | Link |
+|----------|------|
+| CITES Appendices | [cites.org/eng/app/appendices.php](https://cites.org/eng/app/appendices.php) |
+| IUCN Red List | [iucnredlist.org](https://www.iucnredlist.org) |
+| SANBI Biodiversity Advisor | [sanbi.org/biodiversity-advisor](https://www.sanbi.org/biodiversity-advisor/) |
+| BioNET-SA (GBIF node) | [biodiversityadvisor.sanbi.org](https://biodiversityadvisor.sanbi.org) |
+| Cycad Conservation Trust | [cycad.co.za](https://www.cycad.co.za) |
+
+---
+
+# Session Information {.appendix}
+
+```{r session-info}
+sessionInfo()
+```
+
+---
+
+*Report generated with R and knitr. Species data: embedded tribble sourced from NEMBA TOPS Regulations (GN R 151/2007 updated), NEMBA AIS Regulations (GN R 1003/2020), National Forests Act GN R 1030/2004, and CITES Appendices (CoP19, 2022). GBIF taxonomy: rgbif package. For current permit requirements consult DFFE or relevant provincial conservation agency.*
+
+```{r kqb-footer, results='asis', echo=FALSE}
+logo_sm <- kqb_logo_img(height = "28px")
+cat(paste0(
+  '<div class="kqb-report-footer">',
+  if (nzchar(logo_sm)) paste0(logo_sm, '<br/>') else "",
+  '<p style="font-weight:600;color:#0d2240;">', kqb_co$name, ' &mdash; ', kqb_co$tagline, '</p>',
+  '<p>', kqb_co$legal_name, ' | ', kqb_co$country, '</p>',
+  '<p style="margin-top:6px;font-size:10px;color:#aaa;">',
+  'Generated ', format(Sys.Date(), "%d %B %Y"),
+  ' &nbsp;&bull;&nbsp; For informational purposes only',
+  ' &nbsp;&bull;&nbsp; Verify current listings at DFFE, SANBI, and CITES',
+  '</p>',
+  '</div>'
+))
+```

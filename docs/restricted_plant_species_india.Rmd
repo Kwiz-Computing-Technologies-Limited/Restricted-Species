@@ -1,0 +1,386 @@
+---
+title: "Restricted and Protected Plant Species in India"
+subtitle: "Wildlife Protection Act Schedule VI, Biological Diversity Act, and CITES — A Comprehensive Reference"
+author: "Kwiz Research"
+date: "`r format(Sys.Date(), '%d %B %Y')`"
+output:
+  html_document:
+    toc: true
+    toc_float:
+      collapsed: false
+      smooth_scroll: true
+    toc_depth: 3
+    number_sections: true
+    theme: flatly
+    highlight: tango
+    df_print: paged
+    code_folding: hide
+    css: style.css
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo=FALSE, warning=FALSE, message=FALSE,
+                      fig.align="center", fig.width=9, fig.height=5, out.width="100%")
+
+suppressPackageStartupMessages({
+  library(tidyverse); library(kableExtra); library(glue); library(janitor); library(rgbif)
+})
+
+# ── kwizbranding ──────────────────────────────────────────────────────────────
+.kqb_pkg <- "/Users/kwizera.jvk/Desktop/Kwiz Computing Comes to Life/Kwiz Quants/libs/kwizbranding"
+suppressMessages(devtools::load_all(.kqb_pkg, quiet = TRUE))
+kqb_co <- kqb_company("research"); kqb_col <- kqb_colours()
+.kqb_logo_candidates <- c(file.path(here::here(), "docs", "www"), file.path(getwd(), "www"),
+                            file.path(getwd()), file.path(here::here()))
+.kqb_load_logo <- function(fn, ck) {
+  for (d in .kqb_logo_candidates) {
+    p <- file.path(d, fn)
+    if (file.exists(p)) {
+      assign(ck, paste0("data:image/svg+xml;base64,", base64enc::base64encode(readBin(p, "raw", file.size(p)))),
+             envir = .GlobalEnv); return(invisible(TRUE))
+    }
+  }
+}
+.kqb_load_logo("Kwiz Black Logo Transparent bg.svg",    ".kqb_wm_cache")
+.kqb_load_logo("Kwiz Inverted Color Transparent bg.svg", ".kqb_display_cache")
+
+styled_kable <- function(df, caption=NULL, scroll=TRUE, height="450px") {
+  k <- df |> kbl(caption=caption, escape=FALSE, align="l") |>
+    kable_styling(bootstrap_options=c("striped","hover","condensed","responsive"),
+                  full_width=TRUE, font_size=12)
+  if (scroll) k <- scroll_box(k, height=height)
+  k
+}
+
+# ── Embedded species data ─────────────────────────────────────────────────────
+# Source: Wild Life (Protection) Act 1972 Schedule VI (as amended by WPA Amendment Act 2022),
+#         Biological Diversity Act 2002, CITES Appendices (CoP19, 2022).
+# Schedule VI lists "Specified Plants" — collection, possession, trade prohibited without licence.
+species <- tribble(
+  ~common_name,                     ~scientific_name,             ~taxonomic_group, ~iucn_status,            ~cites_appendix, ~legal_status_india,                    ~restriction_type,          ~governing_law,                        ~managing_institution,  ~notes,
+  "Slipper orchid (India)",         "Paphiopedilum druryi",       "Magnoliopsida",  "Critically Endangered", "Appendix I",    "Schedule VI — Specified Plant",        "Collection/trade prohibited","WPA 1972 Schedule VI",               "MoEFCC / WCCB",        "Most threatened Indian slipper orchid; Agasthyamalai hills",
+  "Lady slipper orchid",            "Cypripedium cordigerum",     "Magnoliopsida",  "Least Concern",          "Appendix II",   "Schedule VI — Specified Plant",        "Collection/trade prohibited","WPA 1972 Schedule VI",               "MoEFCC / WCCB",        "High-altitude Himalayan orchid; whole family protected",
+  "Kuth / Costus root",             "Saussurea costus",           "Magnoliopsida",  "Critically Endangered", "Appendix I",    "Schedule VI — Specified Plant",        "Collection/trade prohibited","WPA 1972 Schedule VI",               "MoEFCC / WCCB",        "Critically threatened; used in traditional medicine and perfumery",
+  "Indian podophyllum",             "Podophyllum hexandrum",      "Magnoliopsida",  "Vulnerable",            "Appendix II",   "Schedule VI — Specified Plant",        "Collection/trade prohibited","WPA 1972 Schedule VI",               "MoEFCC / WCCB",        "Alpine Himalayan; source of podophyllotoxin (anti-cancer); over-harvested",
+  "Cycas (India)",                  "Cycas beddomei",             "Cycadopsida",    "Critically Endangered", "Appendix I",    "Schedule VI — Specified Plant",        "Collection/trade prohibited","WPA 1972 Schedule VI",               "MoEFCC / WCCB",        "Endemic to Andhra Pradesh; all Cycas spp. Schedule VI",
+  "Himalayan yew",                  "Taxus wallichiana",          "Pinopsida",      "Endangered",            "Appendix II",   "Schedule VI — Specified Plant",        "Collection/trade prohibited","WPA 1972 Schedule VI",               "MoEFCC / WCCB",        "Source of taxol (cancer treatment); heavily exploited in Himalaya",
+  "Indian serpentine / Rauvolfia",  "Rauvolfia serpentina",       "Magnoliopsida",  "Least Concern",          "Appendix II",   "Schedule VI — Specified Plant",        "Collection/trade prohibited","WPA 1972 Schedule VI",               "MoEFCC / WCCB",        "Sedative alkaloid reserpine; over-collected from wild",
+  "Spider orchid",                  "Frerea indica",              "Magnoliopsida",  "Critically Endangered", "Not listed",    "Schedule VI — Specified Plant",        "Collection/trade prohibited","WPA 1972 Schedule VI",               "MoEFCC / WCCB",        "Extremely rare; Pune district rocky hills; <50 plants known",
+  "Dioscorea (medicinal yam)",      "Dioscorea deltoidea",        "Magnoliopsida",  "Least Concern",          "Appendix II",   "Schedule VI — Specified Plant",        "Collection/trade prohibited","WPA 1972 Schedule VI",               "MoEFCC / WCCB",        "Source of diosgenin (contraceptive hormone); over-harvested Himalaya",
+  "Spikenard",                      "Nardostachys jatamansi",     "Magnoliopsida",  "Endangered",            "Not listed",    "Schedule VI — Specified Plant",        "Collection/trade prohibited","WPA 1972 Schedule VI",               "MoEFCC / WCCB",        "Himalayan aromatic herb; heavily traded for ayurvedic use",
+  "Himalayan poppy",                "Meconopsis regia",           "Magnoliopsida",  "Least Concern",          "Not listed",    "Schedule VI — Specified Plant",        "Collection/trade prohibited","WPA 1972 Schedule VI",               "MoEFCC / WCCB",        "Alpine poppy; high-altitude endemic; ornamental collection threat",
+  "Red Sanders",                    "Pterocarpus santalinus",     "Magnoliopsida",  "Endangered",            "Appendix II",   "Schedule VI — Specified Plant",        "Harvesting / export restricted","WPA 1972 Schedule VI",             "MoEFCC / WCCB / APFD", "Critically over-exploited timber; major smuggling to China and SE Asia",
+  "Indian sandalwood",              "Santalum album",             "Magnoliopsida",  "Vulnerable",            "Not listed",    "State Protected Tree",                 "Govt owned in Karnataka/AP","Karnataka Forest Act / AP Forest Act","State Forest Dept",    "Government ownership in Karnataka; major illicit trade",
+  "Blue vanda orchid",              "Vanda coerulea",             "Magnoliopsida",  "Endangered",            "Appendix I",    "Schedule VI — Specified Plant",        "Collection/trade prohibited","WPA 1972 Schedule VI",               "MoEFCC / WCCB",        "North-east India; heavily collected for horticulture and floriculture",
+  "Indian marsh orchid",            "Dactylorhiza hatagirea",     "Magnoliopsida",  "Least Concern",          "Appendix II",   "Schedule VI — Specified Plant",        "Collection/trade prohibited","WPA 1972 Schedule VI",               "MoEFCC / WCCB",        "Alpine orchid; used in Shilajit; high collection pressure",
+  "Euphorbia (succulent, India)",   "Euphorbia nivulia",          "Magnoliopsida",  "Least Concern",          "Appendix II",   "Schedule VI — Specified Plant",        "Regulated collection/trade", "WPA 1972 Schedule VI",              "MoEFCC / WCCB",        "Succulent euphorbia; entire genus regulated under CITES",
+  "Water hyacinth",                 "Eichhornia crassipes",       "Magnoliopsida",  "Least Concern",          "Not listed",    "Notified Invasive Species",           "Control mandated by states","EP Act 1986 / State rules",           "MoEFCC / State PCBs",  "Major freshwater invasive; covers millions of ha; spreads rapidly",
+  "Parthenium weed",                "Parthenium hysterophorus",   "Magnoliopsida",  "Least Concern",          "Not listed",    "Invasive / Noxious Weed",             "State-level control orders","State Agricultural Acts",             "ICAR / State Depts",   "Widespread invasive; severe human allergy; crop competitor",
+  "Lantana",                        "Lantana camara",             "Magnoliopsida",  "Least Concern",          "Not listed",    "Invasive — National Park threat",     "Eradication in protected areas","WPA 1972 / PA management",          "Forest Dept / Protected Areas", "Major forest understory invasive; actively managed in tiger reserves",
+  "Prosopis (mesquite)",            "Prosopis juliflora",         "Magnoliopsida",  "Least Concern",          "Not listed",    "Invasive — semi-arid degradation",    "State control programmes",  "EP Act 1986 / State rules",           "MoEFCC / CAZRI",       "Semi-arid invasive; massive spread in Rajasthan, Gujarat, Tamil Nadu"
+)
+
+n_species    <- nrow(species)
+n_sch6       <- sum(str_detect(species$governing_law, "WPA"), na.rm = TRUE)
+n_invasive   <- sum(str_detect(species$restriction_type, regex("invasive|control|eradication", ignore_case = TRUE)), na.rm = TRUE)
+n_cites_i    <- sum(species$cites_appendix == "Appendix I",  na.rm = TRUE)
+n_cites_ii   <- sum(species$cites_appendix == "Appendix II", na.rm = TRUE)
+n_cr         <- sum(species$iucn_status == "Critically Endangered", na.rm = TRUE)
+n_en         <- sum(species$iucn_status == "Endangered", na.rm = TRUE)
+
+# ── GBIF resolution ──────────────────────────────────────────────────────────
+proj_root  <- here::here()
+gbif_cache <- file.path(proj_root, "output", "tables", "india_regulated_plants_gbif.csv")
+
+if (!file.exists(gbif_cache)) {
+  clean_name <- function(nm) nm |> str_remove_all("\\s+spp\\.?$") |>
+    str_remove_all("\\(.*?\\)") |> str_squish()
+  names_df <- tibble(name = clean_name(species$scientific_name), kingdom = "Plantae")
+  backbone_res <- tryCatch(name_backbone_checklist(names_df), error = function(e) {
+    map_dfr(names_df$name, function(nm) tryCatch(
+      as_tibble(name_backbone(name=nm, kingdom="Plantae")),
+      error=function(e2) tibble(usageKey=NA_integer_, canonicalName=nm, matchType="NONE")))
+  })
+  get_vernacular <- function(key) {
+    if (is.na(key)) return(NA_character_)
+    tryCatch({
+      vn <- name_usage(key=as.numeric(key), data="vernacularNames", limit=100)
+      if (is.null(vn$data)||nrow(vn$data)==0) return(NA_character_)
+      en <- vn$data |> filter(language %in% c("eng","en")) |> pull(vernacularName) |> unique()
+      if (length(en)==0) NA_character_ else paste(en, collapse=", ")
+    }, error=function(e) NA_character_)
+  }
+  get_synonyms <- function(key) {
+    if (is.na(key)) return(NA_character_)
+    tryCatch({
+      syn <- name_usage(key=as.numeric(key), data="synonyms", limit=100)
+      if (is.null(syn$data)||nrow(syn$data)==0) return(NA_character_)
+      s <- syn$data |> pull(canonicalName) |> unique() |> na.omit()
+      if (length(s)==0) NA_character_ else paste(s, collapse=", ")
+    }, error=function(e) NA_character_)
+  }
+  backbone_clean <- backbone_res |> as_tibble() |>
+    mutate(GBIFusageKey=as.character(usageKey),
+           prefName=coalesce(species, canonicalName, verbatim_name),
+           gbif_family=family, gbif_genus=genus)
+  species_matched <- species |> mutate(clean_sci=clean_name(scientific_name)) |>
+    bind_cols(backbone_clean |> select(GBIFusageKey, prefName, gbif_family, gbif_genus,
+                                        gbif_matchType=matchType, gbif_confidence=confidence))
+  keys <- species_matched |> filter(!is.na(GBIFusageKey)) |> distinct(GBIFusageKey) |> pull(GBIFusageKey)
+  vl <- list(); sl <- list()
+  for (i in seq_along(keys)) {
+    k <- keys[i]; vl[[k]] <- get_vernacular(k); sl[[k]] <- get_synonyms(k)
+    if (i %% 5==0) Sys.sleep(0.2)
+  }
+  vd <- tibble(GBIFusageKey=names(vl), gbif_english=unlist(vl), gbif_synonyms=unlist(sl[names(vl)]))
+  enriched <- species_matched |> left_join(vd, by="GBIFusageKey") |>
+    mutate(englishName=coalesce(gbif_english, common_name), synonyms=gbif_synonyms, family=gbif_family)
+  dir.create(file.path(proj_root,"output","tables"), recursive=TRUE, showWarnings=FALSE)
+  enriched |> select(GBIFusageKey, prefName, family, englishName, synonyms,
+                     legal_status_india, restriction_type, governing_law) |> write_csv(gbif_cache)
+}
+if (file.exists(gbif_cache)) {
+  plants_gbif     <- read_csv(gbif_cache, col_types=cols(.default=col_character()), show_col_types=FALSE)
+  n_gbif_resolved <- sum(!is.na(plants_gbif$GBIFusageKey) & plants_gbif$GBIFusageKey!="")
+  n_gbif_families <- n_distinct(plants_gbif$family, na.rm=TRUE)
+} else {
+  plants_gbif <- NULL; n_gbif_resolved <- 0L; n_gbif_families <- 0L
+}
+```
+
+```{r kqb-watermark, results='asis', echo=FALSE}
+cat(kqb_watermark_css(opacity=0.04, size="280px auto"))
+uri <- kqb_watermark_uri()
+if (nzchar(uri)) cat(paste0('<style>\nbody::after {\n  content: "";\n  position: fixed;\n',
+  '  top:0; left:0; width:100%; height:100%;\n  z-index:9000;\n  pointer-events:none;\n',
+  '  background-image: url("', uri, '");\n  background-repeat:repeat;\n  background-size:280px auto;\n',
+  '  opacity:0.04;\n}\n</style>\n'))
+```
+
+---
+
+# Executive Summary {.unnumbered}
+
+India is one of the world's **17 megadiverse** countries, hosting approximately **47,513 plant species** — representing about 11% of global flora — across 4 recognised biodiversity hotspots (Himalaya, Western Ghats, Indo-Burma, Sundaland). The country's flora includes numerous species of global conservation significance that are simultaneously under severe collection and trade pressure.
+
+This report documents **`r n_species` plant species** restricted under Indian law. **`r n_sch6`** are listed on Schedule VI of the Wild Life (Protection) Act 1972 (as amended 2022), making collection, possession, and trade unlawful without a permit from the Chief Wildlife Warden. **`r n_invasive`** are notified invasive species. **`r n_cites_i`** carry CITES Appendix I status and **`r n_cites_ii`** are on Appendix II. **`r n_cr`** are IUCN Critically Endangered and **`r n_en`** are Endangered.
+
+---
+
+# Legal Framework {#legal-framework}
+
+## Wild Life (Protection) Act, 1972 — Schedule VI {#wpa}
+
+The **Wild Life (Protection) Act, 1972** (WLPA) — as comprehensively amended by the Wild Life (Protection) Amendment Act 2022 — is India's primary wildlife legislation. **Schedule VI** lists **"Specified Plants"** for which collection, uprooting, damage, trade, and possession are prohibited without a licence from the Chief Wildlife Warden of the relevant state.
+
+Key provisions:
+- **Section 17A:** No person shall uproot, damage, collect, acquire or possess any Scheduled plant (other than for personal possession/cultivation without trade intent).
+- **Section 17C:** No person shall deal in, sell, or offer for sale any Scheduled plant or its derivative without a licence.
+- **Section 51 (penalties):** For Schedule VI violations: imprisonment up to **3 years** and/or fine up to **₹25,000** (enhanced by 2022 Amendment).
+- **Section 49B:** Import of Scheduled species requires CITES documentation and permission of Director General of Foreign Trade.
+
+The **2022 Amendment** reorganised the Schedule system (from VI Schedules to IV), consolidating some provisions. Schedule VI equivalent species are now in the new Schedule structure.
+
+Full text: [IndiaCode — WPA 1972](https://www.indiacode.nic.in/bitstream/123456789/1726/2/A1972-53.pdf)
+
+<div class="alert alert-warning" role="alert">
+**⚠ Implementation Gap** — Schedule VI lists only approximately **29 species/genera** explicitly. Given India's 47,000+ plant species, this coverage is extremely narrow. The Botanical Survey of India (BSI) has assessed hundreds of additional species as threatened, but these lack Schedule VI protection. The Ministry of Environment, Forest and Climate Change (MoEFCC) has not comprehensively updated the Schedule VI list since the original enactment despite documented declines in many medicinal and horticultural plant species.
+</div>
+
+## Biological Diversity Act, 2002 {#bda}
+
+The **Biological Diversity Act, 2002** (Act No. 18 of 2003) implements the Convention on Biological Diversity (CBD) and the Nagoya Protocol. It establishes the National Biodiversity Authority (NBA) to regulate:
+- **Access to Biological Resources:** Any person seeking to obtain biological resources for commercial use must obtain prior approval from the NBA (foreigners/foreign entities) or file intimation with State Biodiversity Boards (Indians).
+- **Benefit Sharing:** Commercial use of biological resources must be accompanied by benefit sharing with local communities and knowledge holders.
+- **Biodiversity Management Committees (BMCs):** Gram Panchayats and urban local bodies must establish BMCs and maintain People's Biodiversity Registers (PBRs).
+
+The **Biological Diversity (Amendment) Act, 2023** made significant changes, exempting traditional practitioners and cultivators from ABS requirements and simplifying the research pathway.
+
+Full text: [WIPO Lex — Biological Diversity Act 2002](https://www.wipo.int/wipolex/en/legislation/details/6058)
+
+## Environment (Protection) Act, 1986 {#epa}
+
+The **Environment (Protection) Act, 1986** (EPA) provides a framework for Central Government notifications covering invasive species and specific environmental restrictions. Several State Pollution Control Boards have issued orders under EPA for control of major invasive plants such as *Parthenium hysterophorus* and *Eichhornia crassipes*.
+
+## CITES Implementation in India {#cites}
+
+India ratified CITES in 1976. The **WCCB (Wildlife Crime Control Bureau)** under MoEFCC is the primary CITES Management Authority. CITES implementation is through Schedule VI (plants) and Schedules I–III (animals) of the WPA 1972.
+
+Key CITES-listed Indian plant groups:
+- All Orchidaceae (Appendix II; *Paphiopedilum* spp. Appendix I)
+- All Cycadaceae (Appendix I/II)
+- *Taxus* spp. (Himalayan yew) — Appendix II
+- *Dioscorea deltoidea* — Appendix II
+- *Pterocarpus santalinus* (Red Sanders) — Appendix II
+- *Saussurea costus* (Kuth) — Appendix I
+
+---
+
+# Regulatory Institutions {#institutions}
+
+```{r institutions-table}
+tribble(
+  ~`Abbrev.`, ~`Institution`,                                    ~`Ministry`,    ~`Mandate`,
+  "MoEFCC",   "Ministry of Environment, Forest and Climate Change","GoI",        "Central regulator; WPA administration; CITES authority; NBA oversight",
+  "WCCB",     "Wildlife Crime Control Bureau",                   "MoEFCC",       "Central intelligence and enforcement; coordinates interstate WPA/CITES cases",
+  "BSI",      "Botanical Survey of India",                       "MoEFCC",       "Botanical inventory; Red List assessments; flora of India; Schedule VI science",
+  "NBA",      "National Biodiversity Authority",                  "MoEFCC",       "ABS regulation; bioprospecting approvals; Nagoya Protocol implementation",
+  "Forest Dept","State Forest Departments (28 states + 8 UTs)",  "State Govts",  "WPA enforcement; Chief Wildlife Wardens; TOPS permits; reserved forest management",
+  "NBWL",     "National Board for Wildlife",                      "MoEFCC",       "Policy oversight; protected area management; species conservation plans",
+  "FSI",      "Forest Survey of India",                           "MoEFCC",       "National forest inventory; remote sensing; forest cover mapping",
+  "ICAR",     "Indian Council of Agricultural Research",          "DARE",         "Invasive species research; plant protection; crop pest and weed management"
+) |>
+  styled_kable(caption = "Table 1. Institutions with Plant Regulatory Mandates in India", height = "380px")
+```
+
+---
+
+# Comprehensive Plant Species Listing {#species}
+
+```{r species-overview-fig, fig.cap="India restricted plant species by legal category."}
+species |>
+  mutate(category = case_when(
+    str_detect(restriction_type, regex("invasive|eradication|control", ignore_case=TRUE)) ~ "Invasive Species",
+    str_detect(governing_law, "WPA") ~ "WPA Schedule VI",
+    TRUE ~ "Other Protected"
+  )) |>
+  count(category) |>
+  mutate(category = fct_reorder(category, n)) |>
+  ggplot(aes(x=n, y=category, fill=category)) +
+  geom_col(width=0.6, show.legend=FALSE) +
+  geom_text(aes(label=n), hjust=-0.2, size=4) +
+  scale_x_continuous(expand=expansion(mult=c(0,0.2))) +
+  scale_fill_brewer(palette="Set2") +
+  labs(title="India Restricted Plant Species by Legal Category",
+       subtitle=glue("Total: {n_species} representative species"),
+       x="Number of species", y=NULL) +
+  theme_minimal(base_size=12) +
+  theme(panel.grid.major.y=element_blank())
+```
+
+## Master Species Table
+
+```{r master-table}
+species |>
+  arrange(governing_law, iucn_status, common_name) |>
+  mutate(`Scientific Name` = paste0("*", scientific_name, "*")) |>
+  select(`Common Name`=common_name, `Scientific Name`, `Group`=taxonomic_group,
+         `IUCN`=iucn_status, `CITES`=cites_appendix,
+         `India Legal Status`=legal_status_india,
+         `Managing Inst.`=managing_institution, `Notes`=notes) |>
+  styled_kable(caption="Table 2. Restricted/Protected Plant Species in India (Representative Listing)",
+               height="600px")
+```
+
+## Schedule VI — Specified Plants
+
+The Wild Life (Protection) Act Schedule VI lists approximately 29 plant taxa for which collection, trade, and possession without a licence from the Chief Wildlife Warden is prohibited. The list heavily emphasises medicinally and horticulturally significant species facing exploitation pressure.
+
+```{r sch6-table}
+species |>
+  filter(str_detect(governing_law, "WPA")) |>
+  arrange(iucn_status, common_name) |>
+  mutate(`Scientific Name` = paste0("*", scientific_name, "*")) |>
+  select(`Common Name`=common_name, `Scientific Name`, `IUCN`=iucn_status, `CITES`=cites_appendix,
+         `Notes`=notes) |>
+  styled_kable(caption=glue("Table 3. WPA 1972 Schedule VI Plant Species ({n_sch6} listed)"), height="500px")
+```
+
+## Invasive Species
+
+India's invasive plant crisis is driven by rapid spread in disturbed habitats, agricultural areas, and protected areas. The Working Group on Invasive Alien Species (under the National Board for Wildlife) has documented major threats from *Parthenium*, *Lantana*, *Prosopis*, and *Eichhornia*.
+
+```{r invasive-table}
+species |>
+  filter(str_detect(restriction_type, regex("invasive|control|eradication", ignore_case=TRUE))) |>
+  arrange(common_name) |>
+  mutate(`Scientific Name` = paste0("*", scientific_name, "*")) |>
+  select(`Common Name`=common_name, `Scientific Name`, `India Status`=legal_status_india,
+         `Notes`=notes) |>
+  styled_kable(caption=glue("Table 4. Invasive Plant Species in India ({n_invasive} listed)"), height="350px")
+```
+
+## GBIF Backbone Resolution {#gbif}
+
+```{r gbif-table}
+if (!is.null(plants_gbif) && nrow(plants_gbif) > 0) {
+  plants_gbif |>
+    mutate(
+      gbif_url = if_else(!is.na(GBIFusageKey) & GBIFusageKey!="",
+                         glue("https://www.gbif.org/species/{GBIFusageKey}"), NA_character_),
+      iucn_url = paste0("https://www.iucnredlist.org/search?query=",
+                        URLencode(str_squish(coalesce(prefName,"")), reserved=TRUE)),
+      `Scientific Name` = if_else(!is.na(gbif_url),
+                                   glue("<a href='{gbif_url}' target='_blank'><em>{prefName}</em></a>"),
+                                   glue("<em>{coalesce(prefName,'')}</em>")),
+      `IUCN` = glue("<a href='{iucn_url}' target='_blank'>IUCN &#x2197;</a>")
+    ) |>
+    transmute(`#`=row_number(), `Scientific Name`, `Common Name`=coalesce(englishName,""),
+              `Family`=coalesce(family,""), `GBIF Key`=coalesce(GBIFusageKey,""),
+              `India Status`=coalesce(legal_status_india,""),
+              `Synonyms`=str_trunc(coalesce(synonyms,""),80), `IUCN`) |>
+    styled_kable(caption=glue("Table 5. India Regulated Plants — GBIF Backbone Resolved ({n_gbif_resolved} of {n_species} matched | {n_gbif_families} families)"),
+                 height="600px")
+} else { cat("*GBIF data will be generated on first render with internet access.*") }
+```
+
+---
+
+# Regulatory Gaps {#gaps}
+
+```{r gaps-table}
+tribble(
+  ~`#`, ~`Gap Area`,                                           ~`Severity`, ~`Status (2025)`,
+  "1",  "Schedule VI covers ~29 taxa; thousands unthreatened", "High",      "Unresolved",
+  "2",  "BSI Red List assessments not triggering WPA updates",  "High",      "Unresolved",
+  "3",  "Red Sanders smuggling persists despite Schedule VI",   "High",      "Partial enforcement",
+  "4",  "Medicinal plant over-collection from wild (NTFPs)",    "High",      "Unresolved",
+  "5",  "BDA ABS implementation — benefit sharing rarely occurs","High",     "BDA Amendment 2023",
+  "6",  "Invasive species legislation fragmented across states", "Medium",   "Unresolved",
+  "7",  "Orchid trade enforcement: nursery vs wild unclear",    "Medium",    "Unresolved",
+  "8",  "Traditional knowledge protections weak",               "Medium",    "BDA Amendment 2023"
+) |>
+  kbl(caption="Table 6. Regulatory Gaps for Plant Species in India", escape=FALSE, align="l") |>
+  kable_styling(bootstrap_options=c("striped","hover","condensed","responsive"), full_width=TRUE, font_size=12) |>
+  column_spec(3, bold=TRUE, color=ifelse(c(TRUE,TRUE,TRUE,TRUE,TRUE,FALSE,FALSE,FALSE),"white","black"),
+              background=ifelse(c(TRUE,TRUE,TRUE,TRUE,TRUE,FALSE,FALSE,FALSE),"#c0392b","#e67e22"))
+```
+
+## Schedule VI Coverage Gap
+
+India's Schedule VI is one of the most narrowly scoped protected plant lists among megadiverse countries. With ~47,500 species of vascular plants recorded in India (BSI National Database, 2024), and the Botanical Survey of India assessing over 1,200 species as Threatened or Near Threatened, the WPA list of approximately 29 taxa offers protection to fewer than 0.1% of India's plant species. The legal mechanism to add species exists but requires a Central Government amendment — a slow process without any statutory review timetable.
+
+## Red Sanders Trafficking
+
+Red sanders (*Pterocarpus santalinus*), endemic to the Seshachalam hills of Andhra Pradesh, remains among the world's most heavily trafficked plant commodities. Despite Schedule VI listing, CITES Appendix II listing, and active seizures by the Andhra Pradesh Forest Department, large-scale smuggling (primarily to China, Hong Kong, and Japan) persists. Between 2015 and 2022, Indian courts processed hundreds of red sanders cases, but organised crime networks continue to operate, often exploiting porous port oversight at Chennai and Visakhapatnam.
+
+---
+
+# Key References {#references}
+
+| Resource | Link |
+|----------|------|
+| Wild Life (Protection) Act 1972 — IndiaCode | [indiacode.nic.in](https://www.indiacode.nic.in/bitstream/123456789/1726/2/A1972-53.pdf) |
+| WPA Amendment Act 2022 | [MoEFCC](https://www.moef.gov.in) |
+| Biological Diversity Act 2002 — WIPO Lex | [wipo.int](https://www.wipo.int/wipolex/en/legislation/details/6058) |
+| National Biodiversity Authority | [nbaindia.org](https://www.nbaindia.org) |
+| Botanical Survey of India | [bsi.gov.in](https://www.bsi.gov.in) |
+| Wildlife Crime Control Bureau | [wccb.gov.in](https://www.wccb.gov.in) |
+| GBIF India | [gbif.org/country/IN](https://www.gbif.org/country/IN/summary) |
+
+---
+
+```{r session-info}
+sessionInfo()
+```
+
+```{r kqb-footer, results='asis', echo=FALSE}
+logo_sm <- kqb_logo_img(height="28px")
+cat(paste0('<div class="kqb-report-footer">',
+  if(nzchar(logo_sm)) paste0(logo_sm,'<br/>') else "",
+  '<p style="font-weight:600;color:#0d2240;">', kqb_co$name,' &mdash; ',kqb_co$tagline,'</p>',
+  '<p>',kqb_co$legal_name,' | ',kqb_co$country,'</p>',
+  '<p style="margin-top:6px;font-size:10px;color:#aaa;">Generated ',format(Sys.Date(),"%d %B %Y"),
+  ' &nbsp;&bull;&nbsp; For informational purposes only &nbsp;&bull;&nbsp; Verify at MoEFCC / IndiaCode / BSI</p>',
+  '</div>'))
+```

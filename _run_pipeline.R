@@ -3,7 +3,8 @@
 # ── 0. Install missing packages ───────────────────────────────────────────────
 pkgs_needed <- c(
   "tidyverse", "janitor", "lubridate", "glue", "here",
-  "knitr", "rmarkdown", "kableExtra", "rvest", "httr", "writexl"
+  "knitr", "rmarkdown", "kableExtra", "rvest", "httr", "writexl",
+  "rgbif", "jsonlite"
 )
 
 missing_pkgs <- pkgs_needed[!pkgs_needed %in% rownames(installed.packages())]
@@ -34,6 +35,9 @@ source(file.path(proj_root, "R", "03_species_listing.R"))
 
 message("\n===== 04_merge_and_export.R =====")
 source(file.path(proj_root, "R", "04_merge_and_export.R"))
+
+message("\n===== 05_gbif_plant_listing.R =====")
+source(file.path(proj_root, "R", "05_gbif_plant_listing.R"))
 
 # ── 3. Render Rmd ─────────────────────────────────────────────────────────────
 message("\n===== Rendering Rmd =====")

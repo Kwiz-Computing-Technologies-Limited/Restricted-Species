@@ -1,0 +1,330 @@
+---
+title: "Restricted and Protected Plant Species in Tanzania"
+subtitle: "Wildlife Conservation Act, Forests Act, Environmental Management Act, and CITES"
+author: "Kwiz Research"
+date: "`r format(Sys.Date(), '%d %B %Y')`"
+output:
+  html_document:
+    toc: true
+    toc_float: {collapsed: false, smooth_scroll: true}
+    toc_depth: 3
+    number_sections: true
+    theme: flatly
+    highlight: tango
+    df_print: paged
+    code_folding: hide
+    css: style.css
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo=FALSE, warning=FALSE, message=FALSE,
+                      fig.align="center", fig.width=9, fig.height=5, out.width="100%")
+suppressPackageStartupMessages({
+  library(tidyverse); library(kableExtra); library(glue); library(janitor); library(rgbif)
+})
+
+.kqb_pkg <- "/Users/kwizera.jvk/Desktop/Kwiz Computing Comes to Life/Kwiz Quants/libs/kwizbranding"
+suppressMessages(devtools::load_all(.kqb_pkg, quiet=TRUE))
+kqb_co <- kqb_company("research"); kqb_col <- kqb_colours()
+.kqb_logo_candidates <- c(file.path(here::here(),"docs","www"), file.path(getwd(),"www"),
+                            file.path(getwd()), file.path(here::here()))
+.kqb_load_logo <- function(fn, ck) {
+  for (d in .kqb_logo_candidates) { p <- file.path(d,fn)
+    if (file.exists(p)) { assign(ck, paste0("data:image/svg+xml;base64,",
+      base64enc::base64encode(readBin(p,"raw",file.size(p)))), envir=.GlobalEnv); return(invisible(TRUE)) } }
+}
+.kqb_load_logo("Kwiz Black Logo Transparent bg.svg",".kqb_wm_cache")
+.kqb_load_logo("Kwiz Inverted Color Transparent bg.svg",".kqb_display_cache")
+
+styled_kable <- function(df, caption=NULL, scroll=TRUE, height="450px") {
+  k <- df |> kbl(caption=caption, escape=FALSE, align="l") |>
+    kable_styling(bootstrap_options=c("striped","hover","condensed","responsive"), full_width=TRUE, font_size=12)
+  if (scroll) k <- scroll_box(k, height=height); k
+}
+
+# ── Embedded species data ─────────────────────────────────────────────────────
+# Sources: Wildlife Conservation Act 2009 (Cap. 283); Forests Act 2002 (Cap. 323);
+#          Environmental Management Act 2004; Plant Protection Act 1997;
+#          CITES CoP19 2022; Tanzania Government Gazette.
+species <- tribble(
+  ~common_name,                     ~scientific_name,               ~taxonomic_group, ~iucn_status,            ~cites_appendix, ~legal_status_tz,                        ~restriction_type,              ~governing_law,                     ~managing_institution,   ~notes,
+  "African blackwood / mpingo",     "Dalbergia melanoxylon",        "Magnoliopsida",  "Least Concern",          "Appendix II",   "Protected Timber Species",              "Export quota / permit req.",    "Forests Act 2002 / CITES",         "TFS / CITES Secretariat","Iconic Tanzanian timber; CITES Appendix II since 2017; global instrument-making",
+  "East African rosewood",          "Dalbergia lanceolaria",        "Magnoliopsida",  "Least Concern",          "Appendix II",   "Protected Timber Species",              "Export permit required",        "Forests Act 2002 / CITES",         "TFS",                   "All Dalbergia species added to CITES App II in 2017 due to trade concerns",
+  "Prunus africana",                "Prunus africana",              "Magnoliopsida",  "Least Concern",          "Appendix II",   "Regulated (CITES Appendix II)",         "Export permit required",        "CITES Regs / Forests Act",         "TFS / CITES Authority", "Over-exploited for European prostate medication market; Kilimanjaro populations",
+  "East African sandalwood",        "Osyris lanceolata",            "Magnoliopsida",  "Least Concern",          "Not listed",    "Export Banned (TZ Govt Order)",         "Harvesting/export prohibited",  "Ministerial Order (2004)",         "TFS / MNRT",            "Total export ban due to severe over-exploitation across East Africa",
+  "Miombo woodland tree (miombo)",  "Brachystegia spiciformis",     "Magnoliopsida",  "Least Concern",          "Not listed",    "Protected Forest Species",              "Charcoal/harvest restricted",   "Forests Act 2002",                 "TFS",                   "Dominant miombo woodland tree; charcoal production major threat",
+  "Brachystegia (mwanga)",          "Brachystegia longifolia",      "Magnoliopsida",  "Least Concern",          "Not listed",    "Protected Forest Species",              "Harvest regulated",             "Forests Act 2002",                 "TFS",                   "Dry miombo woodland; timber and charcoal; restricted harvest",
+  "African camphor",                "Ocotea usambarensis",          "Magnoliopsida",  "Vulnerable",            "Not listed",    "Vulnerable — Forests Act Protected",    "Harvest restricted",            "Forests Act 2002",                 "TFS",                   "Usambara Mountains endemic; prized timber; declining due to illegal logging",
+  "Tanzanian violet",               "Saintpaulia ionantha",         "Magnoliopsida",  "Critically Endangered", "Not listed",    "Critically Endangered (WCA 2009)",      "Collection/trade prohibited",   "Wildlife Conservation Act 2009",   "TAWA / TAWIRI",         "African violet; wild ancestor of popular ornamental; East Usambara endemic",
+  "African violet (Nguru)",         "Saintpaulia ionantha",         "Magnoliopsida",  "Critically Endangered", "Not listed",    "Critically Endangered — habitat loss",  "Collection prohibited",         "Wildlife Conservation Act 2009",   "TAWA",                  "Multiple Saintpaulia species — Taitense, Rupicola, Tongwensis — all threatened",
+  "Usambara cycad",                 "Encephalartos hildebrandtii",  "Cycadopsida",    "Vulnerable",            "Appendix I",    "Protected (CITES Appendix I)",          "Collection/trade prohibited",   "Wildlife Conservation Act 2009",   "TAWA",                  "Coastal Tanzania cycad; CITES App I; poaching pressure significant",
+  "East African aloe",              "Aloe rabaiensis",              "Magnoliopsida",  "Near Threatened",        "Appendix II",   "Regulated (CITES Appendix II)",         "Export permit required",        "CITES Regs / WCA 2009",            "TAWA / CITES Authority","Tanzania endemic aloe; all Aloe spp. regulated under CITES",
+  "Moringa",                        "Moringa oleifera",             "Magnoliopsida",  "Least Concern",          "Not listed",    "Commercial Collection Regulated",       "Export permit may be required", "Forests Act 2002 / TOSCI",         "TOSCI / MAFSC",         "Nutritional superfood; unregulated harvesting from wild populations possible",
+  "Coelacanth palm",                "Dypsis madagascariensis",      "Magnoliopsida",  "Least Concern",          "Appendix II",   "Regulated (CITES Appendix II)",         "Collection permit required",    "CITES Regs",                       "TAWA",                  "All CITES Appendix II palm species; ornamental collection risk",
+  "Tanzanian orchid",               "Eulophia petersii",            "Magnoliopsida",  "Least Concern",          "Appendix II",   "Regulated (CITES Appendix II)",         "Collection permit required",    "CITES Regs / WCA 2009",            "TAWA",                  "All Orchidaceae CITES Appendix II; collection pressure in Eastern Arc",
+  "Elephant grass",                 "Cenchrus purpureus",           "Magnoliopsida",  "Least Concern",          "Not listed",    "Potentially Invasive Grass",            "Control in protected areas",    "EMA 2004 / Wildlife Act",          "NEMC / TAWA",           "Widely used for fodder; becoming invasive in disturbed forest edges",
+  "Chromolaena / Siam weed",        "Chromolaena odorata",          "Magnoliopsida",  "Least Concern",          "Not listed",    "Invasive Species",                      "Control mandated",              "EMA 2004",                         "NEMC / MAFSC",          "Spreading invasive in coastal Tanzania and Zanzibar; replaces native vegetation",
+  "Water hyacinth",                 "Eichhornia crassipes",         "Magnoliopsida",  "Least Concern",          "Not listed",    "Invasive Species",                      "Eradication mandated",          "EMA 2004 / WCA 2009",              "NEMC / TAWA",           "Lake Victoria and other water bodies; requires regular mechanical control",
+  "Lantana",                        "Lantana camara",               "Magnoliopsida",  "Least Concern",          "Not listed",    "Invasive Species",                      "Control in protected areas",    "Wildlife Conservation Act 2009",   "TAWA / TANAPA",         "Major invasive in Serengeti and other national parks; biocontrol partially deployed",
+  "Prosopis (mesquite)",            "Prosopis juliflora",           "Magnoliopsida",  "Least Concern",          "Not listed",    "Invasive — semi-arid zones",            "Control programmes active",     "EMA 2004 / NEMC",                  "NEMC / MAFSC",          "Invasive in semi-arid northern Tanzania; Arusha and Dodoma regions",
+  "Black jack",                     "Bidens pilosa",                "Magnoliopsida",  "Least Concern",          "Not listed",    "Noxious Weed",                          "Control in croplands",          "Plant Protection Act 1997",        "MAFSC",                 "Widespread weed in agricultural zones; priority in Plant Protection Act schedules"
+)
+
+n_species  <- nrow(species)
+n_protected<- sum(str_detect(species$governing_law, regex("Wildlife Conservation|Forests Act|WCA", ignore_case=TRUE)), na.rm=TRUE)
+n_invasive <- sum(str_detect(species$restriction_type, regex("invasive|eradication|control|noxious|mandated", ignore_case=TRUE)), na.rm=TRUE)
+n_cites_i  <- sum(species$cites_appendix == "Appendix I", na.rm=TRUE)
+n_cites_ii <- sum(species$cites_appendix == "Appendix II", na.rm=TRUE)
+n_cr       <- sum(species$iucn_status == "Critically Endangered", na.rm=TRUE)
+
+proj_root  <- here::here()
+gbif_cache <- file.path(proj_root, "output", "tables", "tanzania_regulated_plants_gbif.csv")
+if (!file.exists(gbif_cache)) {
+  clean_name <- function(nm) nm |> str_remove_all("\\s+spp\\.?$") |> str_remove_all("\\(.*?\\)") |> str_squish()
+  names_df <- tibble(name=clean_name(species$scientific_name), kingdom="Plantae")
+  backbone_res <- tryCatch(name_backbone_checklist(names_df), error=function(e)
+    map_dfr(names_df$name, function(nm) tryCatch(as_tibble(name_backbone(name=nm,kingdom="Plantae")),
+      error=function(e2) tibble(usageKey=NA_integer_,canonicalName=nm,matchType="NONE"))))
+  get_vern <- function(key) { if(is.na(key)) return(NA_character_)
+    tryCatch({ vn <- name_usage(key=as.numeric(key),data="vernacularNames",limit=100)
+      if(is.null(vn$data)||nrow(vn$data)==0) return(NA_character_)
+      en <- vn$data |> filter(language %in% c("eng","en")) |> pull(vernacularName) |> unique()
+      if(length(en)==0) NA_character_ else paste(en,collapse=", ") }, error=function(e) NA_character_) }
+  get_syn <- function(key) { if(is.na(key)) return(NA_character_)
+    tryCatch({ syn <- name_usage(key=as.numeric(key),data="synonyms",limit=100)
+      if(is.null(syn$data)||nrow(syn$data)==0) return(NA_character_)
+      s <- syn$data |> pull(canonicalName) |> unique() |> na.omit()
+      if(length(s)==0) NA_character_ else paste(s,collapse=", ") }, error=function(e) NA_character_) }
+  bc <- backbone_res |> as_tibble() |>
+    mutate(GBIFusageKey=as.character(usageKey),prefName=coalesce(species,canonicalName,verbatim_name),gbif_family=family)
+  sm <- species |> mutate(clean_sci=clean_name(scientific_name)) |>
+    bind_cols(bc |> select(GBIFusageKey,prefName,gbif_family,gbif_matchType=matchType,gbif_confidence=confidence))
+  keys <- sm |> filter(!is.na(GBIFusageKey)) |> distinct(GBIFusageKey) |> pull(GBIFusageKey)
+  vl <- list(); sl <- list()
+  for (i in seq_along(keys)) { k <- keys[i]; vl[[k]] <- get_vern(k); sl[[k]] <- get_syn(k); if(i%%5==0) Sys.sleep(0.2) }
+  vd <- tibble(GBIFusageKey=names(vl),gbif_english=unlist(vl),gbif_synonyms=unlist(sl[names(vl)]))
+  enriched <- sm |> left_join(vd,by="GBIFusageKey") |>
+    mutate(englishName=coalesce(gbif_english,common_name),synonyms=gbif_synonyms,family=gbif_family)
+  dir.create(file.path(proj_root,"output","tables"),recursive=TRUE,showWarnings=FALSE)
+  enriched |> select(GBIFusageKey,prefName,family,englishName,synonyms,legal_status_tz,restriction_type,governing_law) |>
+    write_csv(gbif_cache)
+}
+if (file.exists(gbif_cache)) {
+  plants_gbif     <- read_csv(gbif_cache,col_types=cols(.default=col_character()),show_col_types=FALSE)
+  n_gbif_resolved <- sum(!is.na(plants_gbif$GBIFusageKey)&plants_gbif$GBIFusageKey!="")
+  n_gbif_families <- n_distinct(plants_gbif$family, na.rm=TRUE)
+} else { plants_gbif <- NULL; n_gbif_resolved <- 0L; n_gbif_families <- 0L }
+```
+
+```{r kqb-watermark, results='asis', echo=FALSE}
+cat(kqb_watermark_css(opacity=0.04, size="280px auto"))
+uri <- kqb_watermark_uri()
+if (nzchar(uri)) cat(paste0('<style>\nbody::after {\n  content: "";\n  position: fixed;\n',
+  '  top:0; left:0; width:100%; height:100%;\n  z-index:9000;\n  pointer-events:none;\n',
+  '  background-image: url("', uri, '");\n  background-repeat:repeat;\n  background-size:280px auto;\n',
+  '  opacity:0.04;\n}\n</style>\n'))
+```
+
+---
+
+# Executive Summary {.unnumbered}
+
+Tanzania is home to approximately **14,000 plant species**, with an estimated **1,100 endemics**, concentrated particularly in the **Eastern Arc Mountains** — one of Africa's most irreplaceable biodiversity hotspots. The country's plant diversity spans tropical lowland forests, montane forests, miombo and acacia woodlands, mangroves, and alpine moorlands. Tanzania also harbours globally significant populations of *Dalbergia* (rosewood/mpingo) species, which drive major international timber trade.
+
+This report covers **`r n_species` representative plant species** under legal restriction in Tanzania. **`r n_protected`** are protected under the Wildlife Conservation Act 2009 or Forests Act 2002. **`r n_invasive`** are notified invasive species. **`r n_cites_i`** hold CITES Appendix I status and **`r n_cites_ii`** are on CITES Appendix II. **`r n_cr`** are IUCN Critically Endangered.
+
+---
+
+# Legal Framework {#legal-framework}
+
+## Wildlife Conservation Act, 2009 (Cap. 283) {#wca}
+
+The **Wildlife Conservation Act, 2009** (Cap. 283, Revised Edition 2016) is Tanzania's primary wildlife statute. It covers both fauna and certain flora, providing:
+
+- Protection of nationally significant wildlife resources including specific plant species
+- Regulation of collection, trade, and export of wildlife products
+- CITES implementation for all appendix-listed species
+- Management of Game Reserves and Game Controlled Areas
+
+Plant species may be listed via subsidiary regulations and Gazette notices under this Act.
+
+Full text: [TanzLII — WCA 2009](https://tanzlii.org/tz/legislation/act/2009/5/)
+
+## Forests Act, 2002 (Cap. 323) {#forests}
+
+The **Forests Act, 2002** governs all forest resources in Tanzania Mainland. Key provisions:
+
+- **Section 46:** Regulates the harvesting of timber and non-timber forest products in forest reserves
+- **Gazette Notices:** The Minister may gazette specific tree species as protected
+- **Forest Reserves:** Covering approximately 9.5 million ha; all forest products within reserves require licences
+- Regulates export of logs, poles, and processed timber; export bans may be declared by Minister
+
+**Charcoal and wood fuel:** The 2020 Charcoal Regulations under the Forests Act regulate commercial charcoal production. Miombo woodland species (*Brachystegia* spp.) are primary charcoal sources with significant pressure on reserves.
+
+## Environmental Management Act, 2004 {#ema}
+
+The **Environmental Management Act, 2004** (Cap. 191) provides the overarching environmental framework, establishing:
+
+- **National Environmental Management Council (NEMC)** as the environmental regulator
+- Environmental Impact Assessment requirements for development activities
+- Provisions for invasive species management and biological diversity conservation
+- Section 57: Prohibition on introducing invasive species without Environmental Impact Assessment
+
+## Plant Protection Act, 1997 {#ppa}
+
+The **Plant Protection Act, 1997** empowers the Ministry of Agriculture, Food Security and Cooperatives (MAFSC) to:
+- Control importation of plant material and quarantine pests
+- Gazette noxious weeds for compulsory control
+- Regulate movement of plant material within Tanzania to prevent spread of pests and diseases
+
+## CITES Implementation {#cites}
+
+Tanzania ratified CITES in 1980 and is a significant party, having been repeatedly at the centre of elephant ivory and rosewood trade debates. The **CITES Management Authority** for plants operates under MNRT (Ministry of Natural Resources and Tourism).
+
+Critical plant-related CITES milestone: **COP17 (2016)** listed all *Dalbergia* species on Appendix II, directly impacting Tanzania's mpingo (*D. melanoxylon*) export trade. Tanzania had previously relied on *Dalbergia* for significant export revenue and was required to establish and comply with Non-Detriment Findings (NDFs).
+
+<div class="alert alert-warning" role="alert">
+**⚠ Implementation Gap** — Tanzania seized 8,069 logs of CITES-regulated rosewood (*Dalbergia* spp.) from Madagascar in 2014. Multiple trials and appeals resulted in courts ordering the logs returned to the shippers in 2023. This case — analysed in [*Diversity* 16(3):183, 2024](https://www.mdpi.com/1424-2818/16/3/183) — revealed that Tanzanian and regional courts lack adequate understanding of CITES Appendix II plant trade provisions.
+</div>
+
+---
+
+# Regulatory Institutions {#institutions}
+
+```{r institutions-table}
+tribble(
+  ~`Abbrev.`, ~`Institution`,                                    ~`Ministry`,     ~`Mandate`,
+  "TAWA",     "Tanzania Wildlife Management Authority",           "MNRT",          "Game Reserves management; WCA enforcement; wildlife permits; CITES authority (wildlife)",
+  "TANAPA",   "Tanzania National Parks Authority",                "MNRT",          "National park management; invasive species control in parks; tourism regulation",
+  "TFS",      "Tanzania Forest Services Agency",                  "MNRT",          "Forests Act enforcement; timber licensing; charcoal regulation; protected tree species",
+  "NEMC",     "National Environmental Management Council",        "VP Office",     "Environmental regulation; EMA enforcement; invasive species monitoring; EIA review",
+  "TAWIRI",   "Tanzania Wildlife Research Institute",             "MNRT",          "Wildlife research; biodiversity assessments; monitoring; Red List contributions for Tanzania",
+  "MAFSC",    "Ministry of Agriculture — Plant Health Directorate","MAFSC",        "Plant Protection Act enforcement; phytosanitary; quarantine; noxious weed control",
+  "TOSCI",    "Tanzania Official Seed Certification Institute",   "MAFSC",         "Seed certification; plant genetic resources; seed trade regulation"
+) |>
+  styled_kable(caption="Table 1. Institutions with Plant Regulatory Mandates in Tanzania", height="360px")
+```
+
+---
+
+# Comprehensive Plant Species Listing {#species}
+
+## Master Species Table
+
+```{r master-table}
+species |>
+  arrange(governing_law, iucn_status, common_name) |>
+  mutate(`Scientific Name` = paste0("*", scientific_name, "*")) |>
+  select(`Common Name`=common_name, `Scientific Name`, `Group`=taxonomic_group,
+         `IUCN`=iucn_status, `CITES`=cites_appendix,
+         `Tanzania Status`=legal_status_tz,
+         `Managing Inst.`=managing_institution, `Notes`=notes) |>
+  styled_kable(caption="Table 2. Restricted/Protected Plant Species in Tanzania", height="600px")
+```
+
+## CITES-Listed and Regulated Timber Species {#timber}
+
+Tanzania's *Dalbergia melanoxylon* (African blackwood, mpingo) is one of the world's most valuable timbers by weight, prized for wind and string instrument manufacturing. Following COP17's listing of all *Dalbergia* on CITES Appendix II, Tanzania established a Non-Detriment Finding (NDF) process and an annual export quota.
+
+```{r timber-table}
+species |>
+  filter(cites_appendix %in% c("Appendix I","Appendix II") |
+         str_detect(governing_law, regex("Forests Act|CITES", ignore_case=TRUE))) |>
+  arrange(cites_appendix, common_name) |>
+  mutate(`Scientific Name` = paste0("*", scientific_name, "*")) |>
+  select(`Common Name`=common_name, `Scientific Name`,
+         `IUCN`=iucn_status, `CITES`=cites_appendix,
+         `Tanzania Status`=legal_status_tz, `Notes`=notes) |>
+  styled_kable(caption="Table 3. CITES-Listed and Protected Timber/Forest Species in Tanzania", height="400px")
+```
+
+## Invasive Species {#invasive}
+
+```{r invasive-table}
+species |>
+  filter(str_detect(restriction_type, regex("invasive|eradication|control|noxious|mandated", ignore_case=TRUE))) |>
+  arrange(common_name) |>
+  mutate(`Scientific Name` = paste0("*", scientific_name, "*")) |>
+  select(`Common Name`=common_name, `Scientific Name`,
+         `Tanzania Status`=legal_status_tz, `Notes`=notes) |>
+  styled_kable(caption=glue("Table 4. Invasive Plant Species in Tanzania ({n_invasive} species)"), height="350px")
+```
+
+## GBIF Backbone Resolution {#gbif}
+
+```{r gbif-table}
+if (!is.null(plants_gbif) && nrow(plants_gbif) > 0) {
+  plants_gbif |>
+    mutate(
+      gbif_url = if_else(!is.na(GBIFusageKey)&GBIFusageKey!="",
+                         glue("https://www.gbif.org/species/{GBIFusageKey}"),NA_character_),
+      iucn_url = paste0("https://www.iucnredlist.org/search?query=",
+                        URLencode(str_squish(coalesce(prefName,"")),reserved=TRUE)),
+      `Scientific Name` = if_else(!is.na(gbif_url),
+        glue("<a href='{gbif_url}' target='_blank'><em>{prefName}</em></a>"),
+        glue("<em>{coalesce(prefName,'')}</em>")),
+      `IUCN` = glue("<a href='{iucn_url}' target='_blank'>IUCN &#x2197;</a>")
+    ) |>
+    transmute(`#`=row_number(), `Scientific Name`, `Common Name`=coalesce(englishName,""),
+              `Family`=coalesce(family,""), `GBIF Key`=coalesce(GBIFusageKey,""),
+              `Tanzania Status`=coalesce(legal_status_tz,""),
+              `Synonyms`=str_trunc(coalesce(synonyms,""),80), `IUCN`) |>
+    styled_kable(caption=glue("Table 5. Tanzania Regulated Plants — GBIF Backbone Resolved ({n_gbif_resolved} of {n_species} | {n_gbif_families} families)"), height="600px")
+} else { cat("*GBIF data will be generated on first render with internet access.*") }
+```
+
+---
+
+# Regulatory Gaps {#gaps}
+
+```{r gaps-table}
+tribble(
+  ~`#`, ~`Gap Area`,                                               ~`Severity`, ~`Status (2025)`,
+  "1",  "No published comprehensive threatened plant species list", "High",     "Unresolved",
+  "2",  "Dalbergia/rosewood: court enforcement failures on CITES",  "High",     "Documented failure (2023 acquittal)",
+  "3",  "Mpingo (D. melanoxylon): export quota monitoring gaps",    "High",     "NDF process active",
+  "4",  "Charcoal production: miombo woodland degradation",         "High",     "Partial regulations",
+  "5",  "Eastern Arc endemic plants — most lack legal protection",  "High",     "Unresolved",
+  "6",  "NEMC IAS enforcement limited capacity",                    "Medium",   "Unresolved",
+  "7",  "Sandalwood ban enforcement at border posts",               "Medium",   "Partial",
+  "8",  "EIA process does not require plant species surveys",       "Medium",   "Unresolved"
+) |>
+  kbl(caption="Table 6. Regulatory Gaps for Plant Species in Tanzania", escape=FALSE, align="l") |>
+  kable_styling(bootstrap_options=c("striped","hover","condensed","responsive"), full_width=TRUE, font_size=12) |>
+  column_spec(3, bold=TRUE, color=ifelse(c(TRUE,TRUE,TRUE,TRUE,TRUE,FALSE,FALSE,FALSE),"white","black"),
+              background=ifelse(c(TRUE,TRUE,TRUE,TRUE,TRUE,FALSE,FALSE,FALSE),"#c0392b","#e67e22"))
+```
+
+## Eastern Arc Mountains — A Plant Biodiversity Hotspot Without Adequate Protection
+
+The Eastern Arc Mountains (EAM) — a chain of 13 ancient forest blocks from southern Kenya to southern Tanzania — are recognised as one of the world's top biodiversity hotspots, with over **2,000 endemic plant species**. Despite this global significance, the vast majority of EAM endemic plant species lack specific domestic legal protection in Tanzania. The WCA 2009 and Forests Act 2002 protect the forest reserves where these plants occur, but species-level listing and monitoring is absent. IUCN assessments document significant threats to EAM endemics including habitat loss, climate change, and collection.
+
+---
+
+# Key References {#references}
+
+| Resource | Link |
+|----------|------|
+| Wildlife Conservation Act 2009 — TanzLII | [tanzlii.org](https://tanzlii.org/tz/legislation/act/2009/5/) |
+| Forests Act 2002 (Cap. 323) — TanzLII | [tanzlii.org](https://tanzlii.org) |
+| Environmental Management Act 2004 | [tanzlii.org](https://tanzlii.org) |
+| Tanzania Forest Services | [tfs.go.tz](https://www.tfs.go.tz) |
+| GBIF Tanzania | [gbif.org/country/TZ](https://www.gbif.org/country/TZ/summary) |
+| EAM — Conservation International | [conservation.org](https://www.conservation.org) |
+
+---
+
+```{r session-info}
+sessionInfo()
+```
+
+```{r kqb-footer, results='asis', echo=FALSE}
+logo_sm <- kqb_logo_img(height="28px")
+cat(paste0('<div class="kqb-report-footer">',
+  if(nzchar(logo_sm)) paste0(logo_sm,'<br/>') else "",
+  '<p style="font-weight:600;color:#0d2240;">',kqb_co$name,' &mdash; ',kqb_co$tagline,'</p>',
+  '<p>',kqb_co$legal_name,' | ',kqb_co$country,'</p>',
+  '<p style="margin-top:6px;font-size:10px;color:#aaa;">Generated ',format(Sys.Date(),"%d %B %Y"),
+  ' &nbsp;&bull;&nbsp; For informational purposes only &nbsp;&bull;&nbsp; Verify at TAWA / TFS / NEMC</p>',
+  '</div>'))
+```

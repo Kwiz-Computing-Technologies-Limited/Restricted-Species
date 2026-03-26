@@ -1,0 +1,176 @@
+---
+title: "Restricted and Protected Plant Species in Thailand"
+subtitle: "Plants Act B.E. 2518 (1975), Wild Animal and Plant Conservation and Protection Act B.E. 2562 (2019) — Preliminary Reference"
+author: "Kwiz Research"
+date: "`r format(Sys.Date(), '%d %B %Y')`"
+output:
+  html_document:
+    toc: true
+    toc_float: {collapsed: false, smooth_scroll: true}
+    toc_depth: 3
+    number_sections: true
+    theme: flatly
+    highlight: tango
+    df_print: paged
+    code_folding: hide
+    css: style.css
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo=FALSE, warning=FALSE, message=FALSE,
+                      fig.align="center", fig.width=9, fig.height=5, out.width="100%")
+suppressPackageStartupMessages({
+  library(tidyverse); library(kableExtra); library(glue); library(janitor); library(rgbif)
+})
+.kqb_pkg <- "/Users/kwizera.jvk/Desktop/Kwiz Computing Comes to Life/Kwiz Quants/libs/kwizbranding"
+suppressMessages(devtools::load_all(.kqb_pkg, quiet=TRUE))
+kqb_co <- kqb_company("research"); kqb_col <- kqb_colours()
+.kqb_logo_candidates <- c(file.path(here::here(),"docs","www"),file.path(getwd(),"www"),file.path(getwd()),file.path(here::here()))
+.kqb_load_logo <- function(fn,ck){for(d in .kqb_logo_candidates){p<-file.path(d,fn);if(file.exists(p)){assign(ck,paste0("data:image/svg+xml;base64,",base64enc::base64encode(readBin(p,"raw",file.size(p)))),envir=.GlobalEnv);return(invisible(TRUE))}}}
+.kqb_load_logo("Kwiz Black Logo Transparent bg.svg",".kqb_wm_cache")
+.kqb_load_logo("Kwiz Inverted Color Transparent bg.svg",".kqb_display_cache")
+styled_kable <- function(df,caption=NULL,scroll=TRUE,height="450px"){k<-df|>kbl(caption=caption,escape=FALSE,align="l")|>kable_styling(bootstrap_options=c("striped","hover","condensed","responsive"),full_width=TRUE,font_size=12);if(scroll)k<-scroll_box(k,height=height);k}
+
+species <- tribble(
+  ~common_name,              ~scientific_name,            ~taxonomic_group, ~iucn_status,            ~cites_appendix,  ~legal_status_th,                              ~restriction_type,              ~governing_law,                    ~managing_institution,   ~notes,
+  "Siamese rosewood",        "Dalbergia cochinchinensis",  "Magnoliopsida",  "Critically Endangered", "Appendix II",    "Conserved plant (Plants Act B.E. 2518) / CITES App. II","Collection/trade prohibited",  "Plants Act B.E. 2518 / CITES",    "DNP / DOF",             "Phayung; most trafficked timber species globally; >90% population decline; Mekong region endemic",
+  "Blue vanda orchid",       "Vanda coerulea",             "Magnoliopsida",  "Endangered",            "Appendix I",     "Conserved plant (Plants Act B.E. 2518) / CITES App. I","Collection/trade prohibited",  "Plants Act B.E. 2518 / CITES",    "DNP",                   "Royal blue orchid; Chiang Mai highlands; wild collection for horticulture devastated wild populations",
+  "Nepenthes (Mekong)",      "Nepenthes mirabilis",        "Magnoliopsida",  "Vulnerable",            "Appendix II",    "Protected (WACPPA B.E. 2562 / CITES App. II)", "Collection/trade regulated",   "WACPPA B.E. 2562 / CITES",        "DNP",                   "Widespread tropical pitcher plant; Thailand populations on CITES Appendix II; popular in carnivorous plant trade",
+  "Rafflesia",               "Rafflesia kerrii",           "Magnoliopsida",  "Critically Endangered", "Not listed",     "Conserved plant (Plants Act B.E. 2518)",       "Collection/disturbance prohibited","Plants Act B.E. 2518",          "DNP",                   "World's largest individual flower; southern Thailand and Malaysia; parasitic on Tetrastigma vines; highly threatened",
+  "Black orchid",            "Coelogyne pandurata",        "Magnoliopsida",  "Least Concern",         "Appendix II",    "Protected (CITES App. II)",                   "Collection/trade regulated",   "CITES / Plants Act B.E. 2518",    "DNP",                   "Spectacular Borneo-Thai orchid; black lip; epiphytic; all CITES App. II orchids regulated under Plants Act",
+  "Siam tulip",              "Curcuma alismatifolia",      "Magnoliopsida",  "Least Concern",         "Not listed",     "Permitted commercial export — regulated",     "Trade regulated (export permit)","Plants Act B.E. 2518 — prohibited export list","DOA",      "Thailand's major commercial flower export; wild populations protected; commercial cultivation permitted",
+  "Mangrove apple",          "Sonneratia caseolaris",      "Magnoliopsida",  "Least Concern",         "Not listed",     "Protected (mangrove forest regulations)",     "Mangrove felling prohibited",  "Mangrove Management regulations / WACPPA","DNP",            "Keystone mangrove species; coastal fisheries habitat; mangrove loss in Thailand ~25% since 1990",
+  "Chromolaena",             "Chromolaena odorata",        "Magnoliopsida",  "Least Concern",         "Not listed",     "Invasive — management required",              "Control mandated in reserves",  "DNP management plans",            "DNP / ONEP",            "Siam weed; major invasive in Thai forest margins and buffer zones; displaces native ground flora rapidly",
+  "Water hyacinth",          "Eichhornia crassipes",       "Magnoliopsida",  "Least Concern",         "Not listed",     "Invasive — control required",                 "Control mandated",             "ONEP / RID regulations",          "ONEP / RID",            "Phak tob chawa; clogs Thai waterways and reservoirs; >100,000 ha affected; control programme ongoing",
+  "Teak",                    "Tectona grandis",            "Magnoliopsida",  "Least Concern",         "Not listed",     "Preserved plant — logging banned (1989)",     "All logging prohibited",       "Logging Ban Policy 1989 / Forest Act","RFD",               "Royal Forest Department ban on all commercial logging 1989; teak still illegally harvested near Myanmar border"
+)
+
+n_species <- nrow(species)
+proj_root <- here::here()
+gbif_cache <- file.path(proj_root,"output","tables","thailand_regulated_plants_gbif.csv")
+if (!file.exists(gbif_cache)) {
+  cn <- function(nm) nm|>str_remove_all("\\s+spp\\.?$")|>str_remove_all("\\(.*?\\)")|>str_squish()
+  nd <- tibble(name=cn(species$scientific_name),kingdom="Plantae")
+  br <- tryCatch(name_backbone_checklist(nd),error=function(e) map_dfr(nd$name,function(nm) tryCatch(as_tibble(name_backbone(name=nm,kingdom="Plantae")),error=function(e2) tibble(usageKey=NA_integer_,canonicalName=nm,matchType="NONE"))))
+  gv <- function(k){if(is.na(k))return(NA_character_);tryCatch({vn<-name_usage(key=as.numeric(k),data="vernacularNames",limit=100);if(is.null(vn$data)||nrow(vn$data)==0)return(NA_character_);en<-vn$data|>filter(language%in%c("eng","en"))|>pull(vernacularName)|>unique();if(length(en)==0)NA_character_ else paste(en,collapse=", ")},error=function(e)NA_character_)}
+  gs <- function(k){if(is.na(k))return(NA_character_);tryCatch({syn<-name_usage(key=as.numeric(k),data="synonyms",limit=100);if(is.null(syn$data)||nrow(syn$data)==0)return(NA_character_);s<-syn$data|>pull(canonicalName)|>unique()|>na.omit();if(length(s)==0)NA_character_ else paste(s,collapse=", ")},error=function(e)NA_character_)}
+  bc <- br|>as_tibble()|>mutate(GBIFusageKey=as.character(usageKey),prefName=coalesce(species,canonicalName,verbatim_name),gbif_family=family)
+  sm <- species|>mutate(cs=cn(scientific_name))|>bind_cols(bc|>select(GBIFusageKey,prefName,gbif_family,gbif_matchType=matchType,gbif_confidence=confidence))
+  keys <- sm|>filter(!is.na(GBIFusageKey))|>distinct(GBIFusageKey)|>pull(GBIFusageKey)
+  vl<-list();sl<-list()
+  for(i in seq_along(keys)){k<-keys[i];vl[[k]]<-gv(k);sl[[k]]<-gs(k);if(i%%5==0)Sys.sleep(0.2)}
+  vd<-tibble(GBIFusageKey=names(vl),gbif_english=unlist(vl),gbif_synonyms=unlist(sl[names(vl)]))
+  en<-sm|>left_join(vd,by="GBIFusageKey")|>mutate(englishName=coalesce(gbif_english,common_name),synonyms=gbif_synonyms,family=gbif_family)
+  dir.create(file.path(proj_root,"output","tables"),recursive=TRUE,showWarnings=FALSE)
+  en|>select(GBIFusageKey,prefName,family,englishName,synonyms,legal_status_th,restriction_type,governing_law)|>write_csv(gbif_cache)
+}
+if(file.exists(gbif_cache)){plants_gbif<-read_csv(gbif_cache,col_types=cols(.default=col_character()),show_col_types=FALSE);n_gbif_resolved<-sum(!is.na(plants_gbif$GBIFusageKey)&plants_gbif$GBIFusageKey!="");n_gbif_families<-n_distinct(plants_gbif$family,na.rm=TRUE)}else{plants_gbif<-NULL;n_gbif_resolved<-0L;n_gbif_families<-0L}
+```
+
+```{r kqb-watermark, results='asis', echo=FALSE}
+cat(kqb_watermark_css(opacity=0.04,size="280px auto"))
+uri<-kqb_watermark_uri();if(nzchar(uri))cat(paste0('<style>\nbody::after{\ncontent:"";position:fixed;top:0;left:0;width:100%;height:100%;z-index:9000;pointer-events:none;background-image:url("',uri,'");background-repeat:repeat;background-size:280px auto;opacity:0.04;}\n</style>\n'))
+```
+
+---
+
+# Executive Summary {.unnumbered}
+
+Thailand hosts approximately **11,000–12,000 plant species** within a diverse landscape spanning tropical rainforests, monsoon forests, mangroves, and montane cloud forests. The country is part of the Indo-Burma biodiversity hotspot. Thailand's plant protection regime operates under the **Plants Act B.E. 2518 (1975)**, which classifies plants into three categories — **conserved** (strictly protected), **controlled** (export/import regulated), and **prohibited** (import banned) — and the newer **Wild Animal and Plant Conservation and Protection Act B.E. 2562 (2019)**, which implements CITES obligations domestically.
+
+<div class="alert alert-info" role="alert">
+**Preliminary Report** — Full species listing from the Plants Act B.E. 2518 conserved and controlled plant lists to be completed. Current report covers `r n_species` representative species. The Plants Act list is maintained by the Department of Agriculture (DOA) with DNP coordinating CITES implementation.
+</div>
+
+---
+
+# Legal Framework (Summary) {#legal-framework}
+
+| Law / Instrument | Year | Key Provision |
+|-----------------|------|---------------|
+| Plants Act B.E. 2518 | 1975 (amended) | Three-tier classification: conserved (protected), controlled (permit), prohibited (import ban); DOA administration |
+| Wild Animal and Plant Conservation and Protection Act B.E. 2562 | 2019 | CITES implementation; replaces Wildlife Enhancement and Conservation Act B.E. 2535; App. I/II/III obligations |
+| National Forest Act B.E. 2484 | 1941 (amended) | Forest reserves; timber licensing; RFD management |
+| Environmental Quality Promotion and Conservation Act B.E. 2535 | 1992 | EIA; environmental quality management; ONEP coordination |
+| Logging Ban Policy | 1989 | Blanket ban on commercial logging in natural forests |
+
+Full text: [DNP Thailand](https://www.dnp.go.th) | [DOA Thailand](https://www.doa.go.th) | [FAOLEX Thailand](https://faolex.fao.org/thailand)
+
+---
+
+# Regulatory Institutions {#institutions}
+
+| Institution | Role |
+|-------------|------|
+| DNP (Department of National Parks, Wildlife and Plant Conservation) | WACPPA administration; CITES management authority; national parks; conserved plants |
+| DOF (Department of Forestry / Royal Forest Department, RFD) | Timber licensing; forest management; teak and timber species oversight |
+| DOA (Department of Agriculture) | Plants Act administration; conserved/controlled plant lists; import permits |
+| ONEP (Office of Natural Resources and Environment Policy and Planning) | Environmental policy; biodiversity strategy; NBSAP coordination |
+| Queen Sirikit Botanic Garden | Ex-situ plant conservation; orchid collections; seed bank |
+| Forest Herbarium (BKF) | National herbarium; plant taxonomy; species identification support |
+
+---
+
+# Preliminary Species Listing {#species}
+
+```{r master-table}
+species|>arrange(iucn_status,common_name)|>mutate(`Scientific Name`=paste0("*",scientific_name,"*"))|>
+  select(`Common Name`=common_name,`Scientific Name`,`IUCN`=iucn_status,`CITES`=cites_appendix,
+         `Thailand Status`=legal_status_th,`Managing Inst.`=managing_institution,`Notes`=notes)|>
+  styled_kable(caption="Table 1. Preliminary — Protected Plant Species in Thailand",height="450px")
+```
+
+## GBIF Backbone Resolution
+
+```{r gbif-table}
+if(!is.null(plants_gbif)&&nrow(plants_gbif)>0){plants_gbif|>
+  mutate(gu=if_else(!is.na(GBIFusageKey)&GBIFusageKey!="",glue("https://www.gbif.org/species/{GBIFusageKey}"),NA_character_),
+         iu=paste0("https://www.iucnredlist.org/search?query=",URLencode(str_squish(coalesce(prefName,"")),reserved=TRUE)),
+         `Scientific Name`=if_else(!is.na(gu),glue("<a href='{gu}' target='_blank'><em>{prefName}</em></a>"),glue("<em>{coalesce(prefName,'')}</em>")),
+         `IUCN`=glue("<a href='{iu}' target='_blank'>IUCN &#x2197;</a>"))|>
+  transmute(`#`=row_number(),`Scientific Name`,`Common Name`=coalesce(englishName,""),`Family`=coalesce(family,""),
+            `GBIF Key`=coalesce(GBIFusageKey,""),`Thailand Status`=coalesce(legal_status_th,""),
+            `Synonyms`=str_trunc(coalesce(synonyms,""),80),`IUCN`)|>
+  styled_kable(caption=glue("Table 2. Thailand — GBIF Resolved ({n_gbif_resolved} of {n_species} | {n_gbif_families} fam.)"),height="450px")
+}else{cat("*GBIF data will be generated on first render.*")}
+```
+
+---
+
+# Regulatory Gaps (Summary) {#gaps}
+
+| # | Gap | Severity |
+|---|-----|----------|
+| 1 | Siamese rosewood trafficking — one of world's most seized timber species; organised criminal syndicates involved | High |
+| 2 | WACPPA 2019 enforcement capacity insufficient; border controls for plant trafficking inadequate | High |
+| 3 | Orchid wild collection continues despite Plants Act; online trade via Line/Facebook unmonitored | High |
+| 4 | Mangrove coastal forest loss ongoing from aquaculture and coastal development | High |
+| 5 | Chromolaena odorata invasion in national park buffer zones inadequately resourced | Medium |
+| 6 | Plants Act conserved plant list review overdue relative to current IUCN threat assessments | Medium |
+
+---
+
+# References {#references}
+
+| Resource | Link |
+|----------|------|
+| DNP Thailand | [dnp.go.th](https://www.dnp.go.th) |
+| Department of Agriculture (DOA) | [doa.go.th](https://www.doa.go.th) |
+| Royal Forest Department (RFD) | [forest.go.th](https://www.forest.go.th) |
+| GBIF Thailand | [gbif.org/country/TH](https://www.gbif.org/country/TH/summary) |
+| CITES Thailand | [cites.org — Thailand](https://cites.org/eng/cms/index.php/component/cp/country/TH) |
+
+---
+
+```{r session-info}
+sessionInfo()
+```
+
+```{r kqb-footer, results='asis', echo=FALSE}
+logo_sm<-kqb_logo_img(height="28px")
+cat(paste0('<div class="kqb-report-footer">',if(nzchar(logo_sm))paste0(logo_sm,'<br/>')else"",
+  '<p style="font-weight:600;color:#0d2240;">',kqb_co$name,' &mdash; ',kqb_co$tagline,'</p>',
+  '<p>',kqb_co$legal_name,' | ',kqb_co$country,'</p>',
+  '<p style="margin-top:6px;font-size:10px;color:#aaa;">Generated ',format(Sys.Date(),"%d %B %Y"),
+  ' &nbsp;&bull;&nbsp; Preliminary — Verify at DNP / DOA Thailand / CITES</p></div>'))
+```

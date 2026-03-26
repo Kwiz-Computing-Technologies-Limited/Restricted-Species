@@ -1,0 +1,159 @@
+---
+title: "Restricted and Protected Plant Species in Malaysia"
+subtitle: "Wildlife Conservation Act 2010, National Forestry Act 1984, and CITES — Preliminary Reference"
+author: "Kwiz Research"
+date: "`r format(Sys.Date(), '%d %B %Y')`"
+output:
+  html_document:
+    toc: true
+    toc_float: {collapsed: false, smooth_scroll: true}
+    toc_depth: 3
+    number_sections: true
+    theme: flatly
+    highlight: tango
+    df_print: paged
+    code_folding: hide
+    css: style.css
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo=FALSE, warning=FALSE, message=FALSE,
+                      fig.align="center", fig.width=9, fig.height=5, out.width="100%")
+suppressPackageStartupMessages({
+  library(tidyverse); library(kableExtra); library(glue); library(janitor); library(rgbif)
+})
+.kqb_pkg <- "/Users/kwizera.jvk/Desktop/Kwiz Computing Comes to Life/Kwiz Quants/libs/kwizbranding"
+suppressMessages(devtools::load_all(.kqb_pkg, quiet=TRUE))
+kqb_co <- kqb_company("research"); kqb_col <- kqb_colours()
+.kqb_logo_candidates <- c(file.path(here::here(),"docs","www"),file.path(getwd(),"www"),file.path(getwd()),file.path(here::here()))
+.kqb_load_logo <- function(fn,ck){for(d in .kqb_logo_candidates){p<-file.path(d,fn);if(file.exists(p)){assign(ck,paste0("data:image/svg+xml;base64,",base64enc::base64encode(readBin(p,"raw",file.size(p)))),envir=.GlobalEnv);return(invisible(TRUE))}}}
+.kqb_load_logo("Kwiz Black Logo Transparent bg.svg",".kqb_wm_cache")
+.kqb_load_logo("Kwiz Inverted Color Transparent bg.svg",".kqb_display_cache")
+styled_kable <- function(df,caption=NULL,scroll=TRUE,height="450px"){k<-df|>kbl(caption=caption,escape=FALSE,align="l")|>kable_styling(bootstrap_options=c("striped","hover","condensed","responsive"),full_width=TRUE,font_size=12);if(scroll)k<-scroll_box(k,height=height);k}
+
+species <- tribble(
+  ~common_name,              ~scientific_name,            ~taxonomic_group, ~iucn_status,            ~cites_appendix, ~legal_status_my,                    ~restriction_type,          ~governing_law,            ~managing_institution, ~notes,
+  "Rafflesia",               "Rafflesia kerrii",          "Magnoliopsida",  "Critically Endangered", "Not listed",    "Totally Protected (WCA 2010)",      "Collection/trade prohibited","WCA 2010 First Schedule", "JHL / PERHILITAN",    "Malaysia endemic Rafflesia; Peninsular Malaysia; flower collapses within days",
+  "Nepenthes (Borneo)",      "Nepenthes rajah",           "Magnoliopsida",  "Vulnerable",            "Appendix I",    "Totally Protected (WCA 2010)",      "Collection/trade prohibited","WCA 2010 / CITES",        "JHL / Sabah Parks",   "Largest pitcher plant; Sabah Borneo; CITES Appendix I",
+  "Slipper orchid (Borneo)", "Paphiopedilum rothschildianum","Magnoliopsida","Critically Endangered","Appendix I",    "Totally Protected (WCA 2010)",      "Collection/trade prohibited","WCA 2010 / CITES",        "JHL / Sabah Parks",   "Gold of Kinabalu; 1 specimen = thousands USD on black market",
+  "Borneo ironwood",         "Eusideroxylon zwageri",     "Magnoliopsida",  "Vulnerable",            "Not listed",    "Totally Protected Timber",          "Felling prohibited",        "National Forestry Act 1984","JAKIM / STF",         "Belian; hardest tropical timber; harvesting ban but poaching continues",
+  "Meranti (Sarawak)",       "Shorea macrophylla",        "Magnoliopsida",  "Vulnerable",            "Not listed",    "Protected Forest Species",          "Harvest regulated",         "National Forestry Act 1984","Sarawak Forestry",    "Engkabang; major dipterocarp; seed for illipe butter trade",
+  "Ramin",                   "Gonystylus bancanus",       "Magnoliopsida",  "Vulnerable",            "Appendix II",   "Protected (CITES Appendix II)",     "Export permit required",    "CITES Regs / NFA 1984",   "PERHILITAN / SFC",    "Peat swamp forest timber; CITES Appendix II since 2004",
+  "Malaysian orchid",        "Bulbophyllum lobbii",       "Magnoliopsida",  "Least Concern",         "Appendix II",   "Protected (CITES Appendix II)",     "Collection permit required","CITES Regs / WCA 2010",   "PERHILITAN",          "All orchids Appendix II; Malaysia major source of traded orchids",
+  "Water hyacinth",          "Eichhornia crassipes",      "Magnoliopsida",  "Least Concern",         "Not listed",    "Invasive Species",                  "Control mandated",          "EQA 1974 / State rules",  "DOE / JPS",           "Major invasive in Malaysian reservoirs and rivers",
+  "Mikania vine",            "Mikania micrantha",         "Magnoliopsida",  "Least Concern",         "Not listed",    "Invasive Species",                  "Control in plantations",    "State Forestry Acts",     "DOF",                 "Mile-a-minute vine; major problem in oil palm and rubber plantations"
+)
+
+n_species <- nrow(species)
+proj_root <- here::here()
+gbif_cache <- file.path(proj_root,"output","tables","malaysia_regulated_plants_gbif.csv")
+if (!file.exists(gbif_cache)) {
+  cn <- function(nm) nm|>str_remove_all("\\s+spp\\.?$")|>str_remove_all("\\(.*?\\)")|>str_squish()
+  nd <- tibble(name=cn(species$scientific_name),kingdom="Plantae")
+  br <- tryCatch(name_backbone_checklist(nd),error=function(e) map_dfr(nd$name,function(nm) tryCatch(as_tibble(name_backbone(name=nm,kingdom="Plantae")),error=function(e2) tibble(usageKey=NA_integer_,canonicalName=nm,matchType="NONE"))))
+  gv <- function(k){if(is.na(k))return(NA_character_);tryCatch({vn<-name_usage(key=as.numeric(k),data="vernacularNames",limit=100);if(is.null(vn$data)||nrow(vn$data)==0)return(NA_character_);en<-vn$data|>filter(language%in%c("eng","en"))|>pull(vernacularName)|>unique();if(length(en)==0)NA_character_ else paste(en,collapse=", ")},error=function(e)NA_character_)}
+  gs <- function(k){if(is.na(k))return(NA_character_);tryCatch({syn<-name_usage(key=as.numeric(k),data="synonyms",limit=100);if(is.null(syn$data)||nrow(syn$data)==0)return(NA_character_);s<-syn$data|>pull(canonicalName)|>unique()|>na.omit();if(length(s)==0)NA_character_ else paste(s,collapse=", ")},error=function(e)NA_character_)}
+  bc <- br|>as_tibble()|>mutate(GBIFusageKey=as.character(usageKey),prefName=coalesce(species,canonicalName,verbatim_name),gbif_family=family)
+  sm <- species|>mutate(cs=cn(scientific_name))|>bind_cols(bc|>select(GBIFusageKey,prefName,gbif_family,gbif_matchType=matchType,gbif_confidence=confidence))
+  keys <- sm|>filter(!is.na(GBIFusageKey))|>distinct(GBIFusageKey)|>pull(GBIFusageKey)
+  vl<-list();sl<-list()
+  for(i in seq_along(keys)){k<-keys[i];vl[[k]]<-gv(k);sl[[k]]<-gs(k);if(i%%5==0)Sys.sleep(0.2)}
+  vd<-tibble(GBIFusageKey=names(vl),gbif_english=unlist(vl),gbif_synonyms=unlist(sl[names(vl)]))
+  en<-sm|>left_join(vd,by="GBIFusageKey")|>mutate(englishName=coalesce(gbif_english,common_name),synonyms=gbif_synonyms,family=gbif_family)
+  dir.create(file.path(proj_root,"output","tables"),recursive=TRUE,showWarnings=FALSE)
+  en|>select(GBIFusageKey,prefName,family,englishName,synonyms,legal_status_my,restriction_type,governing_law)|>write_csv(gbif_cache)
+}
+if(file.exists(gbif_cache)){plants_gbif<-read_csv(gbif_cache,col_types=cols(.default=col_character()),show_col_types=FALSE);n_gbif_resolved<-sum(!is.na(plants_gbif$GBIFusageKey)&plants_gbif$GBIFusageKey!="");n_gbif_families<-n_distinct(plants_gbif$family,na.rm=TRUE)}else{plants_gbif<-NULL;n_gbif_resolved<-0L;n_gbif_families<-0L}
+```
+
+```{r kqb-watermark, results='asis', echo=FALSE}
+cat(kqb_watermark_css(opacity=0.04,size="280px auto"))
+uri<-kqb_watermark_uri();if(nzchar(uri))cat(paste0('<style>\nbody::after{\ncontent:"";position:fixed;top:0;left:0;width:100%;height:100%;z-index:9000;pointer-events:none;background-image:url("',uri,'");background-repeat:repeat;background-size:280px auto;opacity:0.04;}\n</style>\n'))
+```
+
+---
+
+# Executive Summary {.unnumbered}
+
+Malaysia hosts approximately **15,000 plant species** across Peninsular Malaysia, Sabah, and Sarawak, with some of the world's richest tropical forest biodiversity. The country is a global centre of Rafflesia, Nepenthes, orchid, and dipterocarp diversity.
+
+<div class="alert alert-info" role="alert">
+**Preliminary Report** — Full species listing from WCA 2010 First and Second Schedules and National Forestry Act protected species lists to be completed. Current report covers `r n_species` representative species.
+</div>
+
+---
+
+# Legal Framework (Summary) {#legal-framework}
+
+| Law | Year | Key Provision |
+|-----|------|---------------|
+| Wildlife Conservation Act (Act 716) | 2010 | First Schedule (Totally Protected); Second Schedule (Protected); 10 year prison / RM100,000 fine |
+| National Forestry Act (Act 313) | 1984 | Protected tree species; timber licensing; forest reserves |
+| Environmental Quality Act (Act 127) | 1974 | Environmental framework; pollution and degradation controls |
+| Sarawak Wildlife Protection Ordinance | 1998 | State-level wildlife protection (Sarawak jurisdiction) |
+| Sabah Wildlife Conservation Enactment | 1997 | State-level wildlife protection (Sabah jurisdiction) |
+
+Full text: [MyBIS — WCA 2010](https://www.mybis.gov.my/pb/675) | [FAOLEX](https://faolex.fao.org/docs/pdf/mal107883.pdf)
+
+---
+
+# Preliminary Species Listing {#species}
+
+```{r master-table}
+species|>arrange(iucn_status,common_name)|>mutate(`Scientific Name`=paste0("*",scientific_name,"*"))|>
+  select(`Common Name`=common_name,`Scientific Name`,`IUCN`=iucn_status,`CITES`=cites_appendix,
+         `Malaysia Status`=legal_status_my,`Managing Inst.`=managing_institution,`Notes`=notes)|>
+  styled_kable(caption="Table 1. Preliminary — Protected Plant Species in Malaysia",height="450px")
+```
+
+## GBIF Backbone Resolution
+
+```{r gbif-table}
+if(!is.null(plants_gbif)&&nrow(plants_gbif)>0){plants_gbif|>
+  mutate(gu=if_else(!is.na(GBIFusageKey)&GBIFusageKey!="",glue("https://www.gbif.org/species/{GBIFusageKey}"),NA_character_),
+         iu=paste0("https://www.iucnredlist.org/search?query=",URLencode(str_squish(coalesce(prefName,"")),reserved=TRUE)),
+         `Scientific Name`=if_else(!is.na(gu),glue("<a href='{gu}' target='_blank'><em>{prefName}</em></a>"),glue("<em>{coalesce(prefName,'')}</em>")),
+         `IUCN`=glue("<a href='{iu}' target='_blank'>IUCN &#x2197;</a>"))|>
+  transmute(`#`=row_number(),`Scientific Name`,`Common Name`=coalesce(englishName,""),`Family`=coalesce(family,""),
+            `GBIF Key`=coalesce(GBIFusageKey,""),`Malaysia Status`=coalesce(legal_status_my,""),
+            `Synonyms`=str_trunc(coalesce(synonyms,""),80),`IUCN`)|>
+  styled_kable(caption=glue("Table 2. Malaysia — GBIF Resolved ({n_gbif_resolved} of {n_species} | {n_gbif_families} fam.)"),height="450px")
+}else{cat("*GBIF data will be generated on first render.*")}
+```
+
+---
+
+# Regulatory Gaps (Summary) {#gaps}
+
+| # | Gap | Severity |
+|---|-----|----------|
+| 1 | Deforestation rate in Sarawak/Sabah — ongoing habitat loss | High |
+| 2 | WCA Second Schedule under-utilised relative to species diversity | High |
+| 3 | Nepenthes online trade via social media | High |
+| 4 | Ramin (CITES App II) — illegal logging continues | High |
+| 5 | Sarawak/Sabah state laws inconsistent with federal WCA | Medium |
+
+---
+
+# References {#references}
+
+| Resource | Link |
+|----------|------|
+| WCA 2010 — MyBIS | [mybis.gov.my](https://www.mybis.gov.my/pb/675) |
+| PERHILITAN | [wildlife.gov.my](https://www.wildlife.gov.my) |
+| GBIF Malaysia | [gbif.org/country/MY](https://www.gbif.org/country/MY/summary) |
+
+---
+
+```{r session-info}
+sessionInfo()
+```
+
+```{r kqb-footer, results='asis', echo=FALSE}
+logo_sm<-kqb_logo_img(height="28px")
+cat(paste0('<div class="kqb-report-footer">',if(nzchar(logo_sm))paste0(logo_sm,'<br/>')else"",
+  '<p style="font-weight:600;color:#0d2240;">',kqb_co$name,' &mdash; ',kqb_co$tagline,'</p>',
+  '<p>',kqb_co$legal_name,' | ',kqb_co$country,'</p>',
+  '<p style="margin-top:6px;font-size:10px;color:#aaa;">Generated ',format(Sys.Date(),"%d %B %Y"),
+  ' &nbsp;&bull;&nbsp; Preliminary — Verify at PERHILITAN / CITES</p></div>'))
+```
