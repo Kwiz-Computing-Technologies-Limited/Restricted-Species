@@ -1,0 +1,176 @@
+---
+title: "Restricted and Protected Plant Species in Peru"
+subtitle: "Decreto Supremo No. 043-2006-AG (National Threatened Flora), Ley No. 26839 (Biological Diversity) — Preliminary Reference"
+author: "Kwiz Research"
+date: "`r format(Sys.Date(), '%d %B %Y')`"
+output:
+  html_document:
+    toc: true
+    toc_float: {collapsed: false, smooth_scroll: true}
+    toc_depth: 3
+    number_sections: true
+    theme: flatly
+    highlight: tango
+    df_print: paged
+    code_folding: hide
+    css: style.css
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo=FALSE, warning=FALSE, message=FALSE,
+                      fig.align="center", fig.width=9, fig.height=5, out.width="100%")
+suppressPackageStartupMessages({
+  library(tidyverse); library(kableExtra); library(glue); library(janitor); library(rgbif)
+})
+.kqb_pkg <- "/Users/kwizera.jvk/Desktop/Kwiz Computing Comes to Life/Kwiz Quants/libs/kwizbranding"
+suppressMessages(devtools::load_all(.kqb_pkg, quiet=TRUE))
+kqb_co <- kqb_company("research"); kqb_col <- kqb_colours()
+.kqb_logo_candidates <- c(file.path(here::here(),"docs","www"),file.path(getwd(),"www"),file.path(getwd()),file.path(here::here()))
+.kqb_load_logo <- function(fn,ck){for(d in .kqb_logo_candidates){p<-file.path(d,fn);if(file.exists(p)){assign(ck,paste0("data:image/svg+xml;base64,",base64enc::base64encode(readBin(p,"raw",file.size(p)))),envir=.GlobalEnv);return(invisible(TRUE))}}}
+.kqb_load_logo("Kwiz Black Logo Transparent bg.svg",".kqb_wm_cache")
+.kqb_load_logo("Kwiz Inverted Color Transparent bg.svg",".kqb_display_cache")
+styled_kable <- function(df,caption=NULL,scroll=TRUE,height="450px"){k<-df|>kbl(caption=caption,escape=FALSE,align="l")|>kable_styling(bootstrap_options=c("striped","hover","condensed","responsive"),full_width=TRUE,font_size=12);if(scroll)k<-scroll_box(k,height=height);k}
+
+species <- tribble(
+  ~common_name,              ~scientific_name,            ~taxonomic_group, ~iucn_status,            ~cites_appendix,  ~legal_status_pe,                              ~restriction_type,              ~governing_law,                    ~managing_institution,   ~notes,
+  "Cinchona / quinine tree", "Cinchona pubescens",         "Magnoliopsida",  "Vulnerable",            "Appendix II",    "Vulnerable (DS 043-2006-AG) — National Tree",  "Collection regulated",         "DS 043-2006-AG / CITES",          "SERNANP / MINAM",       "Peru national tree; Andean cloud forest; bark source of quinine antimalarial; over-harvested historically",
+  "Cantuta",                 "Cantuta buxifolia",          "Magnoliopsida",  "Near Threatened",       "Not listed",     "Near Threatened (DS 043-2006-AG) — National Flower","Habitat protection",       "DS 043-2006-AG",                  "SERNANP / MINAM",       "Sacred flower of the Incas; Peru national flower; Andean valleys 2,500–3,500 m; threatened by habitat loss",
+  "Giant Amazon water lily",  "Victoria amazonica",        "Magnoliopsida",  "Least Concern",         "Not listed",     "Protected habitat (Amazon biome)",            "Habitat protection",           "Ley 26839 / Decreto 1076",        "SERNANP",               "Iconic Amazon wetland plant; floating leaves to 3 m; Loreto and Madre de Dios regions; habitat protected",
+  "Masdevallia orchid",      "Masdevallia veitchiana",     "Magnoliopsida",  "Vulnerable",            "Appendix II",    "Vulnerable (DS 043-2006-AG / CITES App. II)", "Collection/trade regulated",   "DS 043-2006-AG / CITES",          "SERNANP / MINAM",       "Andean cloud forest orchid; Cusco region; prized horticulture; wild populations depleted by collection",
+  "Puya raimondii",          "Puya raimondii",             "Magnoliopsida",  "Endangered",            "Not listed",     "Endangered (DS 043-2006-AG)",                 "Collection prohibited",        "DS 043-2006-AG",                  "SERNANP",               "World's largest bromeliad; 100-yr flowering cycle; Andean puna; fewer than 300 viable populations; grazing threat",
+  "Aguaje palm",             "Mauritia flexuosa",          "Magnoliopsida",  "Least Concern",         "Not listed",     "Heavily exploited — monitoring required",     "Harvest regulated in key zones","DS 043-2006-AG / regional rules", "SERNANP / MINAM",       "Amazon swamp palm; massive harvest for aguaje fruit; females felled — destructive harvest major concern",
+  "Camu camu",               "Myrciaria dubia",            "Magnoliopsida",  "Least Concern",         "Not listed",     "Commercialised — sustainable use framework", "Harvest regulated",            "Ley 26839 / MINAM ABS rules",     "MINAM / IIAP",          "High-vitamin C Amazonian fruit; wild population regulation under biodiversity law; export controlled",
+  "Kudzu",                   "Pueraria montana",           "Magnoliopsida",  "Least Concern",         "Not listed",     "Invasive — control measures active",          "Control mandated in key areas", "SERNANP management plans",        "SERNANP",               "Major invasive in Amazonian buffer zones; smothers native vegetation; spreads along deforestation fronts",
+  "Water hyacinth",          "Eichhornia crassipes",       "Magnoliopsida",  "Least Concern",         "Not listed",     "Invasive — management mandated",              "Control mandated",             "MINAM / ANA regulations",         "MINAM / ANA",           "Clogs Amazonian oxbow lakes and peri-urban waterways; major management problem in Iquitos region",
+  "Macaw palm",              "Acrocomia aculeata",         "Magnoliopsida",  "Least Concern",         "Not listed",     "Under monitoring — regional protection",      "Harvest regulated",            "DS 043-2006-AG / regional",       "SERNANP",               "Coyol palm; dry forest ecotone; important food and oil source; populations monitored in dry inter-Andean valleys"
+)
+
+n_species <- nrow(species)
+proj_root <- here::here()
+gbif_cache <- file.path(proj_root,"output","tables","peru_regulated_plants_gbif.csv")
+if (!file.exists(gbif_cache)) {
+  cn <- function(nm) nm|>str_remove_all("\\s+spp\\.?$")|>str_remove_all("\\(.*?\\)")|>str_squish()
+  nd <- tibble(name=cn(species$scientific_name),kingdom="Plantae")
+  br <- tryCatch(name_backbone_checklist(nd),error=function(e) map_dfr(nd$name,function(nm) tryCatch(as_tibble(name_backbone(name=nm,kingdom="Plantae")),error=function(e2) tibble(usageKey=NA_integer_,canonicalName=nm,matchType="NONE"))))
+  gv <- function(k){if(is.na(k))return(NA_character_);tryCatch({vn<-name_usage(key=as.numeric(k),data="vernacularNames",limit=100);if(is.null(vn$data)||nrow(vn$data)==0)return(NA_character_);en<-vn$data|>filter(language%in%c("eng","en"))|>pull(vernacularName)|>unique();if(length(en)==0)NA_character_ else paste(en,collapse=", ")},error=function(e)NA_character_)}
+  gs <- function(k){if(is.na(k))return(NA_character_);tryCatch({syn<-name_usage(key=as.numeric(k),data="synonyms",limit=100);if(is.null(syn$data)||nrow(syn$data)==0)return(NA_character_);s<-syn$data|>pull(canonicalName)|>unique()|>na.omit();if(length(s)==0)NA_character_ else paste(s,collapse=", ")},error=function(e)NA_character_)}
+  bc <- br|>as_tibble()|>mutate(GBIFusageKey=as.character(usageKey),prefName=coalesce(species,canonicalName,verbatim_name),gbif_family=family)
+  sm <- species|>mutate(cs=cn(scientific_name))|>bind_cols(bc|>select(GBIFusageKey,prefName,gbif_family,gbif_matchType=matchType,gbif_confidence=confidence))
+  keys <- sm|>filter(!is.na(GBIFusageKey))|>distinct(GBIFusageKey)|>pull(GBIFusageKey)
+  vl<-list();sl<-list()
+  for(i in seq_along(keys)){k<-keys[i];vl[[k]]<-gv(k);sl[[k]]<-gs(k);if(i%%5==0)Sys.sleep(0.2)}
+  vd<-tibble(GBIFusageKey=names(vl),gbif_english=unlist(vl),gbif_synonyms=unlist(sl[names(vl)]))
+  en<-sm|>left_join(vd,by="GBIFusageKey")|>mutate(englishName=coalesce(gbif_english,common_name),synonyms=gbif_synonyms,family=gbif_family)
+  dir.create(file.path(proj_root,"output","tables"),recursive=TRUE,showWarnings=FALSE)
+  en|>select(GBIFusageKey,prefName,family,englishName,synonyms,legal_status_pe,restriction_type,governing_law)|>write_csv(gbif_cache)
+}
+if(file.exists(gbif_cache)){plants_gbif<-read_csv(gbif_cache,col_types=cols(.default=col_character()),show_col_types=FALSE);n_gbif_resolved<-sum(!is.na(plants_gbif$GBIFusageKey)&plants_gbif$GBIFusageKey!="");n_gbif_families<-n_distinct(plants_gbif$family,na.rm=TRUE)}else{plants_gbif<-NULL;n_gbif_resolved<-0L;n_gbif_families<-0L}
+```
+
+```{r kqb-watermark, results='asis', echo=FALSE}
+cat(kqb_watermark_css(opacity=0.04,size="280px auto"))
+uri<-kqb_watermark_uri();if(nzchar(uri))cat(paste0('<style>\nbody::after{\ncontent:"";position:fixed;top:0;left:0;width:100%;height:100%;z-index:9000;pointer-events:none;background-image:url("',uri,'");background-repeat:repeat;background-size:280px auto;opacity:0.04;}\n</style>\n'))
+```
+
+---
+
+# Executive Summary {.unnumbered}
+
+Peru is one of the world's most biodiverse countries, ranked as a **megadiverse nation** with approximately **18,000–20,000 plant species** — around 10% of all plant species on Earth. Peruvian flora spans 84 of the world's 117 life zones, from hyper-arid coastal deserts to the Amazon lowlands and Andean cloud forests. The primary legal instrument for plant protection is **Decreto Supremo No. 043-2006-AG**, which lists 777 species across IUCN threat categories (CR, EN, VU, NT, DD). Peru is also party to CITES, with SERNANP serving as the management authority.
+
+<div class="alert alert-info" role="alert">
+**Preliminary Report** — Full species listing from DS 043-2006-AG (national threatened flora list, 777 species) to be completed. Current report covers `r n_species` representative species. Legislation is primarily in Spanish; the MINAM Biodiversity Portal provides further data.
+</div>
+
+---
+
+# Legal Framework (Summary) {#legal-framework}
+
+| Law / Instrument | Year | Key Provision |
+|-----------------|------|---------------|
+| Ley No. 26839 — Biological Diversity | 1997 | Framework biodiversity law; ABS; conservation areas |
+| Decreto Supremo No. 043-2006-AG | 2006 | National threatened flora list — CR, EN, VU, NT, DD categories; 777 species |
+| DS 004-2014-MINAGRI | 2014 | Updated threatened wildlife/fauna list (cross-reference with flora regulations) |
+| Ley de Áreas Naturales Protegidas No. 26834 | 1997 | National protected areas system (SINANPE); SERNANP management |
+| Ley 13/2015 (Forestry and Wildlife Law) | 2015 | Forest management; timber species; harvesting permits |
+
+Full text: [SERNANP](https://www.sernanp.gob.pe) | [MINAM](https://www.gob.pe/minam) | [FAOLEX Peru](https://faolex.fao.org/peru)
+
+---
+
+# Regulatory Institutions {#institutions}
+
+| Institution | Role |
+|-------------|------|
+| SERNANP (National Service for Natural Protected Areas) | Protected areas management; CITES management authority; threatened flora lists |
+| MINAM (Ministry of Environment) | Biodiversity policy; ABS; international convention coordination |
+| SERFOR (National Forest and Wildlife Service) | Forestry regulation; timber permits; forest monitoring |
+| CONCYTEC (National Council for Science and Technology) | Biodiversity research coordination; taxonomic research |
+| IIAP (Amazonian Research Institute) | Amazonian flora and ecosystem research; camu camu and aguaje monitoring |
+| INRENA (former) | Now SERNANP/SERFOR — historical records authority |
+
+---
+
+# Preliminary Species Listing {#species}
+
+```{r master-table}
+species|>arrange(iucn_status,common_name)|>mutate(`Scientific Name`=paste0("*",scientific_name,"*"))|>
+  select(`Common Name`=common_name,`Scientific Name`,`IUCN`=iucn_status,`CITES`=cites_appendix,
+         `Peru Status`=legal_status_pe,`Managing Inst.`=managing_institution,`Notes`=notes)|>
+  styled_kable(caption="Table 1. Preliminary — Protected Plant Species in Peru",height="450px")
+```
+
+## GBIF Backbone Resolution
+
+```{r gbif-table}
+if(!is.null(plants_gbif)&&nrow(plants_gbif)>0){plants_gbif|>
+  mutate(gu=if_else(!is.na(GBIFusageKey)&GBIFusageKey!="",glue("https://www.gbif.org/species/{GBIFusageKey}"),NA_character_),
+         iu=paste0("https://www.iucnredlist.org/search?query=",URLencode(str_squish(coalesce(prefName,"")),reserved=TRUE)),
+         `Scientific Name`=if_else(!is.na(gu),glue("<a href='{gu}' target='_blank'><em>{prefName}</em></a>"),glue("<em>{coalesce(prefName,'')}</em>")),
+         `IUCN`=glue("<a href='{iu}' target='_blank'>IUCN &#x2197;</a>"))|>
+  transmute(`#`=row_number(),`Scientific Name`,`Common Name`=coalesce(englishName,""),`Family`=coalesce(family,""),
+            `GBIF Key`=coalesce(GBIFusageKey,""),`Peru Status`=coalesce(legal_status_pe,""),
+            `Synonyms`=str_trunc(coalesce(synonyms,""),80),`IUCN`)|>
+  styled_kable(caption=glue("Table 2. Peru — GBIF Resolved ({n_gbif_resolved} of {n_species} | {n_gbif_families} fam.)"),height="450px")
+}else{cat("*GBIF data will be generated on first render.*")}
+```
+
+---
+
+# Regulatory Gaps (Summary) {#gaps}
+
+| # | Gap | Severity |
+|---|-----|----------|
+| 1 | Deforestation — Peru lost >1 million ha of Amazonian forest 2019–2022; enforcement in remote areas very limited | High |
+| 2 | DS 043-2006-AG list not updated since 2006 despite new IUCN assessments | High |
+| 3 | Destructive female aguaje palm harvest continues despite sustainable harvest alternatives available | High |
+| 4 | Orchid trade via online platforms poorly monitored; CITES App. II compliance weak | Medium |
+| 5 | Puya raimondii populations threatened by livestock grazing in Andean puna with limited enforcement | Medium |
+| 6 | ABS implementation under Ley 26839 for commercialised native plants (camu camu, maca) incomplete | Medium |
+
+---
+
+# References {#references}
+
+| Resource | Link |
+|----------|------|
+| SERNANP | [sernanp.gob.pe](https://www.sernanp.gob.pe) |
+| MINAM — Ministry of Environment | [gob.pe/minam](https://www.gob.pe/minam) |
+| SERFOR — Forestry and Wildlife Service | [serfor.gob.pe](https://www.serfor.gob.pe) |
+| GBIF Peru | [gbif.org/country/PE](https://www.gbif.org/country/PE/summary) |
+| CITES Peru | [cites.org — Peru](https://cites.org/eng/cms/index.php/component/cp/country/PE) |
+
+---
+
+```{r session-info}
+sessionInfo()
+```
+
+```{r kqb-footer, results='asis', echo=FALSE}
+logo_sm<-kqb_logo_img(height="28px")
+cat(paste0('<div class="kqb-report-footer">',if(nzchar(logo_sm))paste0(logo_sm,'<br/>')else"",
+  '<p style="font-weight:600;color:#0d2240;">',kqb_co$name,' &mdash; ',kqb_co$tagline,'</p>',
+  '<p>',kqb_co$legal_name,' | ',kqb_co$country,'</p>',
+  '<p style="margin-top:6px;font-size:10px;color:#aaa;">Generated ',format(Sys.Date(),"%d %B %Y"),
+  ' &nbsp;&bull;&nbsp; Preliminary — Verify at SERNANP / MINAM / CITES</p></div>'))
+```

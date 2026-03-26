@@ -1,0 +1,177 @@
+---
+title: "Restricted and Protected Plant Species in Brazil"
+subtitle: "Portaria MMA 443/2014 (National Threatened Plants), Lei 12.651/2012 (Native Vegetation Protection Law), Lei 13.123/2015 (Biodiversity Law) — Preliminary Reference"
+author: "Kwiz Research"
+date: "`r format(Sys.Date(), '%d %B %Y')`"
+output:
+  html_document:
+    toc: true
+    toc_float: {collapsed: false, smooth_scroll: true}
+    toc_depth: 3
+    number_sections: true
+    theme: flatly
+    highlight: tango
+    df_print: paged
+    code_folding: hide
+    css: style.css
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo=FALSE, warning=FALSE, message=FALSE,
+                      fig.align="center", fig.width=9, fig.height=5, out.width="100%")
+suppressPackageStartupMessages({
+  library(tidyverse); library(kableExtra); library(glue); library(janitor); library(rgbif)
+})
+.kqb_pkg <- "/Users/kwizera.jvk/Desktop/Kwiz Computing Comes to Life/Kwiz Quants/libs/kwizbranding"
+suppressMessages(devtools::load_all(.kqb_pkg, quiet=TRUE))
+kqb_co <- kqb_company("research"); kqb_col <- kqb_colours()
+.kqb_logo_candidates <- c(file.path(here::here(),"docs","www"),file.path(getwd(),"www"),file.path(getwd()),file.path(here::here()))
+.kqb_load_logo <- function(fn,ck){for(d in .kqb_logo_candidates){p<-file.path(d,fn);if(file.exists(p)){assign(ck,paste0("data:image/svg+xml;base64,",base64enc::base64encode(readBin(p,"raw",file.size(p)))),envir=.GlobalEnv);return(invisible(TRUE))}}}
+.kqb_load_logo("Kwiz Black Logo Transparent bg.svg",".kqb_wm_cache")
+.kqb_load_logo("Kwiz Inverted Color Transparent bg.svg",".kqb_display_cache")
+styled_kable <- function(df,caption=NULL,scroll=TRUE,height="450px"){k<-df|>kbl(caption=caption,escape=FALSE,align="l")|>kable_styling(bootstrap_options=c("striped","hover","condensed","responsive"),full_width=TRUE,font_size=12);if(scroll)k<-scroll_box(k,height=height);k}
+
+species <- tribble(
+  ~common_name,              ~scientific_name,            ~taxonomic_group, ~iucn_status,            ~cites_appendix,  ~legal_status_br,                              ~restriction_type,              ~governing_law,                    ~managing_institution,   ~notes,
+  "Pau-brasil / Brazilwood",  "Paubrasilia echinata",      "Magnoliopsida",  "Endangered",            "Appendix II",    "Endangered (Port. 443/2014) — National Tree / CITES App. II","Collection/trade prohibited","Port. MMA 443/2014 / CITES",     "ICMBio / IBAMA",        "Brazil's national tree and namesake; bow-making wood; historically over-exploited; Atlantic Forest endemic; <10% habitat remains",
+  "Paraná pine / Araucária",  "Araucaria angustifolia",    "Pinopsida",      "Critically Endangered", "Appendix I",     "CR (Port. 443/2014) — Strictly Protected (CITES App. I)","Felling/collection prohibited","Port. MMA 443/2014 / CITES",     "ICMBio / IBAMA",        "Atlantic Forest conifer; >97% population decline; seeds (pinhão) culturally important; Paraná and Santa Catarina",
+  "Cattleya orchid",          "Cattleya labiata",           "Magnoliopsida",  "Vulnerable",            "Appendix II",    "Vulnerable (Port. 443/2014 / CITES App. II)",  "Collection/trade regulated",   "Port. MMA 443/2014 / CITES",      "ICMBio",                "Brazil national orchid; flamboyant epiphyte; Pernambuco Atlantic Forest; wild collection for horticulture a major threat",
+  "Giant Amazon water lily",  "Victoria amazonica",        "Magnoliopsida",  "Least Concern",         "Not listed",     "Protected habitat — Amazon biome regulations", "Habitat protection",           "Lei 12.651/2012 / SNUC",          "ICMBio / IBAMA",        "Amazonian floodplain icon; floating leaves to 3 m; Amazonia habitat protected under Forest Code and SNUC",
+  "Wild cacao",               "Theobroma cacao",           "Magnoliopsida",  "Least Concern",         "Not listed",     "Wild relatives regulated — ABS under Lei 13.123","ABS permit required for research","Lei 13.123/2015",               "MMA / IBAMA",           "Wild cacao relatives in Amazon; biodiversity law requires access and benefit sharing for commercial genetic use",
+  "Guaraná",                  "Paullinia cupana",           "Magnoliopsida",  "Least Concern",         "Not listed",     "Commercially regulated — ABS and geographic indication","Commercial use regulated",  "Lei 13.123/2015 / INPI",          "MMA / IBAMA / INPI",    "Amazon stimulant; wild populations monitored; commercial cultivation extensive; geographic indication for Maués region",
+  "Brazilian pepper tree",    "Schinus terebinthifolia",    "Magnoliopsida",  "Least Concern",         "Not listed",     "Native — invasive outside Brazil; monitored",  "Native — no restriction domestically","Lei 12.651/2012",              "IBAMA",                 "Aroeira-da-praia; Brazilian native; highly invasive in Florida/Caribbean/Hawaii; export/trade monitored under biosafety",
+  "Water hyacinth",           "Eichhornia crassipes",       "Magnoliopsida",  "Least Concern",         "Not listed",     "Invasive — management mandated",              "Control mandated",             "Lei 9.605/1998 / IBAMA regulations","IBAMA / ANA",          "Aguapé; covers >100,000 ha of Brazilian waterways; hydroelectric turbine and navigation impact; Pantanal concern",
+  "Leucaena",                 "Leucaena leucocephala",      "Magnoliopsida",  "Least Concern",         "Not listed",     "Invasive — control required in Atlantic Forest","Control mandated in reserves",  "IBAMA / ICMBio management plans", "ICMBio / IBAMA",        "Major invasive in Atlantic Forest fragments and Cerrado margins; nitrogen-fixer that alters soil chemistry",
+  "Pinus",                    "Pinus elliottii",            "Pinopsida",      "Least Concern",         "Not listed",     "Invasive (South Brazil) — control in Atlantic Forest","Removal mandated in protected areas","CONAMA Resolution 369/2006",  "ICMBio / State enviro agencies","Plantation escapee; invades Araucaria mixed forest and grasslands in Paraná, Santa Catarina, Rio Grande do Sul"
+)
+
+n_species <- nrow(species)
+proj_root <- here::here()
+gbif_cache <- file.path(proj_root,"output","tables","brazil_regulated_plants_gbif.csv")
+if (!file.exists(gbif_cache)) {
+  cn <- function(nm) nm|>str_remove_all("\\s+spp\\.?$")|>str_remove_all("\\(.*?\\)")|>str_squish()
+  nd <- tibble(name=cn(species$scientific_name),kingdom="Plantae")
+  br <- tryCatch(name_backbone_checklist(nd),error=function(e) map_dfr(nd$name,function(nm) tryCatch(as_tibble(name_backbone(name=nm,kingdom="Plantae")),error=function(e2) tibble(usageKey=NA_integer_,canonicalName=nm,matchType="NONE"))))
+  gv <- function(k){if(is.na(k))return(NA_character_);tryCatch({vn<-name_usage(key=as.numeric(k),data="vernacularNames",limit=100);if(is.null(vn$data)||nrow(vn$data)==0)return(NA_character_);en<-vn$data|>filter(language%in%c("eng","en"))|>pull(vernacularName)|>unique();if(length(en)==0)NA_character_ else paste(en,collapse=", ")},error=function(e)NA_character_)}
+  gs <- function(k){if(is.na(k))return(NA_character_);tryCatch({syn<-name_usage(key=as.numeric(k),data="synonyms",limit=100);if(is.null(syn$data)||nrow(syn$data)==0)return(NA_character_);s<-syn$data|>pull(canonicalName)|>unique()|>na.omit();if(length(s)==0)NA_character_ else paste(s,collapse=", ")},error=function(e)NA_character_)}
+  bc <- br|>as_tibble()|>mutate(GBIFusageKey=as.character(usageKey),prefName=coalesce(species,canonicalName,verbatim_name),gbif_family=family)
+  sm <- species|>mutate(cs=cn(scientific_name))|>bind_cols(bc|>select(GBIFusageKey,prefName,gbif_family,gbif_matchType=matchType,gbif_confidence=confidence))
+  keys <- sm|>filter(!is.na(GBIFusageKey))|>distinct(GBIFusageKey)|>pull(GBIFusageKey)
+  vl<-list();sl<-list()
+  for(i in seq_along(keys)){k<-keys[i];vl[[k]]<-gv(k);sl[[k]]<-gs(k);if(i%%5==0)Sys.sleep(0.2)}
+  vd<-tibble(GBIFusageKey=names(vl),gbif_english=unlist(vl),gbif_synonyms=unlist(sl[names(vl)]))
+  en<-sm|>left_join(vd,by="GBIFusageKey")|>mutate(englishName=coalesce(gbif_english,common_name),synonyms=gbif_synonyms,family=gbif_family)
+  dir.create(file.path(proj_root,"output","tables"),recursive=TRUE,showWarnings=FALSE)
+  en|>select(GBIFusageKey,prefName,family,englishName,synonyms,legal_status_br,restriction_type,governing_law)|>write_csv(gbif_cache)
+}
+if(file.exists(gbif_cache)){plants_gbif<-read_csv(gbif_cache,col_types=cols(.default=col_character()),show_col_types=FALSE);n_gbif_resolved<-sum(!is.na(plants_gbif$GBIFusageKey)&plants_gbif$GBIFusageKey!="");n_gbif_families<-n_distinct(plants_gbif$family,na.rm=TRUE)}else{plants_gbif<-NULL;n_gbif_resolved<-0L;n_gbif_families<-0L}
+```
+
+```{r kqb-watermark, results='asis', echo=FALSE}
+cat(kqb_watermark_css(opacity=0.04,size="280px auto"))
+uri<-kqb_watermark_uri();if(nzchar(uri))cat(paste0('<style>\nbody::after{\ncontent:"";position:fixed;top:0;left:0;width:100%;height:100%;z-index:9000;pointer-events:none;background-image:url("',uri,'");background-repeat:repeat;background-size:280px auto;opacity:0.04;}\n</style>\n'))
+```
+
+---
+
+# Executive Summary {.unnumbered}
+
+Brazil is the world's most biodiverse nation, harbouring approximately **50,000 plant species** — roughly **20% of all plant species on Earth**. The country contains six major biomes: Amazon, Atlantic Forest, Cerrado, Caatinga, Pantanal, and Pampa. The Atlantic Forest is one of the world's most threatened and species-rich biomes, with less than 12% of original cover remaining. Brazil's national threatened plant list — **Portaria MMA 443/2014** — covers 2,113 species across IUCN threat categories. The **Native Vegetation Protection Law (Lei 12.651/2012)** — the Forest Code — governs vegetation protection on private land and defines Permanent Preservation Areas (APPs) and Legal Reserve requirements.
+
+<div class="alert alert-info" role="alert">
+**Preliminary Report** — Full species listing from Portaria MMA 443/2014 (National List of Threatened Plant Species, 2,113 species) to be completed. Current report covers `r n_species` representative species. Legislation is primarily in Portuguese; the REFLORA database ([reflora.jbrj.gov.br](http://reflora.jbrj.gov.br)) provides an English-language taxonomic interface.
+</div>
+
+---
+
+# Legal Framework (Summary) {#legal-framework}
+
+| Law / Instrument | Year | Key Provision |
+|-----------------|------|---------------|
+| Portaria MMA 443/2014 | 2014 | National List of Threatened Plant Species — 2,113 species in CR/EN/VU/NT/DD categories |
+| Lei 12.651/2012 — Native Vegetation Protection Law (Forest Code) | 2012 | Permanent Preservation Areas (APPs); Legal Reserve (RL) requirements; vegetation protection on private land |
+| Lei 13.123/2015 — Biodiversity Law | 2015 | Access and benefit sharing (ABS) for genetic resources; replaces MP 2.186-16/2001 |
+| Lei 9.605/1998 — Environmental Crimes Law | 1998 | Criminal penalties for flora crimes; illegal deforestation; invasive species non-management |
+| Sistema Nacional de Unidades de Conservação (SNUC) — Lei 9.985/2000 | 2000 | National protected areas system; 12 categories of conservation units |
+
+Full text: [ICMBio](https://www.icmbio.gov.br) | [MMA](https://www.gov.br/mma) | [IBAMA](https://www.ibama.gov.br) | [FAOLEX Brazil](https://faolex.fao.org/brazil)
+
+---
+
+# Regulatory Institutions {#institutions}
+
+| Institution | Role |
+|-------------|------|
+| ICMBio (Chico Mendes Institute for Biodiversity Conservation) | Protected areas management; threatened species action plans; CITES management authority |
+| IBAMA (Brazilian Institute of Environment and Renewable Natural Resources) | Environmental licensing; enforcement; invasive species; timber trade monitoring |
+| MMA (Ministry of Environment and Climate Change) | Biodiversity policy; Forest Code; threatened species listing; Portaria 443 |
+| Jardim Botânico do Rio de Janeiro (JBRJ) | National herbarium; REFLORA database; plant taxonomy; Red List assessments |
+| INPA (National Institute for Amazonian Research) | Amazonian flora research; botanical surveys |
+| EMBRAPA | Agricultural biodiversity; crop wild relative conservation; genetic resources |
+
+---
+
+# Preliminary Species Listing {#species}
+
+```{r master-table}
+species|>arrange(iucn_status,common_name)|>mutate(`Scientific Name`=paste0("*",scientific_name,"*"))|>
+  select(`Common Name`=common_name,`Scientific Name`,`IUCN`=iucn_status,`CITES`=cites_appendix,
+         `Brazil Status`=legal_status_br,`Managing Inst.`=managing_institution,`Notes`=notes)|>
+  styled_kable(caption="Table 1. Preliminary — Protected Plant Species in Brazil",height="450px")
+```
+
+## GBIF Backbone Resolution
+
+```{r gbif-table}
+if(!is.null(plants_gbif)&&nrow(plants_gbif)>0){plants_gbif|>
+  mutate(gu=if_else(!is.na(GBIFusageKey)&GBIFusageKey!="",glue("https://www.gbif.org/species/{GBIFusageKey}"),NA_character_),
+         iu=paste0("https://www.iucnredlist.org/search?query=",URLencode(str_squish(coalesce(prefName,"")),reserved=TRUE)),
+         `Scientific Name`=if_else(!is.na(gu),glue("<a href='{gu}' target='_blank'><em>{prefName}</em></a>"),glue("<em>{coalesce(prefName,'')}</em>")),
+         `IUCN`=glue("<a href='{iu}' target='_blank'>IUCN &#x2197;</a>"))|>
+  transmute(`#`=row_number(),`Scientific Name`,`Common Name`=coalesce(englishName,""),`Family`=coalesce(family,""),
+            `GBIF Key`=coalesce(GBIFusageKey,""),`Brazil Status`=coalesce(legal_status_br,""),
+            `Synonyms`=str_trunc(coalesce(synonyms,""),80),`IUCN`)|>
+  styled_kable(caption=glue("Table 2. Brazil — GBIF Resolved ({n_gbif_resolved} of {n_species} | {n_gbif_families} fam.)"),height="450px")
+}else{cat("*GBIF data will be generated on first render.*")}
+```
+
+---
+
+# Regulatory Gaps (Summary) {#gaps}
+
+| # | Gap | Severity |
+|---|-----|----------|
+| 1 | Amazon deforestation — 11,568 km² lost in 2022 (INPE); enforcement against illegal clearing inadequate | High |
+| 2 | Forest Code (Lei 12.651/2012) 2012 amnesty provisions reduce legal liability for pre-2008 deforestation | High |
+| 3 | Portaria 443/2014 covers 2,113 species but enforcement capacity insufficient relative to Atlantic Forest area | High |
+| 4 | Araucaria angustifolia (CR) — illegal logging for timber continues in southern Brazil buffer zones | High |
+| 5 | Lei 13.123/2015 ABS implementation for wild plant genetic resources incomplete — many sectors non-compliant | Medium |
+| 6 | Invasive Pinus and Leucaena removal in protected areas severely underfunded | Medium |
+
+---
+
+# References {#references}
+
+| Resource | Link |
+|----------|------|
+| ICMBio | [icmbio.gov.br](https://www.icmbio.gov.br) |
+| IBAMA | [ibama.gov.br](https://www.ibama.gov.br) |
+| JBRJ — REFLORA Database | [reflora.jbrj.gov.br](http://reflora.jbrj.gov.br) |
+| Flora do Brasil 2020 | [floradobrasil.jbrj.gov.br](http://floradobrasil.jbrj.gov.br) |
+| GBIF Brazil | [gbif.org/country/BR](https://www.gbif.org/country/BR/summary) |
+| CITES Brazil | [cites.org — Brazil](https://cites.org/eng/cms/index.php/component/cp/country/BR) |
+
+---
+
+```{r session-info}
+sessionInfo()
+```
+
+```{r kqb-footer, results='asis', echo=FALSE}
+logo_sm<-kqb_logo_img(height="28px")
+cat(paste0('<div class="kqb-report-footer">',if(nzchar(logo_sm))paste0(logo_sm,'<br/>')else"",
+  '<p style="font-weight:600;color:#0d2240;">',kqb_co$name,' &mdash; ',kqb_co$tagline,'</p>',
+  '<p>',kqb_co$legal_name,' | ',kqb_co$country,'</p>',
+  '<p style="margin-top:6px;font-size:10px;color:#aaa;">Generated ',format(Sys.Date(),"%d %B %Y"),
+  ' &nbsp;&bull;&nbsp; Preliminary — Verify at ICMBio / IBAMA / JBRJ / CITES</p></div>'))
+```

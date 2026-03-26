@@ -1,0 +1,323 @@
+---
+title: "Restricted and Protected Plant Species in Uganda"
+subtitle: "National Environment Act, Plant Protection and Health Act, National Forestry Act, and CITES"
+author: "Kwiz Research"
+date: "`r format(Sys.Date(), '%d %B %Y')`"
+output:
+  html_document:
+    toc: true
+    toc_float: {collapsed: false, smooth_scroll: true}
+    toc_depth: 3
+    number_sections: true
+    theme: flatly
+    highlight: tango
+    df_print: paged
+    code_folding: hide
+    css: style.css
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo=FALSE, warning=FALSE, message=FALSE,
+                      fig.align="center", fig.width=9, fig.height=5, out.width="100%")
+suppressPackageStartupMessages({
+  library(tidyverse); library(kableExtra); library(glue); library(janitor); library(rgbif)
+})
+
+.kqb_pkg <- "/Users/kwizera.jvk/Desktop/Kwiz Computing Comes to Life/Kwiz Quants/libs/kwizbranding"
+suppressMessages(devtools::load_all(.kqb_pkg, quiet=TRUE))
+kqb_co <- kqb_company("research"); kqb_col <- kqb_colours()
+.kqb_logo_candidates <- c(file.path(here::here(),"docs","www"), file.path(getwd(),"www"),
+                            file.path(getwd()), file.path(here::here()))
+.kqb_load_logo <- function(fn, ck) {
+  for (d in .kqb_logo_candidates) { p <- file.path(d,fn)
+    if (file.exists(p)) { assign(ck, paste0("data:image/svg+xml;base64,",
+      base64enc::base64encode(readBin(p,"raw",file.size(p)))), envir=.GlobalEnv); return(invisible(TRUE)) } }
+}
+.kqb_load_logo("Kwiz Black Logo Transparent bg.svg",".kqb_wm_cache")
+.kqb_load_logo("Kwiz Inverted Color Transparent bg.svg",".kqb_display_cache")
+
+styled_kable <- function(df, caption=NULL, scroll=TRUE, height="450px") {
+  k <- df |> kbl(caption=caption, escape=FALSE, align="l") |>
+    kable_styling(bootstrap_options=c("striped","hover","condensed","responsive"), full_width=TRUE, font_size=12)
+  if (scroll) k <- scroll_box(k, height=height); k
+}
+
+# ── Embedded species data ─────────────────────────────────────────────────────
+# Sources: National Forestry and Tree Planting Act 2003 (Protected Species List);
+#          Plant Protection and Health Act 2016; National Environment Act 2019;
+#          Uganda Wildlife Act 2019; CITES CoP19 2022.
+species <- tribble(
+  ~common_name,                     ~scientific_name,               ~taxonomic_group, ~iucn_status,            ~cites_appendix, ~legal_status_ug,                     ~restriction_type,              ~governing_law,                        ~managing_institution,  ~notes,
+  "East African sandalwood",        "Osyris lanceolata",            "Magnoliopsida",  "Least Concern",          "Not listed",    "Prohibited Export (NFA Order 2004)",  "Harvesting/export prohibited", "NFA Statutory Order 2004",            "NFA",                  "Banned due to massive over-exploitation; international trade suspended",
+  "Prunus africana",                "Prunus africana",              "Magnoliopsida",  "Least Concern",          "Appendix II",   "Regulated (CITES Appendix II)",       "Export permit required",        "CITES Regs / NFA",                    "NFA / CITES Authority","Bark harvested for prostate medication; severe over-exploitation",
+  "African mahogany",               "Khaya anthotheca",             "Magnoliopsida",  "Vulnerable",            "Not listed",    "Protected Species (NFA 2003)",        "Harvesting restricted",         "National Forestry and Tree Planting Act 2003","NFA",          "Major commercial timber; protected forest reserves",
+  "Elgon teak",                     "Olea welwitschii",             "Magnoliopsida",  "Least Concern",          "Not listed",    "Protected Species (NFA 2003)",        "Harvesting restricted",         "National Forestry and Tree Planting Act 2003","NFA",          "Highly valued timber from Mt Elgon forests; NFA protected",
+  "Musizi",                         "Maesopsis eminii",             "Magnoliopsida",  "Least Concern",          "Not listed",    "Protected Species (NFA 2003)",        "Harvesting restricted",         "National Forestry and Tree Planting Act 2003","NFA",          "Fast-growing timber tree; NFA plantation species; Bwindi forests",
+  "Mvule / African teak",           "Milicia excelsa",              "Magnoliopsida",  "Least Concern",          "Not listed",    "Protected Species (NFA 2003)",        "Harvesting restricted",         "National Forestry and Tree Planting Act 2003","NFA",          "Premium furniture timber; over-exploited; forest reserve requirement",
+  "Podocarpus (East Africa)",       "Podocarpus latifolius",        "Pinopsida",      "Least Concern",          "Not listed",    "Protected Species (NFA 2003)",        "Harvesting restricted",         "National Forestry and Tree Planting Act 2003","NFA",          "High altitude forest tree; montane Uganda forests",
+  "Aloe vera (wild)",               "Aloe vera",                    "Magnoliopsida",  "Least Concern",          "Not listed",    "Regulated (commercial collection)",   "Collection permit required",    "NFA / NDA regulations",               "NDA / NFA",            "Commercial harvest for cosmetics/medicine regulated in Uganda",
+  "Aloe species (Uganda)",          "Aloe dawei",                   "Magnoliopsida",  "Least Concern",          "Appendix II",   "Regulated (CITES Appendix II)",       "Export permit required",        "CITES Regs / NFA",                    "NFA / CITES Authority","Uganda endemic aloe; all Aloe spp. CITES Appendix II",
+  "Nile tulip tree",                "Markhamia lutea",              "Magnoliopsida",  "Least Concern",          "Not listed",    "Protected Species (NFA 2003)",        "Harvesting regulated",          "National Forestry and Tree Planting Act 2003","NFA",          "Uganda national tree; important riparian and agroforestry species",
+  "Uganda orchid",                  "Polystachya bella",            "Magnoliopsida",  "Least Concern",          "Appendix II",   "Regulated (CITES Appendix II)",       "Collection permit required",    "CITES Regs / Wildlife Act 2019",      "UWA / NFA",            "All orchids CITES Appendix II; forest epiphytes under collection pressure",
+  "Muzaiti cycad",                  "Encephalartos whitelockii",    "Cycadopsida",    "Critically Endangered",  "Appendix I",    "Critically Endangered (CITES App I)", "Collection/trade prohibited",   "Uganda Wildlife Act 2019 / CITES",    "UWA",                  "Only known on rocky slopes near Murchison Falls; <200 plants known",
+  "Busoga cycad",                   "Encephalartos macrostrobilus", "Cycadopsida",    "Critically Endangered",  "Appendix I",    "Critically Endangered (CITES App I)", "Collection/trade prohibited",   "Uganda Wildlife Act 2019 / CITES",    "UWA",                  "Eastern Uganda; highly threatened by poaching and habitat loss",
+  "Lake Victoria waterlily",        "Nymphaea lotus",               "Magnoliopsida",  "Least Concern",          "Not listed",    "Regulated (NFA wetland rules)",       "Collection regulated",          "NEA 2019 / NFA 2003",                 "NEMA / NFA",           "Wetland species; protected under NEA 2019 wetland provisions",
+  "Water hyacinth",                 "Eichhornia crassipes",         "Magnoliopsida",  "Least Concern",          "Not listed",    "Notified Invasive Species",           "Eradication mandated",          "NEA 2019 / MAAIF regulations",        "NEMA / MAAIF / NFA",   "Covers ~4,000 ha of Lake Victoria; major economic and ecological threat",
+  "Lantana",                        "Lantana camara",               "Magnoliopsida",  "Least Concern",          "Not listed",    "Invasive Species",                    "Control in protected areas",    "Uganda Wildlife Act 2019 / NEA 2019","UWA / NEMA",           "Major understory invasive in Uganda national parks; Queen Elizabeth NP",
+  "Black wattle",                   "Acacia mearnsii",              "Magnoliopsida",  "Least Concern",          "Not listed",    "Invasive Species",                    "Restricted planting",           "NEA 2019 / NFA 2003",                 "NFA / NEMA",           "Naturalised in highlands; transforms native montane vegetation",
+  "Napier grass (elephant grass)",  "Cenchrus purpureus",           "Magnoliopsida",  "Least Concern",          "Not listed",    "Potentially Invasive Grass",          "Restricted in natural areas",   "NEA 2019",                            "NEMA / MAAIF",         "Widely planted for fodder; invasive in riparian and forest edge zones",
+  "Parthenium weed",                "Parthenium hysterophorus",     "Magnoliopsida",  "Least Concern",          "Not listed",    "Notified Noxious Weed",               "Control mandated — MAAIF",      "MAAIF / PPCA 2016",                   "MAAIF / PPCA",         "Rapidly spreading weed; causes severe human and livestock allergies",
+  "Devil weed",                     "Chromolaena odorata",          "Magnoliopsida",  "Least Concern",          "Not listed",    "Invasive Species",                    "Control in protected areas",    "NEA 2019 / UWA Act 2019",             "UWA / NEMA",           "Widespread shrubby invasive; forest edge and disturbed areas",
+  "Giant mimosa",                   "Mimosa diplotricha",           "Magnoliopsida",  "Least Concern",          "Not listed",    "Invasive Species",                    "Control mandated",              "NEA 2019 / MAAIF",                    "NEMA / MAAIF",         "Expanding in roadsides and degraded land; MAAIF priority weed"
+)
+
+n_species  <- nrow(species)
+n_protected<- sum(str_detect(species$governing_law, regex("NFA|Wildlife Act|CITES Regs", ignore_case=TRUE)), na.rm=TRUE)
+n_invasive <- sum(str_detect(species$restriction_type, regex("invasive|eradication|control|mandated", ignore_case=TRUE)), na.rm=TRUE)
+n_cites_i  <- sum(species$cites_appendix == "Appendix I", na.rm=TRUE)
+n_cites_ii <- sum(species$cites_appendix == "Appendix II", na.rm=TRUE)
+n_cr       <- sum(species$iucn_status == "Critically Endangered", na.rm=TRUE)
+
+proj_root  <- here::here()
+gbif_cache <- file.path(proj_root, "output", "tables", "uganda_regulated_plants_gbif.csv")
+if (!file.exists(gbif_cache)) {
+  clean_name <- function(nm) nm |> str_remove_all("\\s+spp\\.?$") |> str_remove_all("\\(.*?\\)") |> str_squish()
+  names_df <- tibble(name=clean_name(species$scientific_name), kingdom="Plantae")
+  backbone_res <- tryCatch(name_backbone_checklist(names_df), error=function(e)
+    map_dfr(names_df$name, function(nm) tryCatch(as_tibble(name_backbone(name=nm,kingdom="Plantae")),
+      error=function(e2) tibble(usageKey=NA_integer_,canonicalName=nm,matchType="NONE"))))
+  get_vern <- function(key) { if(is.na(key)) return(NA_character_)
+    tryCatch({ vn <- name_usage(key=as.numeric(key),data="vernacularNames",limit=100)
+      if(is.null(vn$data)||nrow(vn$data)==0) return(NA_character_)
+      en <- vn$data |> filter(language %in% c("eng","en")) |> pull(vernacularName) |> unique()
+      if(length(en)==0) NA_character_ else paste(en,collapse=", ") }, error=function(e) NA_character_) }
+  get_syn <- function(key) { if(is.na(key)) return(NA_character_)
+    tryCatch({ syn <- name_usage(key=as.numeric(key),data="synonyms",limit=100)
+      if(is.null(syn$data)||nrow(syn$data)==0) return(NA_character_)
+      s <- syn$data |> pull(canonicalName) |> unique() |> na.omit()
+      if(length(s)==0) NA_character_ else paste(s,collapse=", ") }, error=function(e) NA_character_) }
+  bc <- backbone_res |> as_tibble() |>
+    mutate(GBIFusageKey=as.character(usageKey),prefName=coalesce(species,canonicalName,verbatim_name),gbif_family=family)
+  sm <- species |> mutate(clean_sci=clean_name(scientific_name)) |>
+    bind_cols(bc |> select(GBIFusageKey,prefName,gbif_family,gbif_matchType=matchType,gbif_confidence=confidence))
+  keys <- sm |> filter(!is.na(GBIFusageKey)) |> distinct(GBIFusageKey) |> pull(GBIFusageKey)
+  vl <- list(); sl <- list()
+  for (i in seq_along(keys)) { k <- keys[i]; vl[[k]] <- get_vern(k); sl[[k]] <- get_syn(k); if(i%%5==0) Sys.sleep(0.2) }
+  vd <- tibble(GBIFusageKey=names(vl),gbif_english=unlist(vl),gbif_synonyms=unlist(sl[names(vl)]))
+  enriched <- sm |> left_join(vd,by="GBIFusageKey") |>
+    mutate(englishName=coalesce(gbif_english,common_name),synonyms=gbif_synonyms,family=gbif_family)
+  dir.create(file.path(proj_root,"output","tables"),recursive=TRUE,showWarnings=FALSE)
+  enriched |> select(GBIFusageKey,prefName,family,englishName,synonyms,legal_status_ug,restriction_type,governing_law) |>
+    write_csv(gbif_cache)
+}
+if (file.exists(gbif_cache)) {
+  plants_gbif     <- read_csv(gbif_cache,col_types=cols(.default=col_character()),show_col_types=FALSE)
+  n_gbif_resolved <- sum(!is.na(plants_gbif$GBIFusageKey)&plants_gbif$GBIFusageKey!="")
+  n_gbif_families <- n_distinct(plants_gbif$family, na.rm=TRUE)
+} else { plants_gbif <- NULL; n_gbif_resolved <- 0L; n_gbif_families <- 0L }
+```
+
+```{r kqb-watermark, results='asis', echo=FALSE}
+cat(kqb_watermark_css(opacity=0.04, size="280px auto"))
+uri <- kqb_watermark_uri()
+if (nzchar(uri)) cat(paste0('<style>\nbody::after {\n  content: "";\n  position: fixed;\n',
+  '  top:0; left:0; width:100%; height:100%;\n  z-index:9000;\n  pointer-events:none;\n',
+  '  background-image: url("', uri, '");\n  background-repeat:repeat;\n  background-size:280px auto;\n',
+  '  opacity:0.04;\n}\n</style>\n'))
+```
+
+---
+
+# Executive Summary {.unnumbered}
+
+Uganda is one of Africa's most biologically diverse countries, occupying less than 1% of the continent's land area but supporting approximately **18% of Africa's plant species** (~5,000 species) and exceptional forest biodiversity across tropical rainforests, montane forests, savanna woodlands, and wetland ecosystems. The country straddles two major biodiversity regions — the Albertine Rift and the Congo Basin — and provides critical habitat for globally threatened tree species and rare endemics.
+
+This report compiles **`r n_species` representative plant species** subject to legal restriction in Uganda. **`r n_protected`** are protected under the National Forestry and Tree Planting Act 2003, the Uganda Wildlife Act 2019, or CITES regulations. **`r n_invasive`** are designated invasive species under the National Environment Act 2019 or MAAIF regulations. **`r n_cites_i`** carry CITES Appendix I status and **`r n_cites_ii`** are on CITES Appendix II. **`r n_cr`** are IUCN Critically Endangered.
+
+---
+
+# Legal Framework {#legal-framework}
+
+## National Forestry and Tree Planting Act, 2003 {#nfa}
+
+The **National Forestry and Tree Planting Act, 2003** (NFTPA) establishes the National Forestry Authority (NFA) and sets the framework for forest management. **Section 36** empowers the Minister to list species as "protected" in forest reserves. The Act:
+
+- Prohibits harvesting of protected species without a licence
+- Governs Central and Local Forest Reserves (covering ~15% of Uganda's land)
+- Requires reforestation and environmental impact assessment for forestry activities
+- Restricts export of unprocessed timber
+
+**East African sandalwood export ban (NFA Statutory Order 2004):** The NFA declared a complete ban on harvesting and export of *Osyris lanceolata* (East African sandalwood) following catastrophic over-exploitation driven by Middle Eastern demand.
+
+Full text: [ULII — NFTPA 2003](https://ulii.org/akn/ug/act/2003/5/eng@2023-12-31)
+
+## Uganda Wildlife Act, 2019 {#wildlife}
+
+The **Uganda Wildlife Act, 2019** (Act No. 11 of 2019) consolidates wildlife management legislation. While primarily focused on fauna, it covers:
+
+- CITES implementation for both plant and animal species
+- Protection of wildlife in and around national parks
+- Prohibition on collecting or transporting listed species without UWA permits
+
+## Plant Protection and Health Act, 2016 {#ppca}
+
+The **Plant Protection and Health Act, 2016** (Act No. 6 of 2016) empowers the **Directorate of Agricultural Extension Services** (MAAIF) to regulate:
+
+- Import and export of plant material and phytosanitary controls
+- Quarantine of plant pests and diseases
+- Control of designated noxious weeds
+
+Full text: [ULII — PPCA 2016](https://ulii.org/akn/ug/act/2016/6/eng@2023-12-31)
+
+## National Environment Act, 2019 {#nea}
+
+The **National Environment Act, 2019** (Act No. 5 of 2019) provides the overarching environmental framework, including:
+
+- **Section 94:** Prohibition on introducing alien species without risk assessment and NEMA approval
+- **Section 95:** Invasive species control obligations on landholders
+- Wetland protection provisions relevant to aquatic plants
+
+## CITES in Uganda {#cites}
+
+Uganda ratified CITES in 1991. The **Uganda CITES Management Authority** is administered jointly by UWA and the NEMA office, with the NFA involved for timber species. Key plant listings include all Cycas and Encephalartos spp. (Appendix I), all Orchidaceae (Appendix II), *Prunus africana* (Appendix II), and all Aloe spp. (Appendix II).
+
+<div class="alert alert-warning" role="alert">
+**⚠ Implementation Gap** — Uganda lacks a comprehensive, publicly available national threatened plant species list equivalent to Kenya's WCMA Sixth Schedule. The NFA maintains an internal list of protected tree species in Central Forest Reserves, but this is not systematically published. Uganda's Biodiversity Strategy and Action Plan (NBSAP, 2015–2025) acknowledges the absence of a national species inventory database as a critical gap.
+</div>
+
+---
+
+# Regulatory Institutions {#institutions}
+
+```{r institutions-table}
+tribble(
+  ~`Abbrev.`, ~`Institution`,                               ~`Ministry`,           ~`Mandate`,
+  "NFA",      "National Forestry Authority",                 "MWLE",                "Manages Central Forest Reserves; enforces NFTPA 2003; tree planting; timber licensing",
+  "UWA",      "Uganda Wildlife Authority",                   "MWLE",                "Manages national parks and game reserves; CITES authority; wildlife law enforcement",
+  "NEMA",     "National Environment Management Authority",   "MWLE",                "Framework environmental regulator; NEA 2019 enforcement; alien species regulation; wetlands",
+  "MAAIF-PPCA","Ministry of Agric., Animal Industry and Fisheries — PPCA","MAAIF", "Plant Protection and Health Act; phytosanitary regulation; quarantine; noxious weed control",
+  "UBOS-ENRM","Uganda Bureau of Statistics — Environment Unit","Finance",           "Environmental and natural resource statistics; land use monitoring",
+  "Makerere-MUIENR","Mak. Univ. Inst. of Environment and Natural Resources","Education","Research; species assessments; herbarium collections; Uganda Red List contributions"
+) |>
+  styled_kable(caption="Table 1. Institutions with Plant Regulatory Mandates in Uganda", height="320px")
+```
+
+---
+
+# Comprehensive Plant Species Listing {#species}
+
+## Master Species Table
+
+```{r master-table}
+species |>
+  arrange(governing_law, iucn_status, common_name) |>
+  mutate(`Scientific Name` = paste0("*", scientific_name, "*")) |>
+  select(`Common Name`=common_name, `Scientific Name`, `Group`=taxonomic_group,
+         `IUCN`=iucn_status, `CITES`=cites_appendix,
+         `Uganda Status`=legal_status_ug,
+         `Managing Inst.`=managing_institution, `Notes`=notes) |>
+  styled_kable(caption="Table 2. Restricted/Protected Plant Species in Uganda", height="600px")
+```
+
+## Protected Timber and Forest Species {#timber}
+
+```{r timber-table}
+species |>
+  filter(str_detect(governing_law, regex("NFA|Forestry", ignore_case=TRUE))) |>
+  arrange(iucn_status, common_name) |>
+  mutate(`Scientific Name` = paste0("*", scientific_name, "*")) |>
+  select(`Common Name`=common_name, `Scientific Name`,
+         `IUCN`=iucn_status, `Uganda Status`=legal_status_ug, `Notes`=notes) |>
+  styled_kable(caption="Table 3. Protected Timber and Forest Species (NFA 2003)", height="380px")
+```
+
+## Invasive Species {#invasive}
+
+```{r invasive-table}
+species |>
+  filter(str_detect(restriction_type, regex("invasive|eradication|control|mandated|noxious", ignore_case=TRUE))) |>
+  arrange(common_name) |>
+  mutate(`Scientific Name` = paste0("*", scientific_name, "*")) |>
+  select(`Common Name`=common_name, `Scientific Name`,
+         `Uganda Status`=legal_status_ug, `Notes`=notes) |>
+  styled_kable(caption=glue("Table 4. Invasive Plant Species in Uganda ({n_invasive} species)"), height="350px")
+```
+
+## GBIF Backbone Resolution {#gbif}
+
+```{r gbif-table}
+if (!is.null(plants_gbif) && nrow(plants_gbif) > 0) {
+  plants_gbif |>
+    mutate(
+      gbif_url = if_else(!is.na(GBIFusageKey)&GBIFusageKey!="",
+                         glue("https://www.gbif.org/species/{GBIFusageKey}"),NA_character_),
+      iucn_url = paste0("https://www.iucnredlist.org/search?query=",
+                        URLencode(str_squish(coalesce(prefName,"")),reserved=TRUE)),
+      `Scientific Name` = if_else(!is.na(gbif_url),
+        glue("<a href='{gbif_url}' target='_blank'><em>{prefName}</em></a>"),
+        glue("<em>{coalesce(prefName,'')}</em>")),
+      `IUCN` = glue("<a href='{iucn_url}' target='_blank'>IUCN &#x2197;</a>")
+    ) |>
+    transmute(`#`=row_number(), `Scientific Name`, `Common Name`=coalesce(englishName,""),
+              `Family`=coalesce(family,""), `GBIF Key`=coalesce(GBIFusageKey,""),
+              `Uganda Status`=coalesce(legal_status_ug,""),
+              `Synonyms`=str_trunc(coalesce(synonyms,""),80), `IUCN`) |>
+    styled_kable(caption=glue("Table 5. Uganda Regulated Plants — GBIF Backbone Resolved ({n_gbif_resolved} of {n_species} | {n_gbif_families} families)"), height="600px")
+} else { cat("*GBIF data will be generated on first render with internet access.*") }
+```
+
+---
+
+# Regulatory Gaps {#gaps}
+
+```{r gaps-table}
+tribble(
+  ~`#`, ~`Gap Area`,                                                  ~`Severity`, ~`Status (2025)`,
+  "1",  "No published national threatened plant species list",         "High",      "Unresolved",
+  "2",  "NFA protected species list not publicly accessible",          "High",      "Unresolved",
+  "3",  "Water hyacinth: Lake Victoria coverage growing despite control","High",   "Partial (mechanical harvest)",
+  "4",  "Sandalwood/CITES enforcement in border areas weak",           "High",     "Partial",
+  "5",  "Encephalartos cycads: poaching from natural populations",     "High",     "UWA patrols active",
+  "6",  "NBSAP species inventory — no public database",                "Medium",   "In preparation",
+  "7",  "CITES permit processing delays — NFA/UWA coordination",       "Medium",   "Unresolved",
+  "8",  "Invasive species law reliant on NEA 2019 (not standalone)",   "Medium",   "No standalone IAS law"
+) |>
+  kbl(caption="Table 6. Regulatory Gaps for Plant Species in Uganda", escape=FALSE, align="l") |>
+  kable_styling(bootstrap_options=c("striped","hover","condensed","responsive"), full_width=TRUE, font_size=12) |>
+  column_spec(3, bold=TRUE, color=ifelse(c(TRUE,TRUE,TRUE,TRUE,TRUE,FALSE,FALSE,FALSE),"white","black"),
+              background=ifelse(c(TRUE,TRUE,TRUE,TRUE,TRUE,FALSE,FALSE,FALSE),"#c0392b","#e67e22"))
+```
+
+## Water Hyacinth on Lake Victoria
+
+Water hyacinth (*Eichhornia crassipes*) is Uganda's most critical aquatic invasive plant, covering approximately 4,000–8,000 hectares of Lake Victoria depending on season. It blocks fishing access, harbours disease vectors (snails carrying bilharzia), depletes oxygen, and costs the fishing industry an estimated USD 3 million annually. NEMA, MAAIF, and the Lake Victoria Fisheries Organisation (LVFO) coordinate mechanical harvesting but cannot keep pace with regrowth. A biocontrol programme using *Neochetina eichhorniae* weevils has had partial success but requires sustained long-term deployment.
+
+---
+
+# Key References {#references}
+
+| Resource | Link |
+|----------|------|
+| National Forestry and Tree Planting Act 2003 — ULII | [ulii.org](https://ulii.org/akn/ug/act/2003/5/eng@2023-12-31) |
+| Plant Protection and Health Act 2016 — ULII | [ulii.org](https://ulii.org/akn/ug/act/2016/6/eng@2023-12-31) |
+| National Environment Act 2019 — ULII | [ulii.org](https://ulii.org/akn/ug/act/2019/5/eng@2023-12-31) |
+| Uganda Wildlife Authority | [ugandawildlife.org](https://www.ugandawildlife.org) |
+| National Forestry Authority | [nfa.go.ug](https://www.nfa.go.ug) |
+| GBIF Uganda | [gbif.org/country/UG](https://www.gbif.org/country/UG/summary) |
+
+---
+
+```{r session-info}
+sessionInfo()
+```
+
+```{r kqb-footer, results='asis', echo=FALSE}
+logo_sm <- kqb_logo_img(height="28px")
+cat(paste0('<div class="kqb-report-footer">',
+  if(nzchar(logo_sm)) paste0(logo_sm,'<br/>') else "",
+  '<p style="font-weight:600;color:#0d2240;">',kqb_co$name,' &mdash; ',kqb_co$tagline,'</p>',
+  '<p>',kqb_co$legal_name,' | ',kqb_co$country,'</p>',
+  '<p style="margin-top:6px;font-size:10px;color:#aaa;">Generated ',format(Sys.Date(),"%d %B %Y"),
+  ' &nbsp;&bull;&nbsp; For informational purposes only &nbsp;&bull;&nbsp; Verify at NFA / UWA / NEMA</p>',
+  '</div>'))
+```

@@ -1,0 +1,176 @@
+---
+title: "Restricted and Protected Plant Species in Sri Lanka"
+subtitle: "Fauna and Flora Protection Ordinance (Cap. 469, as amended 2022), Forest Ordinance No. 16 of 1907 — Preliminary Reference"
+author: "Kwiz Research"
+date: "`r format(Sys.Date(), '%d %B %Y')`"
+output:
+  html_document:
+    toc: true
+    toc_float: {collapsed: false, smooth_scroll: true}
+    toc_depth: 3
+    number_sections: true
+    theme: flatly
+    highlight: tango
+    df_print: paged
+    code_folding: hide
+    css: style.css
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo=FALSE, warning=FALSE, message=FALSE,
+                      fig.align="center", fig.width=9, fig.height=5, out.width="100%")
+suppressPackageStartupMessages({
+  library(tidyverse); library(kableExtra); library(glue); library(janitor); library(rgbif)
+})
+.kqb_pkg <- "/Users/kwizera.jvk/Desktop/Kwiz Computing Comes to Life/Kwiz Quants/libs/kwizbranding"
+suppressMessages(devtools::load_all(.kqb_pkg, quiet=TRUE))
+kqb_co <- kqb_company("research"); kqb_col <- kqb_colours()
+.kqb_logo_candidates <- c(file.path(here::here(),"docs","www"),file.path(getwd(),"www"),file.path(getwd()),file.path(here::here()))
+.kqb_load_logo <- function(fn,ck){for(d in .kqb_logo_candidates){p<-file.path(d,fn);if(file.exists(p)){assign(ck,paste0("data:image/svg+xml;base64,",base64enc::base64encode(readBin(p,"raw",file.size(p)))),envir=.GlobalEnv);return(invisible(TRUE))}}}
+.kqb_load_logo("Kwiz Black Logo Transparent bg.svg",".kqb_wm_cache")
+.kqb_load_logo("Kwiz Inverted Color Transparent bg.svg",".kqb_display_cache")
+styled_kable <- function(df,caption=NULL,scroll=TRUE,height="450px"){k<-df|>kbl(caption=caption,escape=FALSE,align="l")|>kable_styling(bootstrap_options=c("striped","hover","condensed","responsive"),full_width=TRUE,font_size=12);if(scroll)k<-scroll_box(k,height=height);k}
+
+species <- tribble(
+  ~common_name,              ~scientific_name,            ~taxonomic_group, ~iucn_status,            ~cites_appendix,  ~legal_status_lk,                              ~restriction_type,              ~governing_law,                    ~managing_institution,   ~notes,
+  "Nelu",                    "Strobilanthes sessilis",     "Magnoliopsida",  "Endangered",            "Not listed",     "Protected (FFPO Schedule V)",                 "Collection prohibited",        "FFPO Cap. 469 Schedule V",        "DWC",                   "Mass flowering every 12 years; Knuckles Range; critical bird habitat; mass fruiting drives rodent cycles",
+  "Sri Lanka orchid",        "Dendrobium macraei",         "Magnoliopsida",  "Vulnerable",            "Appendix II",    "Protected (FFPO Schedule V / CITES App. II)", "Collection/trade regulated",   "FFPO Cap. 469 / CITES",           "DWC",                   "Endemic epiphytic orchid; montane cloud forests; prized in horticulture",
+  "Ebony",                   "Diospyros ebenum",           "Magnoliopsida",  "Near Threatened",       "Not listed",     "Protected timber (Forest Ordinance)",         "Felling regulated",            "Forest Ordinance No. 16/1907",    "Forest Department",     "Ceylon ebony; highly prized dense black timber; historically over-exploited for export",
+  "Ceylon ironwood",         "Mesua ferrea",               "Magnoliopsida",  "Least Concern",         "Not listed",     "Protected forest species",                    "Felling regulated",            "Forest Ordinance No. 16/1907",    "Forest Department",     "Nagassam; national tree of Sri Lanka; dense durable timber; also sacred/temple plantings",
+  "Alexandrian laurel",      "Calophyllum inophyllum",     "Magnoliopsida",  "Least Concern",         "Not listed",     "Protected coastal/forest species",            "Coastal buffer zone controls", "Forest Ordinance / CEA Acts",     "Forest Dept / CEA",     "Coastal and riparian tree; important for soil stability; traditional medicine uses",
+  "Ceylon pitcher plant",    "Nepenthes distillatoria",    "Magnoliopsida",  "Endangered",            "Appendix I",     "Strictly Protected (FFPO / CITES App. I)",    "Collection/trade prohibited",  "FFPO Cap. 469 / CITES",           "DWC",                   "Only Nepenthes species native to Sri Lanka; wet zone lowland bogs; severe habitat loss",
+  "Palk lily",               "Crinum zeylanicum",          "Magnoliopsida",  "Endangered",            "Not listed",     "Protected (FFPO Schedule V)",                 "Collection prohibited",        "FFPO Cap. 469 Schedule V",        "DWC",                   "Sri Lanka endemic; riverine and wet grassland margins; declining due to drainage and agriculture",
+  "Water hyacinth",          "Eichhornia crassipes",       "Magnoliopsida",  "Least Concern",         "Not listed",     "Invasive — management required",              "Control mandated",             "CEA regulations",                 "CEA / Irrigation Dept", "Blocks irrigation channels and reservoirs; major problem in Mahaweli and north-central tanks",
+  "Prickly pear",            "Opuntia dillenii",           "Magnoliopsida",  "Least Concern",         "Not listed",     "Invasive species",                            "Control measures active",      "CEA / Forest Dept regulations",   "Forest Dept / CEA",     "Invasive in dry zone scrublands and coastal dunes; displaces native vegetation",
+  "Velvet tamarind",         "Dialium ovoideum",           "Magnoliopsida",  "Vulnerable",            "Not listed",     "Protected timber (Forest Ordinance)",         "Felling regulated",            "Forest Ordinance No. 16/1907",    "Forest Department",     "Sri Lanka endemic; lowland rainforest; valuable timber; restricted felling permit required"
+)
+
+n_species <- nrow(species)
+proj_root <- here::here()
+gbif_cache <- file.path(proj_root,"output","tables","sri_lanka_regulated_plants_gbif.csv")
+if (!file.exists(gbif_cache)) {
+  cn <- function(nm) nm|>str_remove_all("\\s+spp\\.?$")|>str_remove_all("\\(.*?\\)")|>str_squish()
+  nd <- tibble(name=cn(species$scientific_name),kingdom="Plantae")
+  br <- tryCatch(name_backbone_checklist(nd),error=function(e) map_dfr(nd$name,function(nm) tryCatch(as_tibble(name_backbone(name=nm,kingdom="Plantae")),error=function(e2) tibble(usageKey=NA_integer_,canonicalName=nm,matchType="NONE"))))
+  gv <- function(k){if(is.na(k))return(NA_character_);tryCatch({vn<-name_usage(key=as.numeric(k),data="vernacularNames",limit=100);if(is.null(vn$data)||nrow(vn$data)==0)return(NA_character_);en<-vn$data|>filter(language%in%c("eng","en"))|>pull(vernacularName)|>unique();if(length(en)==0)NA_character_ else paste(en,collapse=", ")},error=function(e)NA_character_)}
+  gs <- function(k){if(is.na(k))return(NA_character_);tryCatch({syn<-name_usage(key=as.numeric(k),data="synonyms",limit=100);if(is.null(syn$data)||nrow(syn$data)==0)return(NA_character_);s<-syn$data|>pull(canonicalName)|>unique()|>na.omit();if(length(s)==0)NA_character_ else paste(s,collapse=", ")},error=function(e)NA_character_)}
+  bc <- br|>as_tibble()|>mutate(GBIFusageKey=as.character(usageKey),prefName=coalesce(species,canonicalName,verbatim_name),gbif_family=family)
+  sm <- species|>mutate(cs=cn(scientific_name))|>bind_cols(bc|>select(GBIFusageKey,prefName,gbif_family,gbif_matchType=matchType,gbif_confidence=confidence))
+  keys <- sm|>filter(!is.na(GBIFusageKey))|>distinct(GBIFusageKey)|>pull(GBIFusageKey)
+  vl<-list();sl<-list()
+  for(i in seq_along(keys)){k<-keys[i];vl[[k]]<-gv(k);sl[[k]]<-gs(k);if(i%%5==0)Sys.sleep(0.2)}
+  vd<-tibble(GBIFusageKey=names(vl),gbif_english=unlist(vl),gbif_synonyms=unlist(sl[names(vl)]))
+  en<-sm|>left_join(vd,by="GBIFusageKey")|>mutate(englishName=coalesce(gbif_english,common_name),synonyms=gbif_synonyms,family=gbif_family)
+  dir.create(file.path(proj_root,"output","tables"),recursive=TRUE,showWarnings=FALSE)
+  en|>select(GBIFusageKey,prefName,family,englishName,synonyms,legal_status_lk,restriction_type,governing_law)|>write_csv(gbif_cache)
+}
+if(file.exists(gbif_cache)){plants_gbif<-read_csv(gbif_cache,col_types=cols(.default=col_character()),show_col_types=FALSE);n_gbif_resolved<-sum(!is.na(plants_gbif$GBIFusageKey)&plants_gbif$GBIFusageKey!="");n_gbif_families<-n_distinct(plants_gbif$family,na.rm=TRUE)}else{plants_gbif<-NULL;n_gbif_resolved<-0L;n_gbif_families<-0L}
+```
+
+```{r kqb-watermark, results='asis', echo=FALSE}
+cat(kqb_watermark_css(opacity=0.04,size="280px auto"))
+uri<-kqb_watermark_uri();if(nzchar(uri))cat(paste0('<style>\nbody::after{\ncontent:"";position:fixed;top:0;left:0;width:100%;height:100%;z-index:9000;pointer-events:none;background-image:url("',uri,'");background-repeat:repeat;background-size:280px auto;opacity:0.04;}\n</style>\n'))
+```
+
+---
+
+# Executive Summary {.unnumbered}
+
+Sri Lanka is a global **biodiversity hotspot** with approximately **3,200 native plant species**, of which roughly **26% are endemic** — an extraordinary proportion for an island of its size (65,610 km²). The wet zone rainforests of the southwestern lowlands and the montane forests of the central highlands harbour the greatest concentration of endemic plants. Sri Lanka's primary instrument for plant protection is the **Fauna and Flora Protection Ordinance (FFPO, Cap. 469)**, which lists protected species in its schedules and establishes the framework for the country's network of national parks and sanctuaries.
+
+<div class="alert alert-info" role="alert">
+**Preliminary Report** — Full species listing from FFPO Schedule V (protected plants) to be completed. Current report covers `r n_species` representative species. DWC ([dwc.gov.lk](https://www.dwc.gov.lk)) maintains the authoritative species schedules.
+</div>
+
+---
+
+# Legal Framework (Summary) {#legal-framework}
+
+| Law / Instrument | Year | Key Provision |
+|-----------------|------|---------------|
+| Fauna and Flora Protection Ordinance (FFPO, Cap. 469) | 1937 (amended 2009, 2022) | Schedule V — protected plants; prohibits collection, possession, trade without permit; strict penalties |
+| Forest Ordinance No. 16 | 1907 (amended) | Forest reserves; protected timber species; felling permits |
+| National Environmental Act No. 47 | 1980 (amended) | CEA establishment; environmental impact assessments; pollution control |
+| Botanic Gardens Ordinance | 1928 | National botanic gardens as ex-situ conservation sites |
+| CITES Implementation | 1979 (accession) | Wildlife Trade Regulations; DWC as Management Authority |
+
+Full text: [DWC — dwc.gov.lk](https://www.dwc.gov.lk) | [FAOLEX Sri Lanka](https://faolex.fao.org/sri-lanka)
+
+---
+
+# Regulatory Institutions {#institutions}
+
+| Institution | Role |
+|-------------|------|
+| DWC (Department of Wildlife Conservation) | FFPO administration; national parks; CITES management authority; Schedule V enforcement |
+| Forest Department | Forest Ordinance enforcement; forest reserves; protected timber species permits |
+| CEA (Central Environmental Authority) | Environmental permits; EIA oversight; invasive species coordination |
+| National Botanic Gardens (Peradeniya) | Ex-situ plant conservation; seed banks; orchid collections |
+| IUCN Sri Lanka | Red List assessments; conservation research |
+| Ministry of Environment | Policy oversight; international convention coordination |
+
+---
+
+# Preliminary Species Listing {#species}
+
+```{r master-table}
+species|>arrange(iucn_status,common_name)|>mutate(`Scientific Name`=paste0("*",scientific_name,"*"))|>
+  select(`Common Name`=common_name,`Scientific Name`,`IUCN`=iucn_status,`CITES`=cites_appendix,
+         `Sri Lanka Status`=legal_status_lk,`Managing Inst.`=managing_institution,`Notes`=notes)|>
+  styled_kable(caption="Table 1. Preliminary — Protected Plant Species in Sri Lanka",height="450px")
+```
+
+## GBIF Backbone Resolution
+
+```{r gbif-table}
+if(!is.null(plants_gbif)&&nrow(plants_gbif)>0){plants_gbif|>
+  mutate(gu=if_else(!is.na(GBIFusageKey)&GBIFusageKey!="",glue("https://www.gbif.org/species/{GBIFusageKey}"),NA_character_),
+         iu=paste0("https://www.iucnredlist.org/search?query=",URLencode(str_squish(coalesce(prefName,"")),reserved=TRUE)),
+         `Scientific Name`=if_else(!is.na(gu),glue("<a href='{gu}' target='_blank'><em>{prefName}</em></a>"),glue("<em>{coalesce(prefName,'')}</em>")),
+         `IUCN`=glue("<a href='{iu}' target='_blank'>IUCN &#x2197;</a>"))|>
+  transmute(`#`=row_number(),`Scientific Name`,`Common Name`=coalesce(englishName,""),`Family`=coalesce(family,""),
+            `GBIF Key`=coalesce(GBIFusageKey,""),`Sri Lanka Status`=coalesce(legal_status_lk,""),
+            `Synonyms`=str_trunc(coalesce(synonyms,""),80),`IUCN`)|>
+  styled_kable(caption=glue("Table 2. Sri Lanka — GBIF Resolved ({n_gbif_resolved} of {n_species} | {n_gbif_families} fam.)"),height="450px")
+}else{cat("*GBIF data will be generated on first render.*")}
+```
+
+---
+
+# Regulatory Gaps (Summary) {#gaps}
+
+| # | Gap | Severity |
+|---|-----|----------|
+| 1 | FFPO Schedule V plant list is outdated — many IUCN-assessed threatened endemics not yet scheduled | High |
+| 2 | Illegal timber trade (ebony, satinwood) through informal channels continues | High |
+| 3 | Nepenthes distillatoria wet zone habitat destruction ongoing from land conversion | High |
+| 4 | Ornamental plant collection from montane forests (orchids, ferns) poorly monitored | Medium |
+| 5 | Water hyacinth management resources insufficient relative to scale of infestation | Medium |
+| 6 | Coordination between DWC and Forest Department on overlapping jurisdictions | Medium |
+
+---
+
+# References {#references}
+
+| Resource | Link |
+|----------|------|
+| DWC — Department of Wildlife Conservation | [dwc.gov.lk](https://www.dwc.gov.lk) |
+| Forest Department Sri Lanka | [forestdept.gov.lk](https://www.forestdept.gov.lk) |
+| CEA Sri Lanka | [cea.lk](https://www.cea.lk) |
+| GBIF Sri Lanka | [gbif.org/country/LK](https://www.gbif.org/country/LK/summary) |
+| CITES Sri Lanka | [cites.org — Sri Lanka](https://cites.org/eng/cms/index.php/component/cp/country/LK) |
+
+---
+
+```{r session-info}
+sessionInfo()
+```
+
+```{r kqb-footer, results='asis', echo=FALSE}
+logo_sm<-kqb_logo_img(height="28px")
+cat(paste0('<div class="kqb-report-footer">',if(nzchar(logo_sm))paste0(logo_sm,'<br/>')else"",
+  '<p style="font-weight:600;color:#0d2240;">',kqb_co$name,' &mdash; ',kqb_co$tagline,'</p>',
+  '<p>',kqb_co$legal_name,' | ',kqb_co$country,'</p>',
+  '<p style="margin-top:6px;font-size:10px;color:#aaa;">Generated ',format(Sys.Date(),"%d %B %Y"),
+  ' &nbsp;&bull;&nbsp; Preliminary — Verify at DWC / Forest Department / CITES</p></div>'))
+```

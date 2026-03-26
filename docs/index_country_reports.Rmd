@@ -1,0 +1,233 @@
+---
+title: "Restricted Plant Species — Global Country Reports Index"
+subtitle: "Africa · South America · Asia | Kwiz Research"
+author: "Kwiz Research"
+date: "`r format(Sys.Date(), '%d %B %Y')`"
+output:
+  html_document:
+    toc: true
+    toc_float: {collapsed: false, smooth_scroll: true}
+    toc_depth: 2
+    number_sections: false
+    theme: flatly
+    highlight: tango
+    df_print: paged
+    code_folding: hide
+    css: style.css
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo=FALSE, warning=FALSE, message=FALSE)
+suppressPackageStartupMessages({ library(tidyverse); library(kableExtra); library(glue) })
+
+.kqb_pkg <- "/Users/kwizera.jvk/Desktop/Kwiz Computing Comes to Life/Kwiz Quants/libs/kwizbranding"
+suppressMessages(devtools::load_all(.kqb_pkg, quiet=TRUE))
+kqb_co <- kqb_company("research"); kqb_col <- kqb_colours()
+.kqb_logo_candidates <- c(file.path(here::here(),"docs","www"), file.path(getwd(),"www"),
+                            file.path(getwd()), file.path(here::here()))
+.kqb_load_logo <- function(fn, ck) {
+  for (d in .kqb_logo_candidates) { p <- file.path(d, fn)
+    if (file.exists(p)) { assign(ck, paste0("data:image/svg+xml;base64,",
+      base64enc::base64encode(readBin(p, "raw", file.size(p)))), envir=.GlobalEnv)
+      return(invisible(TRUE)) } }
+}
+.kqb_load_logo("Kwiz Black Logo Transparent bg.svg",    ".kqb_wm_cache")
+.kqb_load_logo("Kwiz Inverted Color Transparent bg.svg", ".kqb_display_cache")
+```
+
+```{r kqb-watermark, results='asis', echo=FALSE}
+cat(kqb_watermark_css(opacity=0.04, size="280px auto"))
+uri <- kqb_watermark_uri()
+if (nzchar(uri)) cat(paste0('<style>\nbody::after {\n  content: "";\n  position: fixed;\n',
+  '  top:0; left:0; width:100%; height:100%;\n  z-index:9000;\n  pointer-events:none;\n',
+  '  background-image: url("', uri, '");\n  background-repeat:repeat;\n  background-size:280px auto;\n',
+  '  opacity:0.04;\n}\n</style>\n'))
+```
+
+---
+
+## About This Project {.unnumbered}
+
+This index lists all country-level reports in the **Kwiz Research Restricted Plant Species** database — a comprehensive reference covering laws, institutions, species listings (with GBIF backbone taxonomy), and regulatory gaps for restricted, prohibited, and protected plant species across Africa, South America, and Asia.
+
+Each report follows a consistent structure:
+
+1. **Legal Framework** — primary legislation, permit requirements, penalties
+2. **Regulatory Institutions** — agencies with mandates over plant species
+3. **Plant Species Listing** — species with IUCN status, CITES appendix, domestic legal status
+4. **GBIF Backbone Resolution** — scientific names resolved via `rgbif`, with vernacular names, synonyms, and links
+5. **Regulatory Gaps** — documented implementation challenges
+
+GBIF data is fetched automatically on first render and cached as country-specific CSV files in `output/tables/`.
+
+---
+
+## Country Reports {.unnumbered}
+
+```{r country-index-table}
+reports <- tribble(
+  ~Region,         ~Country,         ~`Report File`,                                      ~`Primary Legislation`,                          ~`Status`,      ~`GBIF Data Quality`,
+  "Africa",        "Kenya",          "restricted_species_kenya.html",                     "WCMA 2013; FCMA 2016; EMCA 1999",               "Complete",     "Excellent",
+  "Africa",        "Kenya (Plants)", "plant_species_kenya.html",                          "FCMA 2016; Plant Protection Act; CITES",         "Complete",     "Excellent",
+  "Africa",        "South Africa",   "restricted_plant_species_south_africa.html",        "NEMBA 2004 (TOPS); AIS Regs 2020; NFA 1998",    "Complete",     "Excellent",
+  "Africa",        "Tanzania",       "restricted_plant_species_tanzania.html",            "Wildlife Conservation Act 2009; Forests Act 2002","Complete",   "Moderate",
+  "Africa",        "Uganda",         "restricted_plant_species_uganda.html",              "NFA 2003; NEA 2019; Wildlife Act 2019",          "Complete",     "Moderate",
+  "Africa",        "Namibia",        "restricted_plant_species_namibia.html",             "Forest Act 2001; NC Ordinance 1975",             "Preliminary",  "Moderate",
+  "Asia",          "India",          "restricted_plant_species_india.html",               "WPA 1972 Schedule VI; Biological Diversity Act 2002","Complete", "Excellent",
+  "Asia",          "Philippines",    "restricted_plant_species_philippines.html",         "RA 9147 (2001); DENR DAO 2019-09",               "Complete",     "Good",
+  "Asia",          "Indonesia",      "restricted_plant_species_indonesia.html",           "Law 5/1990; GR 7/1999; GR 106/2018",            "Preliminary",  "Excellent",
+  "Asia",          "Malaysia",       "restricted_plant_species_malaysia.html",            "WCA Act 716 (2010); NFA 1984",                   "Preliminary",  "Good",
+  "Asia",          "Sri Lanka",      "restricted_plant_species_sri_lanka.html",           "FFPO Cap. 469 (amended 2022)",                   "Preliminary",  "Moderate",
+  "Asia",          "Thailand",       "restricted_plant_species_thailand.html",            "Plants Act B.E. 2518; WACPPA B.E. 2562",         "Preliminary",  "Good",
+  "Asia",          "Singapore",      "restricted_plant_species_singapore.html",           "Parks and Trees Act 2005",                       "Preliminary",  "Limited",
+  "South America", "Colombia",       "restricted_plant_species_colombia.html",            "Decreto 1076/2015; Resolución 1912/2017",        "Preliminary",  "Excellent",
+  "South America", "Peru",           "restricted_plant_species_peru.html",                "DS 043-2006-AG; Ley 26839",                      "Preliminary",  "Good",
+  "South America", "Chile",          "restricted_plant_species_chile.html",               "DS 13/2013; Ley 19.473 de Caza",                 "Preliminary",  "Good",
+  "South America", "Brazil",         "restricted_plant_species_brazil.html",              "Portaria MMA 443/2014; Lei 12.651/2012",         "Preliminary",  "Excellent"
+)
+
+reports |>
+  mutate(
+    Report = glue('<a href="{`Report File`}" target="_blank">{Country}</a>'),
+    Status = case_when(
+      Status == "Complete"    ~ '<span style="color:#27ae60;font-weight:600;">&#10003; Complete</span>',
+      Status == "Preliminary" ~ '<span style="color:#e67e22;font-weight:600;">&#9679; Preliminary</span>',
+      TRUE                    ~ Status
+    ),
+    `GBIF Data Quality` = case_when(
+      `GBIF Data Quality` == "Excellent" ~ '<span style="color:#27ae60;">Excellent</span>',
+      `GBIF Data Quality` == "Good"      ~ '<span style="color:#2980b9;">Good</span>',
+      `GBIF Data Quality` == "Moderate"  ~ '<span style="color:#e67e22;">Moderate</span>',
+      `GBIF Data Quality` == "Limited"   ~ '<span style="color:#c0392b;">Limited</span>',
+      TRUE                               ~ `GBIF Data Quality`
+    )
+  ) |>
+  select(Region, Report, `Primary Legislation`, Status, `GBIF Data Quality`) |>
+  kbl(caption = "Country Reports Index — Restricted Plant Species", escape = FALSE, align = "l") |>
+  kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive"),
+                full_width = TRUE, font_size = 13) |>
+  column_spec(1, bold = TRUE) |>
+  row_spec(which(reports$Status == "Complete"), background = "#f0f9f0") |>
+  collapse_rows(columns = 1, valign = "top")
+```
+
+---
+
+## Country Selection Rationale {.unnumbered}
+
+The 15 expansion countries were selected based on three criteria:
+
+1. **English-language legislation accessibility** — primary plant protection laws available in English or with authoritative English translations
+2. **GBIF data coverage** — sufficient occurrence records to support GBIF backbone resolution and analysis
+3. **Regulatory framework maturity** — published, enforceable species lists (not just aspirational legislation)
+
+```{r selection-rationale-table}
+tribble(
+  ~Country,       ~Region,         ~`Score (/10)`, ~`Tier`, ~`Key Strength`,
+  "South Africa", "Africa",         "10",           "Tier 1","NEMBA TOPS list; SAFLII full text; 28M+ GBIF records; SANBI-GBIF node",
+  "India",        "Asia",           "9",            "Tier 1","WPA 1972 Schedule VI; IndiaCode/WIPO Lex; 30M+ GBIF records",
+  "Philippines",  "Asia",           "9",            "Tier 1","RA 9147 fully in English; Official Gazette online; strong GBIF",
+  "Indonesia",    "Asia",           "9",            "Tier 1","Law 5/1990 + GR 7/1999 in English; Herbarium Bogoriense; top ASEAN GBIF",
+  "Colombia",     "South America",  "8",            "Tier 1","SiB Colombia; 27M+ GBIF records; Resolución 1912/2017 species list",
+  "Malaysia",     "Asia",           "8",            "Tier 1","WCA Act 716; MyBIS portal; strong plant GBIF coverage",
+  "Sri Lanka",    "Asia",           "8",            "Tier 1","FFPO (amended 2022) fully in English; DWC online",
+  "Tanzania",     "Africa",         "7",            "Tier 2","WCA 2009; TanzLII; TanBIF portal; Eastern Arc mega-diversity",
+  "Namibia",      "Africa",         "7",            "Tier 2","NCO 1975 + Forest Act 2001; NamibLII; biodiversity.org.na",
+  "Peru",         "South America",  "7",            "Tier 2","DS 043-2006-AG; SERNANP; ~3.8M GBIF records; megadiverse flora",
+  "Chile",        "South America",  "7",            "Tier 2","Ley 19.473 (English translation); CONAF; 5M+ GBIF records",
+  "Thailand",     "Asia",           "7",            "Tier 2","Plants Act 1975 on FAOLEX; ONEP Red Data; good GBIF data",
+  "Uganda",       "Africa",         "6",            "Tier 2","ULII English; NFA 2003; NEA 2019; Kew TIPA data",
+  "Brazil",       "South America",  "9",            "Tier 1","Portaria 443/2014; REFLORA English interface; 50M+ GBIF records",
+  "Singapore",    "Asia",           "6",            "Tier 3","Excellent legislation quality; limited GBIF footprint by geography"
+) |>
+  kbl(caption = "Country Selection Rationale and Scores", escape = FALSE, align = "l") |>
+  kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive"),
+                full_width = TRUE, font_size = 12) |>
+  column_spec(4, bold = TRUE,
+              color      = ifelse(c("Tier 1","Tier 1","Tier 1","Tier 1","Tier 1","Tier 1","Tier 1",
+                                    "Tier 2","Tier 2","Tier 2","Tier 2","Tier 2","Tier 2",
+                                    "Tier 1","Tier 3") == "Tier 1", "white",
+                             ifelse(c("Tier 1","Tier 1","Tier 1","Tier 1","Tier 1","Tier 1","Tier 1",
+                                      "Tier 2","Tier 2","Tier 2","Tier 2","Tier 2","Tier 2",
+                                      "Tier 1","Tier 3") == "Tier 2", "black", "black")),
+              background = ifelse(c("Tier 1","Tier 1","Tier 1","Tier 1","Tier 1","Tier 1","Tier 1",
+                                    "Tier 2","Tier 2","Tier 2","Tier 2","Tier 2","Tier 2",
+                                    "Tier 1","Tier 3") == "Tier 1", "#27ae60",
+                             ifelse(c("Tier 1","Tier 1","Tier 1","Tier 1","Tier 1","Tier 1","Tier 1",
+                                      "Tier 2","Tier 2","Tier 2","Tier 2","Tier 2","Tier 2",
+                                      "Tier 1","Tier 3") == "Tier 2", "#f39c12", "#95a5a6")))
+```
+
+---
+
+## Data Pipeline {.unnumbered}
+
+Each country report is self-contained and uses the following data flow:
+
+```
+[Embedded Species Data (tribble)]
+        ↓
+[clean scientific names]
+        ↓
+[rgbif::name_backbone_checklist() — GBIF Backbone Taxonomy]
+        ↓
+[rgbif::name_usage() — vernacular names + synonyms]
+        ↓
+[Cached CSV: output/tables/{country}_regulated_plants_gbif.csv]
+        ↓
+[HTML Report with interactive kableExtra tables]
+```
+
+For **Kenya**, a separate pipeline (`R/01` → `R/05`) generates the processed data; all other countries currently embed species data directly as R tribbles.
+
+---
+
+## Render All Reports {.unnumbered}
+
+To render all country reports from R:
+
+```r
+proj_root  <- here::here()
+output_dir <- file.path(proj_root, "output", "reports")
+
+report_files <- list.files(file.path(proj_root, "docs"),
+                           pattern = "^restricted_plant_species_.*\\.Rmd$",
+                           full.names = TRUE)
+
+# Also include Kenya reports
+report_files <- c(
+  file.path(proj_root, "docs", "restricted_species_kenya.Rmd"),
+  file.path(proj_root, "docs", "plant_species_kenya.Rmd"),
+  report_files
+)
+
+for (f in report_files) {
+  message("Rendering: ", basename(f))
+  rmarkdown::render(f, output_dir = output_dir, quiet = FALSE)
+}
+
+message("Render this index:")
+rmarkdown::render(
+  file.path(proj_root, "docs", "index_country_reports.Rmd"),
+  output_dir = output_dir,
+  quiet = FALSE
+)
+```
+
+---
+
+```{r kqb-footer, results='asis', echo=FALSE}
+logo_sm <- kqb_logo_img(height = "28px")
+cat(paste0(
+  '<div class="kqb-report-footer">',
+  if (nzchar(logo_sm)) paste0(logo_sm, '<br/>') else "",
+  '<p style="font-weight:600;color:#0d2240;">', kqb_co$name, ' &mdash; ', kqb_co$tagline, '</p>',
+  '<p>', kqb_co$legal_name, ' | ', kqb_co$country, '</p>',
+  '<p style="margin-top:6px;font-size:10px;color:#aaa;">',
+  'Generated ', format(Sys.Date(), "%d %B %Y"),
+  ' &nbsp;&bull;&nbsp; Restricted Plant Species Global Database',
+  ' &nbsp;&bull;&nbsp; For research and informational purposes only',
+  '</p>',
+  '</div>'
+))
+```
