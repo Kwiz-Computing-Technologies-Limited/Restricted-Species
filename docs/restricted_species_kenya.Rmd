@@ -123,6 +123,40 @@ if (file.exists(gbif_csv)) {
   n_gbif_families  <- 0L
 }
 
+# ── Fetch GBIF occurrence counts for Kenya (country = "KE") ───────────────────
+occ_cache <- file.path(proj_root, "output", "tables", "kenya_gbif_occ_counts.csv")
+if (!file.exists(occ_cache) && !is.null(plants_gbif) && nrow(plants_gbif) > 0) {
+  message("[setup] Fetching GBIF occurrence counts for Kenya (KE) ...")
+  keys_for_occ <- plants_gbif |>
+    filter(!is.na(GBIFusageKey) & GBIFusageKey != "") |>
+    distinct(GBIFusageKey) |>
+    pull(GBIFusageKey)
+  occ_rows <- map_dfr(seq_along(keys_for_occ), function(i) {
+    k   <- keys_for_occ[i]
+    cnt <- tryCatch(
+      occ_count(taxonKey = as.integer(k), country = "KE"),
+      error = function(e) NA_integer_
+    )
+    if (i %% 10 == 0) Sys.sleep(0.5)
+    tibble(GBIFusageKey = k, gbif_occ_kenya = as.integer(cnt))
+  })
+  write_csv(occ_rows, occ_cache)
+  message("[setup] Occurrence counts saved to ", occ_cache)
+}
+if (file.exists(occ_cache)) {
+  occ_counts  <- read_csv(occ_cache,
+                           col_types = cols(.default = col_character()),
+                           show_col_types = FALSE) |>
+    mutate(gbif_occ_kenya = as.integer(gbif_occ_kenya))
+  plants_gbif <- if (!is.null(plants_gbif))
+    left_join(plants_gbif, occ_counts, by = "GBIFusageKey") else plants_gbif
+} else {
+  plants_gbif <- if (!is.null(plants_gbif))
+    mutate(plants_gbif, gbif_occ_kenya = NA_integer_) else plants_gbif
+}
+n_gbif_with_occ <- if (!is.null(plants_gbif))
+  sum(!is.na(plants_gbif$gbif_occ_kenya) & plants_gbif$gbif_occ_kenya > 0, na.rm = TRUE) else 0L
+
 # ── Counts for inline use ──────────────────────────────────────────────────────
 n_species    <- nrow(species)
 n_laws       <- nrow(laws)
@@ -568,9 +602,12 @@ species |>
 The table below resolves Kenya's regulated plant species against the
 [GBIF Backbone Taxonomy](https://www.gbif.org/dataset/d7dddbf4-2cf0-4f39-9b2a-bb099caae36c),
 providing authoritative scientific names, English vernacular names from GBIF's
-vernacularNames endpoint, known synonyms, and direct links to GBIF species pages
-and IUCN Red List assessments. Of **`r nrow(if (!is.null(plants_gbif)) plants_gbif else data.frame())` plant species**,
-**`r n_gbif_resolved`** were matched to a GBIF usage key across **`r n_gbif_families`** families.
+vernacularNames endpoint, known synonyms, direct links to GBIF species pages,
+IUCN Red List assessments, and **GBIF Records (Kenya)** — the number of occurrence
+records logged in Kenya for each species (linked to the GBIF occurrence search).
+Of **`r nrow(if (!is.null(plants_gbif)) plants_gbif else data.frame())` plant species**,
+**`r n_gbif_resolved`** were matched to a GBIF usage key across **`r n_gbif_families`** families;
+**`r n_gbif_with_occ`** have at least one Kenya occurrence record in GBIF.
 
 ```{r plants-gbif-table}
 if (!is.null(plants_gbif) && nrow(plants_gbif) > 0) {
@@ -579,6 +616,11 @@ if (!is.null(plants_gbif) && nrow(plants_gbif) > 0) {
       gbif_url = if_else(
         !is.na(GBIFusageKey) & GBIFusageKey != "",
         glue("https://www.gbif.org/species/{GBIFusageKey}"),
+        NA_character_
+      ),
+      occ_url = if_else(
+        !is.na(GBIFusageKey) & GBIFusageKey != "",
+        glue("https://www.gbif.org/occurrence/search?taxon_key={GBIFusageKey}&country=KE"),
         NA_character_
       ),
       iucn_url = paste0(
@@ -590,24 +632,31 @@ if (!is.null(plants_gbif) && nrow(plants_gbif) > 0) {
         glue("<a href='{gbif_url}' target='_blank'><em>{prefName}</em></a>"),
         glue("<em>{coalesce(prefName, '')}</em>")
       ),
+      `GBIF Records (KE)` = case_when(
+        !is.na(gbif_occ_kenya) & !is.na(occ_url) ~
+          glue("<a href='{occ_url}' target='_blank'>{format(gbif_occ_kenya, big.mark=',')}</a>"),
+        !is.na(gbif_occ_kenya) ~
+          as.character(format(gbif_occ_kenya, big.mark=",")),
+        TRUE ~ "—"
+      ),
       `IUCN` = glue("<a href='{iucn_url}' target='_blank'>IUCN &#x2197;</a>")
     ) |>
     transmute(
-      `#`             = row_number(),
+      `#`                  = row_number(),
       `Scientific Name`,
-      `Common Name`   = coalesce(englishName, ""),
-      `Family`        = coalesce(family, ""),
-      `GBIF Key`      = coalesce(GBIFusageKey, ""),
-      `Kenya Status`  = coalesce(classification, ""),
-      `Synonyms`      = str_trunc(coalesce(synonyms, ""), 80),
+      `Common Name`        = coalesce(englishName, ""),
+      `Family`             = coalesce(family, ""),
+      `GBIF Records (KE)`,
+      `Kenya Status`       = coalesce(classification, ""),
+      `Synonyms`           = str_trunc(coalesce(synonyms, ""), 80),
       `IUCN`
     )
 
   plants_gbif_display |>
     styled_kable(
       caption = glue(
-        "Table 8b. Kenya Regulated Plant Species — GBIF Backbone Resolved ",
-        "({n_gbif_resolved} of {nrow(plants_gbif)} matched across {n_gbif_families} families)"
+        "Table 8b. Kenya Plant Species — GBIF Resolved with Kenya Occurrence Records ",
+        "({n_gbif_resolved} matched | {n_gbif_families} families | {n_gbif_with_occ} with Kenya records)"
       ),
       height = "600px"
     )

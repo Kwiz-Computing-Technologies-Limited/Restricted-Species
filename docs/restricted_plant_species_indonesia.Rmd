@@ -132,6 +132,32 @@ This preliminary report covers **`r n_species` representative plant species** (`
 
 ---
 
+# Regional / Subnational Restrictions {#regional}
+
+Indonesia's decentralisation framework (**UU No. 23/2014** on Regional Governance) grants provinces and districts significant authority over natural resource management, including forest use and plant collection. However, national protected species lists under **Government Regulation 7/1999** (updated by PP 106/2018) apply uniformly across Indonesia — provincial regulations may only add further restrictions, not remove them. In practice, the most significant subnational variation arises from provincial forestry permits, customary law (*adat*), and Special Region status.
+
+## Province-Level Key Variations
+
+| Province | Key Instrument | Plant Species Scope |
+|---------|---------------|-------------------|
+| **Aceh** | Qanun (Sharia-derived provincial regulations); RTRW Aceh | Leuser Ecosystem — additional protection for lowland forest species including *Rafflesia* and pitcher plants (*Nepenthes*); Leuser Development Agency (LDA) has independent conservation authority over the 2.6 million ha Leuser Ecosystem; illegal plant collection prosecuted under Qanun 23/2002 |
+| **Papua** | UU Otonomi Khusus 21/2001 (Papua Special Autonomy); UU 2/2021 | Customary lands (*tanah adat*) managed by indigenous *Ondoafi*; commercial plant extraction requires local customary board (*Dewan Adat Papua*) consent in addition to KLHK permits; *Agathis labillardieri* and *Pterocarpus indicus* within adat territories subject to community veto |
+| **Papua Barat (West Papua)** | As Papua above; mangrove conservation area regulations | Mangrove species (*Rhizophora*, *Avicennia*) protected through provincial coastal zone plans; New Province: South Papua (Provinsi Papua Selatan, 2022), Central Papua (Papua Tengah) now add additional administrative layers |
+| **Kalimantan (all 5 provinces)** | RTRW (Spatial Planning) regulations; Forestry Ministry concession rules | *Shorea* and *Dipterocarpus* timber species — provincial logging moratoria in certain protection forests; Heart of Borneo initiative overlaps with provincial spatial plans; *Dyera costulata* and illipe nut (*Shorea macrophylla*) harvest controls by district forestry offices |
+| **Sumatra** | Sumatra Biodiversity Strategy; Harimau Sumatra conservation zone | *Aquilaria malaccensis* (agarwood): provincial anti-trafficking task forces in Aceh, North Sumatra, Riau; *Rafflesia arnoldii* — Bengkulu provincial protection ordinance; Kerinci Seblat landscape regulations restrict collection |
+| **Sulawesi** | Wallacea Biodiversity Hotspot framework; provincial RTRW | Endemic species specific to Sulawesi (e.g., *Palaquium* spp., rattan *Calamus* spp.) — North Sulawesi and Central Sulawesi have rattan collection quotas; Togean Islands protected area has collection ban |
+| **Maluku** | Sasi customary law | *Sasi* is a Malukan customary resource management system with legal recognition; sasi-closed areas prohibit harvest of designated plant species (sea grasses, mangroves, sago) during seasonal closures; provincial government codifies sasi in regional regulations |
+
+## Customary Law (*Hukum Adat*) and *Masyarakat Hukum Adat*
+
+Indonesia's Constitutional Court rulings (Putusan MK 35/2012) and **UU 41/1999 on Forestry** (as amended) recognise customary forests (*Hutan Adat*) as distinct from state forests. Communities with recognised *masyarakat hukum adat* status control plant resource access within their customary territories. Over 5.4 million hectares of customary forests have been formally recognised as of 2024 — in these areas, national species permit requirements coexist with customary authority.
+
+<div class="alert alert-info" role="alert">
+**Source note** — [KLHK KSDAE (Directorate of Biodiversity Conservation)](https://ksdae.menlhk.go.id) | Leuser Ecosystem Authority: [leuserdevelopment.com](https://leuserdevelopment.com) | Papua Special Autonomy: [BIG Papua](https://big.go.id) | Sasi: [IUCN — Customary Resource Management in Maluku](https://www.iucn.org).
+</div>
+
+---
+
 # Regulatory Institutions {#institutions}
 
 | Abbrev. | Institution | Mandate |

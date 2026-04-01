@@ -98,6 +98,41 @@ Full text: [MET Namibia](https://www.met.gov.na) | [FAOLEX Namibia](https://faol
 
 ---
 
+# Regional / Subnational Restrictions {#regional}
+
+Namibia is a unitary state with 14 administrative regions, but most environmental regulation is centralised under the **Ministry of Environment, Forestry and Tourism (MEFT)**. The most significant subnational layer for plant species restrictions comes from **communal conservancies** and **community forests** — legally constituted community organisations that control natural resource use within their registered areas.
+
+## Communal Conservancies — CBNRM Framework
+
+Under the **Nature Conservation Ordinance 4/1975** (as amended by the MET) and the **Communal Land Reform Act 5/2002**, communal conservancies have rights over wildlife and plant natural resources within their territory. There are over 90 registered communal conservancies covering approximately 20% of Namibia's land area (about 165,000 km²):
+
+| Conservancy Area | Key Instrument | Plant Species Restrictions |
+|-----------------|---------------|--------------------------|
+| **KAZA Region (Caprivi/Zambezi)** | Bwabwata NP co-management; Kyaramacan Association | San Bushmen traditional plant collection rights within Bwabwata NP special zones; *Hyphaene petersiana* (Makalani palm) basket weaving regulated by conservancy |
+| **Namib Desert communal conservancies** | Kunene region conservancy rules | *Welwitschia mirabilis* — covered by both national law (collection ban, Ordinance 4/1975) and conservancy rules; Palmwag Concession area has specific no-disturbance zones |
+| **Communal Forests (NFA)** | Namibia Forest Act 12/2001 | Community Forest Committees manage 37 registered community forests (~0.7 million ha); timber and firewood collection requires committee permit; non-registered collection is an offence under Forest Act |
+
+## Welwitschia and Desert Species — National + Regional Protection
+
+*Welwitschia mirabilis* (the ancient desert plant, some specimens >2,000 years old) is the **national plant of Namibia** and is protected by both:
+
+- **Nature Conservation Ordinance 4/1975** — collection, transplanting, or disturbance without MET permit prohibited anywhere in Namibia.
+- **Namib-Naukluft Park regulations** — the core population near Welwitschia Drive (Swakopmund) is within the Namib-Naukluft NP with additional NP rules.
+- **Erongo Regional by-laws** — the Erongo Regional Council has zone designations around Welwitschia populations near Swakopmund restricting off-road driving within 50 m of plants.
+
+## Succulent Karoo — !Nami≠Nûs and Communal Areas
+
+The southern communal areas (Karas region) host Namibia's Succulent Karoo flora. Several communal conservancies in Karas and //Kharas regions have been engaged by MEFT under the **Plant Genetic Resources Strategy** to regulate bulb and succulent collection (key genera: *Lithops*, *Conophytum*, *Haworthia*):
+
+- Commercial collection of succulents from communal areas requires **written consent from the conservancy committee** plus a MET permit.
+- The **Nama Karoo Biodiversity Stewardship Programme** (a partnership between MEFT, NNF, and landowners) provides voluntary species protection commitments on private and communal land.
+
+<div class="alert alert-info" role="alert">
+**Source note** — MEFT Namibia: [met.gov.na](https://www.met.gov.na) | NACSO (communal conservancies): [nacso.org.na](https://www.nacso.org.na) | Namibia Nature Foundation: [nnf.org.na](https://www.nnf.org.na) | NFA Namibia: [mfa.gov.na/nfa](https://www.met.gov.na).
+</div>
+
+---
+
 # Regulatory Institutions {#institutions}
 
 | Institution | Role |

@@ -98,6 +98,37 @@ Full text: [ICMBio](https://www.icmbio.gov.br) | [MMA](https://www.gov.br/mma) |
 
 ---
 
+# Regional / Subnational Restrictions {#regional}
+
+Brazil's federated system grants states (and the Federal District) significant environmental authority. States may enact their own threatened species lists, expand protected categories, and impose stricter harvest or trade controls than federal law — they may not be *weaker* than federal law. The most significant state instruments for plant species are summarised below.
+
+| State | Key Instrument | Plants Scope | Enforcing Body |
+|-------|---------------|-------------|----------------|
+| **São Paulo** | Resolução SMA 57/2016 (*Lista de Espécies da Flora Ameaçadas*) | 314 threatened plant species listed; stricter than Portaria 443/2014 for many taxa; collection and commercialisation prohibited without CETESB/SMA permit | SEMA-SP (Secretaria de Meio Ambiente) / CETESB |
+| **Minas Gerais** | Deliberação COPAM 367/2008 (*Lista da Flora Ameaçada de Extinção*) | 406 threatened plants listed; Cerrado species especially; major overlap with Atlantic Forest and Cerrado biomes | SUPRAM / SEMAD |
+| **Paraná** | Decreto Estadual 3148/2004 (*Lista Vermelha da Flora Ameaçada — PR*) | ~236 species; araucaria-mixed forest species; forestry licensing conditioned on rare plant surveys | IAP (Instituto Ambiental do Paraná) |
+| **Santa Catarina** | Resolução CONSEMA 51/2008 | 160+ threatened plant species; araucaria and Atlantic Forest taxa | FATMA (Fundação do Meio Ambiente) |
+| **Rio Grande do Sul** | Decreto 52.109/2014 (*Lista de Espécies da Flora Nativa Ameaçadas*) | 300+ taxa listed; grassland (campo) species notably included; native grassland conversion restricted | SEMA-RS / FEPAM |
+| **Amazonas** | Lei Estadual 3135/2007 (*Política Estadual sobre Mudanças Climáticas*) + Decreto 24.375/2004 (*SEUC-AM*) | State conservation units may restrict plant collection beyond federal rules; ABS provisions apply in state PAs | SDS Amazonas (now SEMA-AM) |
+| **Pará** | SEMA-PA management plans for state conservation units | Timber and NTFP harvest restrictions within state PAs; enforcement of Forest Code APP and RL in the Amazon | SEMA-Pará / IDEFLOR-Bio |
+| **Bahia** | IMA-BA (Instituto do Meio Ambiente e Recursos Hídricos) | Atlantic Forest remnants; Caatinga endemic plants; licensing conditioning | IMA Bahia |
+
+## Key State-Level Mechanisms
+
+1. **State threatened plant lists** — São Paulo, Minas Gerais, Paraná, Santa Catarina, and Rio Grande do Sul each maintain official state lists that add hundreds of species not covered by the federal Portaria MMA 443/2014. Commercial use, collection, and trade of listed species require state environmental permits.
+
+2. **State Conservation Units (SEUC)** — Each state has its own system of conservation units (parks, ecological stations, APA areas) with individual management plans that may impose species-specific collection bans. Amazonian states (Amazônas, Pará, Mato Grosso) have extensive state PA networks.
+
+3. **CONAMA Resolutions** — National-level (federal) but implemented regionally: CONAMA Resolution 369/2006 governs intervention in Permanent Preservation Areas (APPs); states add site-specific restrictions. CONAMA Resolution 423/2010 addresses Atlantic Forest species and native grassland.
+
+4. **Forest Code compliance conditionality** — State environmental agencies (e.g., CETESB in SP, FEPAM in RS) enforce CAR (Cadastro Ambiental Rural) registration, a precondition for land use. Rural properties with irregular CAR status face restrictions on timber and NTFP harvest from native vegetation.
+
+<div class="alert alert-info" role="alert">
+**Source note** — State threatened plant lists are enacted by state secretariat resolutions or COPAM deliberations and may be updated independently of federal lists. Always verify the current state list with the relevant state environmental secretariat. Key portal: [Sistema Nacional de Informação sobre Meio Ambiente (SINIMA)](https://www.gov.br/mma/pt-br/acesso-a-informacao/sistemas-e-ferramentas/sinima) | [INMA — Instituto Nacional da Mata Atlântica](https://www.inma.gov.br).
+</div>
+
+---
+
 # Regulatory Institutions {#institutions}
 
 | Institution | Role |

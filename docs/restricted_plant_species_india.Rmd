@@ -216,6 +216,46 @@ Key CITES-listed Indian plant groups:
 
 ---
 
+# Regional / Subnational Restrictions {#regional}
+
+India's constitutional framework gives states concurrent legislative authority over forests and wildlife. Each state has a **Chief Wildlife Warden** (CWW) who administers the Wild Life (Protection) Act, a **State Biodiversity Board (SBB)** under the Biological Diversity Act, and a **State Forest Department** with its own rules for forest produce collection. Many states impose restrictions *beyond* the WPA Schedule VI list, particularly for commercially valuable medicinal plants and timber trees.
+
+## State Biodiversity Boards (SBBs) — Biological Diversity Act, 2002
+
+Each of India's 28 states and 8 Union Territories has a **State Biodiversity Board** constituted under the BDA. SBBs regulate commercial access to biological resources within the state. Specific state-level restrictions include:
+
+| State / Region | Key State Instrument | Notable Plant Species Restrictions |
+|---------------|---------------------|----------------------------------|
+| **Karnataka** | Karnataka Forest Act 1963 (as amended); KFD sandalwood order | **Indian sandalwood** (*Santalum album*): Government owns all naturally grown sandalwood trees on private and public land (Karnataka Sandalwood Act 1970-era amendments); harvesting requires KFD license; sale through KDTDC only |
+| **Andhra Pradesh / Telangana** | AP Forest Act 1967; APFD Red Sanders enforcement regime | **Red Sanders** (*Pterocarpus santalinus*): Both states have dedicated task forces; all wild trees are government property; export prohibited without APFD NOC |
+| **Himachal Pradesh** | HP Forest Produce Transit Rules 2019; HP Forest Act 1927 | *Taxus wallichiana* (Himalayan yew): Transit of yew bark and needles banned; HP Forest Dept has district-level collection permits for medicinal plants; over 70 plant species on HP state restricted list |
+| **Uttarakhand** | UK Forest Policy 2016; Medicinal Plant Board rules | *Saussurea costus*, *Nardostachys jatamansi*, *Podophyllum hexandrum*: State-level harvest quotas; Uttarakhand Forest Development Corporation controls commercial collection |
+| **Sikkim** | Sikkim Forest Act 2023; Sikkim SBB rules | State declared an organic state — all synthetic pesticide use banned; strict collection restrictions on high-altitude medicinal plants; *Fritillaria cirrhosa* and orchids specifically listed |
+| **Meghalaya / Nagaland / Mizoram** | NE States Forest Acts; Customary law | Tribal customary laws (*Ri* / *Ilam* systems) restrict access to community forests; state SBBs work with village biodiversity registers; orchid collection heavily regulated |
+| **Kerala** | Kerala Forest Act 1961; KFRI guidelines | Specific extraction quotas for 168 medicinal plant species under Kerala Medicinal Plants Board (KMPB); Cardamom Hills Reserve species specially protected |
+| **Tamil Nadu** | TN Forest Act 1882 (revised); TNPCB rules | *Pterocarpus santalinus*, red sanders endemic range in TN border districts; state SBB ABS framework adds 15 state-specific species to national list |
+| **Rajasthan / Gujarat** | State Forest Acts; CAZRI guidelines for arid zones | *Prosopis cineraria* (khejri — state tree of Rajasthan) protected; cutting without permit under Forest Act; state-level Bishnoi community protection has customary legal recognition |
+| **Maharashtra** | MoEFCC-MPCB convergence; Mumbai Mangrove rules | Mangrove tree species: Maharashtra enacted specific mangrove protection orders; Mumbai HC rulings have given mangroves virtual PA status; state forest dept maintains mangrove cell |
+
+## Chief Wildlife Warden Permits — State-Level Licensing
+
+For WPA Schedule VI species, **state CWW permits** are required for:
+- Collection for bona fide scientific research
+- Cultivation under CITES documentation
+- Export/import for approved purposes
+
+CWW permit authority means enforcement is **state-specific**: a permit from Karnataka does not cover collection in Himachal Pradesh for the same species. This creates significant inter-state trade regulatory complexity.
+
+## People's Biodiversity Registers (PBRs) — Village-Level Restrictions
+
+Under BDA Section 41, Gram Panchayats and urban local bodies must establish **Biodiversity Management Committees (BMCs)** and maintain **People's Biodiversity Registers (PBRs)** documenting local biological resources. BMCs may levy a **benefit-sharing charge** on commercial users of locally documented resources. Several states (Kerala, Karnataka, Sikkim) have advanced PBR frameworks with >1,000 registers documented that effectively create village-level species access controls.
+
+<div class="alert alert-info" role="alert">
+**Source note** — State SBB portals: [NBA India — State Biodiversity Boards](https://www.nbaindia.org/state-bdb.html) | Karnataka KFD: [kfd.gov.in](https://www.kfd.gov.in) | Uttarakhand Medicinal Plant Board: [umb.uk.gov.in](http://umb.uk.gov.in) | Kerala KMPB: [kmpb.kerala.gov.in](https://kmpb.kerala.gov.in).
+</div>
+
+---
+
 # Regulatory Institutions {#institutions}
 
 ```{r institutions-table}

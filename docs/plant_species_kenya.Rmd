@@ -113,6 +113,40 @@ if (file.exists(gbif_csv)) {
   n_gbif_aquatic  <- 0L
 }
 
+# ── Fetch GBIF occurrence counts for Kenya (country = "KE") ───────────────────
+occ_cache <- file.path(proj_root, "output", "tables", "kenya_gbif_occ_counts.csv")
+if (!file.exists(occ_cache) && !is.null(plants_gbif) && nrow(plants_gbif) > 0) {
+  message("[setup] Fetching GBIF occurrence counts for Kenya (KE) ...")
+  keys_for_occ <- plants_gbif |>
+    filter(!is.na(GBIFusageKey) & GBIFusageKey != "") |>
+    distinct(GBIFusageKey) |>
+    pull(GBIFusageKey)
+  occ_rows <- map_dfr(seq_along(keys_for_occ), function(i) {
+    k   <- keys_for_occ[i]
+    cnt <- tryCatch(
+      occ_count(taxonKey = as.integer(k), country = "KE"),
+      error = function(e) NA_integer_
+    )
+    if (i %% 10 == 0) Sys.sleep(0.5)
+    tibble(GBIFusageKey = k, gbif_occ_kenya = as.integer(cnt))
+  })
+  write_csv(occ_rows, occ_cache)
+  message("[setup] Occurrence counts saved to ", occ_cache)
+}
+if (file.exists(occ_cache)) {
+  occ_counts  <- read_csv(occ_cache,
+                           col_types = cols(.default = col_character()),
+                           show_col_types = FALSE) |>
+    mutate(gbif_occ_kenya = as.integer(gbif_occ_kenya))
+  plants_gbif <- if (!is.null(plants_gbif))
+    left_join(plants_gbif, occ_counts, by = "GBIFusageKey") else plants_gbif
+} else {
+  plants_gbif <- if (!is.null(plants_gbif))
+    mutate(plants_gbif, gbif_occ_kenya = NA_integer_) else plants_gbif
+}
+n_gbif_with_occ <- if (!is.null(plants_gbif))
+  sum(!is.na(plants_gbif$gbif_occ_kenya) & plants_gbif$gbif_occ_kenya > 0, na.rm = TRUE) else 0L
+
 # ── Helper: styled kable ───────────────────────────────────────────────────────
 styled_kable <- function(df, caption = NULL, scroll = TRUE, height = "450px") {
   k <- df |>
@@ -549,6 +583,11 @@ if (!is.null(plants_gbif) && nrow(plants_gbif) > 0) {
         glue("https://www.gbif.org/species/{GBIFusageKey}"),
         NA_character_
       ),
+      occ_url = if_else(
+        !is.na(GBIFusageKey) & GBIFusageKey != "",
+        glue("https://www.gbif.org/occurrence/search?taxon_key={GBIFusageKey}&country=KE"),
+        NA_character_
+      ),
       iucn_url = paste0(
         "https://www.iucnredlist.org/search?query=",
         URLencode(str_squish(coalesce(prefName, "")), reserved = TRUE)
@@ -567,6 +606,13 @@ if (!is.null(plants_gbif) && nrow(plants_gbif) > 0) {
         glue("<a href='{gbif_url}' target='_blank'><em>{prefName}</em></a>"),
         glue("<em>{coalesce(prefName, '')}</em>")
       ),
+      `GBIF Records (KE)` = case_when(
+        !is.na(gbif_occ_kenya) & !is.na(occ_url) ~
+          glue("<a href='{occ_url}' target='_blank'>{format(gbif_occ_kenya, big.mark=',')}</a>"),
+        !is.na(gbif_occ_kenya) ~
+          as.character(format(gbif_occ_kenya, big.mark=",")),
+        TRUE ~ "—"
+      ),
       `IUCN` = glue("<a href='{iucn_url}' target='_blank'>IUCN &#x2197;</a>"),
       `CITES` = if_else(
         !is.na(cites_url),
@@ -581,14 +627,14 @@ if (!is.null(plants_gbif) && nrow(plants_gbif) > 0) {
       )
     ) |>
     transmute(
-      `#`              = row_number(),
+      `#`                  = row_number(),
       `Scientific Name`,
-      `Common Name`    = coalesce(englishName, ""),
-      `Family`         = coalesce(family, ""),
-      `GBIF Key`       = coalesce(GBIFusageKey, ""),
-      `Kenya Status`   = coalesce(classification, ""),
-      `Aquatic`        = `Aquatic`,
-      `Synonyms`       = str_trunc(coalesce(synonyms, ""), 90),
+      `Common Name`        = coalesce(englishName, ""),
+      `Family`             = coalesce(family, ""),
+      `GBIF Records (KE)`,
+      `Kenya Status`       = coalesce(classification, ""),
+      `Aquatic`            = `Aquatic`,
+      `Synonyms`           = str_trunc(coalesce(synonyms, ""), 90),
       `IUCN`,
       `CITES`
     )
@@ -598,7 +644,7 @@ if (!is.null(plants_gbif) && nrow(plants_gbif) > 0) {
       caption = glue(
         "Table 8. Kenya Regulated Plant Species — GBIF Backbone Resolved ",
         "({n_gbif_resolved} of {nrow(plants_gbif)} matched | {n_gbif_families} families | ",
-        "{n_gbif_aquatic} aquatic)"
+        "{n_gbif_aquatic} aquatic | {n_gbif_with_occ} with Kenya occurrences)"
       ),
       height = "700px"
     )

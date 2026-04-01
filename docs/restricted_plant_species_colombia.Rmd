@@ -98,6 +98,41 @@ Full text: [SiB Colombia](https://sibcolombia.net) | [MADS](https://www.minambie
 
 ---
 
+# Regional / Subnational Restrictions {#regional}
+
+Colombia's 33 **Regional Autonomous Corporations (Corporaciones Autónomas Regionales — CARs)** are constitutionally mandated agencies that exercise regulatory authority over natural resources in their territories. Under **Ley 99/1993** and **Decreto 1076/2015**, CARs have independent powers to restrict plant collection, set harvest quotas, and designate regional protected areas (*áreas protegidas regionales*) beyond national law. CARs do not merely implement national policy — they are autonomous legal entities with their own budgets and enforcement capacity.
+
+## Key CARs and Their Plant-Species Restrictions
+
+| CAR | Territory | Notable Plant Restrictions |
+|-----|-----------|--------------------------|
+| **CAR Cundinamarca** | Cundinamarca + Bogotá | Wax palm (*Ceroxylon quindiuense*) frond harvest strictly controlled; Páramo species habitat restrictions; urban tree cutting requires CAR permit |
+| **CVC** (Valle del Cauca) | Valle del Cauca + Pacific | *Aniba rosaeodora* (rosewood) — harvest suspension orders; Chocó forest species collection regulated; tagua harvest quotas under PNN coordination |
+| **Corantioquia** | Antioquia | *Cattleya trianae* orchid — collection bans in Antioquia range; Alto Cauca riparian forest protection; endemic Antioquia species under restriction |
+| **Corpoamazonia** | Putumayo, Caquetá, Amazonas | Amazon plant collection permits issued by Corpoamazonia; *Victoria amazonica* wetland habitats protected; coca eradication coordination |
+| **CDA** | Guainía, Vaupés, Vichada | Remote Amazon CARs — minimal enforcement capacity but legal collection permits required; coca and epena (*Virola calophylla*) monitored |
+| **CDMB** | Santander (paramos) | Páramo ecosystem species — *Espeletia* spp., orchids; collection prohibited in Páramos Almorzadero and Santurbán |
+| **Cornare** | Eastern Antioquia | Protection of Bosque de Niebla (cloud forest) species; endemic orchid collection controls |
+| **CAM** | Huila + Alto Magdalena | Wax palm protections in San Agustín area; *Cinchona* regulation; access to botanical collections requires CAM permit |
+
+## Páramo Ecosystem — Special Regional Regime
+
+Colombian páramos (high-altitude moorlands above ~3,200 m) benefit from a heightened legal protection regime enacted through **Resolución 1769/2023** (MADS) and Constitutional Court rulings (Sentencia T-622/2016 on the Atrato River). Key points:
+
+- All páramo ecosystems are designated **exclusion zones** for agriculture, mining, and hydrocarbon extraction under **Ley 1930/2018** (Ley de Páramos).
+- Plant species characteristic of páramos (*Espeletia*, *Polylepis*, mosses and cushion plants) are indirectly protected through habitat exclusion.
+- Regional CARs must map and delimit páramos in their territories and enforce the exclusion regime — enforcement quality varies substantially by CAR capacity.
+
+## Amazon Resguardos — Indigenous Territorial Restrictions
+
+Indigenous territories (*resguardos*) cover over 25 million hectares of Colombian Amazon and Orinoco basin. Under **Ley 21/1991** (ILO Convention 169) and Constitutional jurisprudence, indigenous communities exercise territorial control over plant resources. Commercial extraction of any plant from a resguardo without community consent (via *consulta previa*) constitutes a legal violation. Several Amazonian communities have self-declared bans on commercial *ayahuasca* vine (*Banisteriopsis caapi*) extraction by non-indigenous operators.
+
+<div class="alert alert-info" role="alert">
+**Source note** — CAR portals vary widely in accessibility. Key national portal: [SIAC (Sistema de Información Ambiental de Colombia)](https://www.siac.gov.co) | CAR registry: [Minambiente — CARs](https://www.minambiente.gov.co/departamento/corporaciones-autonomas-regionales/) | Ley Páramos: [Ley 1930/2018 — Colombia Compra Eficiente](https://www.colombiacompra.gov.co).
+</div>
+
+---
+
 # Regulatory Institutions {#institutions}
 
 | Institution | Role |

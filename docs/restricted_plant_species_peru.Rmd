@@ -98,6 +98,35 @@ Full text: [SERNANP](https://www.sernanp.gob.pe) | [MINAM](https://www.gob.pe/mi
 
 ---
 
+# Regional / Subnational Restrictions {#regional}
+
+Peru's 25 regional governments (**Gobiernos Regionales**) have devolved environmental powers under **Ley 27867/2002**. Each region has an **Autoridad Regional Ambiental (ARA)** or equivalent environmental body with authority to grant NTFP collection permits and manage **Áreas de Conservación Regional (ACRs)**. Regional governments may not weaken national species protections but may impose stricter controls.
+
+## Key Regional Instruments
+
+| Region | Key Body | Notable Plant Restrictions |
+|--------|----------|--------------------------|
+| **Loreto** | ARA Loreto; ACR Ampiyacu-Apayacu | *Myroxylon balsamum*, *Hevea brasiliensis*, *Cedrela odorata* — NTFP harvest permits from ARA Loreto; regional restrictions on cedar and mahogany (*Swietenia macrophylla*) extraction in unlogged areas |
+| **Ucayali** | GERFOR Ucayali | *Swietenia macrophylla* (*caoba*) — CITES App. II + DS 043-2006-AG; regional patrol teams enforce timber operations |
+| **Madre de Dios** | ARA Madre de Dios | Brazil nut (*Bertholletia excelsa*) — collection rights held exclusively by designated concession holders; non-holder collection prohibited under regional ordinance |
+| **Cusco** | DRAC Cusco; Machu Picchu management | *Cinchona officinalis* (national tree); Polylepis cloud forest species; Machu Picchu Historical Sanctuary requires SERNANP permit via Cusco regional office |
+| **Amazonas** | ARA Amazonas; ACR Cordillera de Colán | *Croton lechleri* (sangre de grado) latex collection requires regional permits; cloud forest endemics monitored by ARA Amazonas |
+| **Pasco / Junín** | ARA Pasco | *Cinchona calisaya*; puna and yungas medicinal plants; coca (*Erythroxylum coca*) — controlled cultivation areas designated by DEVIDA and regional governments |
+
+## Amazon Conservation Areas (ACRs) — Regional Layer
+
+Peru's 24 **ACRs** are established by regional ordinances under **Ley 26834/1997**. Within ACRs, collection of DS 043-2006-AG-listed threatened plants is prohibited without SERNANP approval. ACRs additionally list locally important species in their management plans and cover approximately 2 million hectares.
+
+## Indigenous Communities — Consulta Previa
+
+**Ley 29785 (Law of Prior Consultation, 2011)** gives indigenous communities veto rights over commercial resource extraction from their territories. The Shipibo-Konibo, Awajún, Ashaninka, and other Amazonian peoples exercise customary restrictions on medicinal plants (*ayahuasca / Banisteriopsis caapi*, *Uncaria tomentosa* cat's claw, *sangre de grado*). Commercial *ayahuasca* operators must source plants from authorised nurseries or communities with regional DIRESA oversight.
+
+<div class="alert alert-info" role="alert">
+**Source note** — SERNANP: [sernanp.gob.pe](https://www.sernanp.gob.pe) | DS 043-2006-AG threatened plant list: [MINAM](https://www.gob.pe/minam) | DEVIDA: [devida.gob.pe](https://www.devida.gob.pe) | Regional ARAs via: [gob.pe regional portals](https://www.gob.pe).
+</div>
+
+---
+
 # Regulatory Institutions {#institutions}
 
 | Institution | Role |

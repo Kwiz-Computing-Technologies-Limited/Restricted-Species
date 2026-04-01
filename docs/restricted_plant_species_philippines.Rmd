@@ -179,6 +179,51 @@ The Philippine Invasive Alien Species programme is coordinated through the **Int
 
 ---
 
+# Regional / Subnational Restrictions {#regional}
+
+The Philippines' **Local Government Code (RA 7160, 1991)** devolved significant environmental powers to municipalities and cities (Local Government Units — LGUs), and to provinces. LGUs may enact environmental ordinances, declare local sanctuaries, and impose local collection restrictions more restrictive than national law. The DENR also maintains 15 regional offices with region-specific administrative orders.
+
+## Cordillera Administrative Region (CAR) — Indigenous Customary Law
+
+The Cordillera mountains of northern Luzon are governed partly through the **Indigenous Peoples' Rights Act (IPRA, RA 8371, 1997)**. Indigenous communities (Igorot, Ifugao, Kalinga) hold rights over their **Ancestral Domains** including plant resources:
+
+- The **Muyong** system (privately owned pine-forest patches in Ifugao) imposes customary restrictions on pine (*Pinus kesiya*) and timber harvest without community consent.
+- **Almaciga** resin (*Agathis philippinensis*) collection in IP territories requires *free, prior, and informed consent (FPIC)* from the NCIP.
+- NCIP Regional Office – CAR issues Certificates of Ancestral Domain Title (CADTs) that define jurisdictional boundaries where customary law applies.
+
+## BARMM — Bangsamoro Autonomous Region
+
+Under **RA 11054 (Bangsamoro Organic Law, 2018)**, the Bangsamoro Autonomous Region in Muslim Mindanao (BARMM) exercises devolved authority over forestry, environment, and biodiversity in Maguindanao, Lanao del Sur, Basilan, Sulu, Tawi-Tawi, and Cotabato City:
+
+- The **Bangsamoro Environment and Natural Resources Authority (BENRA)** issues its own forestry and collection permits.
+- National species laws (RA 9147; RA 7586) continue to apply, but implementation is through BENRA rather than DENR.
+
+## Protected Area Management Boards (PAMBs)
+
+Each of the Philippines' **240+ protected areas** under the **National Integrated Protected Areas System Act (RA 7586, 1992)** is managed by a PAMB that includes LGU representatives and DENR. PAMBs have authority to impose species-specific collection bans within their protected areas, creating a layer of restrictions above national law:
+
+- **Mt. Apo Natural Park PAMB** (Davao) — absolute collection ban on *Nepenthes* and all wild orchids.
+- **Mt. Kitanglad Range Natural Park PAMB** (Bukidnon) — *Vanda sanderiana* (*Waling-waling*) banned even for CITES-permitted entities.
+- **Puerto Princesa Subterranean River PAMB** (Palawan) — Palawan Council for Sustainable Development (PCSD) has separate authority from DENR for all environmental matters in Palawan.
+
+## Palawan — PCSD Special Regime
+
+**RA 7611 (Strategic Environmental Plan for Palawan, 1992)** establishes the **Palawan Council for Sustainable Development (PCSD)** as the paramount environmental body for Palawan. The **ECAN** zoning system designates Core Zones (no-take), Buffer Zones, and Multiple Use Zones. Any plant collection in Palawan requires PCSD clearance in addition to DENR permits. *Shorea* timber species, almaciga, and rattan have PCSD-specific quotas.
+
+## LGU Ordinances — Selected Examples
+
+| LGU | Key Plant Restriction |
+|-----|-----------------------|
+| Cebu City | Molave (*Vitex parviflora*) and narra (*Pterocarpus indicus*) protected; tree-cutting requires Mayor's permit |
+| Davao City | Trees >10 cm DBH — CENRO permit required for removal; heritage tree inventory maintained |
+| Puerto Princesa, Palawan | No plant collection in city forest reserves; orchid vendors must present PCSD clearance |
+
+<div class="alert alert-info" role="alert">
+**Source note** — NCIP: [ncip.gov.ph](https://www.ncip.gov.ph) | PCSD: [pcsd.palawan.gov.ph](https://pcsd.palawan.gov.ph) | BENRA: [benra.gov.ph](https://benra.gov.ph) | DENR: [denr.gov.ph](https://denr.gov.ph).
+</div>
+
+---
+
 # Regulatory Institutions {#institutions}
 
 ```{r institutions-table}

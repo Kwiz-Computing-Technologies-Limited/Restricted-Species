@@ -189,6 +189,42 @@ Critical plant-related CITES milestone: **COP17 (2016)** listed all *Dalbergia* 
 
 ---
 
+# Regional / Subnational Restrictions {#regional}
+
+Tanzania is a **United Republic** comprising the mainland (Tanzania Proper) and **Zanzibar** (the semi-autonomous islands of Unguja and Pemba). Zanzibar has its own constitution, parliament, and government with independent authority over most matters including environmental management. This creates a dual regulatory system for plant species. The mainland is divided into 31 administrative regions, each with a **Regional Administrative Secretary** and zonal TAWIRI offices, but most environmental regulation remains centralised at the national level.
+
+## Zanzibar — Separate Legal Framework
+
+Zanzibar's environmental legislation is entirely distinct from mainland Tanzania:
+
+| Instrument | Year | Plant Species Scope |
+|-----------|------|---------------------|
+| **Zanzibar Environmental Management Act No. 3/2013 (ZEMA)** | 2013 | Framework environmental law for Zanzibar; Zanzibar Environmental Management Authority (ZEMA) regulates biodiversity access; species collection requires ZEMA permit |
+| **Zanzibar Forests and Non-Farm Trees Act No. 10/1996** | 1996 | Governs collection of forest products in Zanzibar forests; Jozani-Chwaka Bay National Park (the only NP in Zanzibar) has absolute no-collection zones |
+| **Zanzibar Decree Conservation of Wild Plants No. 1/1991** | 1991 | Protects specific plant species in Zanzibar; *Coelacanth* seagrass and mangrove species protected |
+| **Zanzibar Spice Industry regulations** | Ongoing | Cloves (*Syzygium aromaticum*) — export monopoly through Zanzibar State Trading Corporation (ZSTC); vanilla, black pepper and nutmeg also regulated for quality and export |
+| **Zanzibar Blue Economy / Marine Conservation** | 2021 | Seagrass and mangrove collection restricted under Blue Economy Policy; fishing communities have traditional use rights but commercial collection requires ZEMA and Ministry of Blue Economy permits |
+
+Zanzibar's **Jozani-Chwaka Bay National Park** (established 2004 under the National Parks Act No. 3/2004, Zanzibar) protects coral rag forest with distinct plant communities including endemic *Pandanus* palms and *Uvaria*. Collection within the park requires the Zanzibar National Parks and Reserves authority (ZPNR) permit — TANAPA has no jurisdiction here.
+
+## Mainland Tanzania — Regional Variation
+
+While mainland environmental legislation is primarily national, two significant subnational layers exist:
+
+1. **Wildlife Management Areas (WMAs)**: Community-based areas managed by registered Village Natural Resources Committees (VNRCs). WMAs cover approximately 3.6 million hectares. Non-timber forest product collection within WMAs requires village council approval under WMA rules; commercial plant collection prohibited without additional TAMISEMI authorisation.
+
+2. **Ngorongoro Conservation Area (NCA)**: The Ngorongoro Conservation Area Authority (NCAA) administers the 8,094 km² NCA under the **Ngorongoro Conservation Area Ordinance Cap. 413**. Plant collection (including medicinal plants) within the NCA is prohibited except for authorised researchers; Maasai traditional use of specific plant species (*Acacia* bark, *Olea africana*) is subject to NCAA permit.
+
+3. **Selous Game Reserve / Nyerere National Park**: Despite conversion to national park status in 2019, the buffer zone remains under Tanzania Forest Services (TFS) management with specific NTF product collection restrictions different from national park rules.
+
+4. **Southern Highlands Forest Reserves**: Kilolo, Mufindi, Mufindi highlands — TFS administers forest reserves in Iringa and Njombe regions with specific collection permits for timber, medicinal plants, and bamboo (*Arundinaria alpina*).
+
+<div class="alert alert-info" role="alert">
+**Source note** — ZEMA (Zanzibar): [zema.go.tz](https://www.zema.go.tz) | TAWIRI: [tawiri.or.tz](https://www.tawiri.or.tz) | TFS Tanzania: [tfs.go.tz](https://www.tfs.go.tz) | Ngorongoro Conservation Area: [ncaa.go.tz](https://www.ncaa.go.tz).
+</div>
+
+---
+
 # Regulatory Institutions {#institutions}
 
 ```{r institutions-table}

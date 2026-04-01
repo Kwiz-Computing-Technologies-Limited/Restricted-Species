@@ -187,6 +187,48 @@ Uganda ratified CITES in 1991. The **Uganda CITES Management Authority** is admi
 
 ---
 
+# Regional / Subnational Restrictions {#regional}
+
+Uganda's 135+ districts have **District Environmental Officers (DEOs)** under the **National Environment Management Authority (NEMA)** framework, and **District Forest Officers (DFOs)** under the **National Forestry Authority (NFA)**. While national legislation sets species protection standards, district-level implementation varies enormously — from well-resourced districts in Central Region to remote districts with minimal enforcement capacity. Additionally, **Local Government Councils** may pass by-laws under the **Local Governments Act Cap. 243** imposing additional environmental restrictions.
+
+## Central Forest Reserves (CFRs) — NFA Managed
+
+Uganda has 506 **Central Forest Reserves (CFRs)** covering approximately 1.2 million hectares, administered directly by the **NFA** (a national body). Within CFRs, plant collection is governed by NFA management plans:
+
+- Timber species designated as **"protected trees"** in the Forest Practice Regulations — these include *Prunus africana*, *Entandrophragma* spp. (mahogany), *Khaya anthotheca* (Uganda mahogany), *Milicia excelsa* (iroko), and *Podocarpus* spp.
+- CFR management plans identify **biodiversity zones** (no harvest) vs. **production zones** (selective harvest with NFA permit).
+- Community planting agreements in CFR degraded areas carry conditions restricting which species can be harvested.
+
+## Kibale, Bwindi, Mgahinga — National Parks With Collaborative Resource Use
+
+Uganda Wildlife Authority (UWA) manages 10 national parks. Two have significant collaborative resource use frameworks:
+
+- **Bwindi Impenetrable National Park / Mgahinga Gorilla National Park (BINP/MGNP)**: Communities in the buffer zone have **Multiple Use Rights (MURs)** — permitted collection of specific plant resources (medicinal plants, bamboo shoots, craft materials, *Prunus africana* bark) under UWA-issued community permits. The MUR programme specifies which species, quantities, and collection points are allowed per village.
+- **Kibale National Park**: Research area with strict plant collection protocols; community botanical garden programme has specified species.
+
+## Rwenzori Mountains / Mt. Elgon — High-Altitude Special Zones
+
+Both **Rwenzori Mountains NP** and **Mt. Elgon NP** contain afro-montane and afro-alpine flora of unique conservation significance:
+
+- *Lobelia wollastonii* and *Senecio adnivalis* (giant lobelias and senecios) — UWA has issued specific conservation orders prohibiting collection within national parks.
+- *Prunus africana* bark harvesting from Rwenzori slopes — subject to CITES Appendix II controls plus UWA community permit requirements.
+
+## Buganda Kingdom and Traditional Land Authorities
+
+The **Buganda Land Board** and traditional clan (*butaka*) lands cover significant areas in Central Uganda. On Buganda kingdom land, customary authority may restrict commercial plant resource extraction; the kingdom's natural resource committee has engaged with NFA on forest management in some areas.
+
+## District By-Laws — Selected Examples
+
+- **Bundibugyo District**: By-law restricting *Prunus africana* bark stripping in community forests following NFA recommendation.
+- **Kapchorwa District**: Mt. Elgon buffer zone by-law limiting *Aloe* species collection to household use only.
+- **Kanungu District** (near Bwindi): Buffer zone by-law restricts bamboo (*Arundinaria alpina*) harvesting to 2 culms per household per month.
+
+<div class="alert alert-info" role="alert">
+**Source note** — NFA: [nfa.go.ug](https://www.nfa.go.ug) | UWA: [ugandawildlife.org](https://www.ugandawildlife.org) | NEMA Uganda: [nema.go.ug](https://www.nema.go.ug) | Uganda Local Governments Act: [ULII](https://ulii.org).
+</div>
+
+---
+
 # Regulatory Institutions {#institutions}
 
 ```{r institutions-table}

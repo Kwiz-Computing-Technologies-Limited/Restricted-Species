@@ -123,6 +123,44 @@ if(!is.null(plants_gbif)&&nrow(plants_gbif)>0){plants_gbif|>
 
 ---
 
+# Regional / Subnational Restrictions {#regional}
+
+Malaysia's constitutional structure fundamentally divides environmental and forestry jurisdiction: **Peninsular Malaysia** (11 states + 2 Federal Territories) operates under federal legislation including the **Protection of Wildlife Act 1972** and **National Forestry Act 1984**, while **Sabah** and **Sarawak** on Borneo are constitutionally autonomous over forests and wildlife. Federal laws **do not apply** to Sabah and Sarawak for most natural resource matters — each has its own comprehensive legislation.
+
+## Sabah — Wildlife Conservation Enactment 1997 (WCE) + Forestry Enactment
+
+| Instrument | Year | Key Plant Provisions |
+|-----------|------|---------------------|
+| Wildlife Conservation Enactment 1997 (WCE) | 1997 (amended 2012, 2016) | Three-schedule protected species lists; Schedule 1 (totally protected) includes *Rafflesia* spp. — collection, trade, possession absolutely prohibited; Schedule 2 and 3 species require Director of Wildlife permits |
+| Forest Enactment 1968 (revised 1992) | 1968/1992 | Sabah Forestry Department (SFD) administers all forest reserves; Class I (Protection Forests) exclude commercial harvest; timber species licenses issued by SFD only |
+| Sabah Parks Enactment 1984 | 1984 | Kinabalu Park, Tunku Abdul Rahman Marine Park — no plant collection without Sabah Parks permit; *Nepenthes rajah* and all lowii-group pitcher plants fully protected within parks |
+| *Rafflesia* Cabinet Orders | 2004, updated | *Rafflesia keithii*, *R. pricei*, *R. tengku-adlinii* — individually listed by Cabinet Order; trade, transport, damage, and collection a criminal offence under WCE |
+| Sabah Biodiversity Enactment 2000 | 2000 | Access and benefit sharing — any commercial bioprospecting requires Director-General of Sabah Biodiversity Centre (SaBC) approval; plant genetic resource access specifically regulated |
+
+## Sarawak — Wild Life Protection Ordinance 1998 (WLPO) + Forests Ordinance
+
+| Instrument | Year | Key Plant Provisions |
+|-----------|------|---------------------|
+| Wild Life Protection Ordinance 1998 (WLPO) Cap. 26 | 1998 | Three-schedule protected species lists similar to Sabah; Schedule 1 totally protected — all *Rafflesia* spp. in Sarawak; Schedule 2 and 3 require Director permits |
+| Forests Ordinance 2015 (replacing 1954 Ordinance) | 2015 | Sarawak Forestry Corporation (SFC) administers timber licensing; Protected Forest, Permanent Forest Estate, National Park classifications; harvest in Protected Forests prohibited |
+| Sarawak Biodiversity Centre Ordinance 1998 | 1998 | Commercial access to Sarawak biological resources requires SBC Access Permit (AP) and benefit-sharing agreement; applies to all plant species in Sarawak |
+| Wildlife Sanctuary / National Park Regulations | Ongoing | Gunung Mulu, Bako, Lambir Hills, Kubah NP — absolute prohibition on plant collection; orchid, pitcher plant, and *Rafflesia* populations in NPs strictly protected |
+
+## Peninsular Malaysia — State Forestry Variation
+
+Within Peninsular Malaysia, each of the 11 states has its own **State Forestry Department** operating under the National Forestry Act 1984. States manage Permanent Forest Estates (PFE) and may designate additional protection:
+
+- **Pahang**: Cameron Highlands Forest Reserve — highest-elevation forest in Peninsular Malaysia; orchid collection enforcement by State Forestry Department
+- **Kelantan / Terengganu**: Taman Negara buffer zone state forests; rattan and medicinal plant collection quotas
+- **Selangor**: Klang Gates Quartz Ridge Nature Reserve (state gazette) — unique quartz ridge species restrictions
+- **Johor**: Endau-Rompin State Park — no plant collection; *Livistona* palms and endemic species strictly protected within state park boundaries
+
+<div class="alert alert-info" role="alert">
+**Source note** — Sabah Biodiversity Centre: [sabahbiodiversity.org](https://www.sabahbiodiversity.org) | Sabah Forestry Department: [forest.sabah.gov.my](https://forest.sabah.gov.my) | Sarawak Forestry Corporation: [sarawakforestry.com](https://www.sarawakforestry.com) | Sarawak Biodiversity Centre: [sbc.org.my](https://www.sbc.org.my) | PERHILITAN (Peninsular): [wildlife.gov.my](https://www.wildlife.gov.my).
+</div>
+
+---
+
 # Regulatory Gaps (Summary) {#gaps}
 
 | # | Gap | Severity |

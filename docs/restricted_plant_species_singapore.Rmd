@@ -98,6 +98,49 @@ Full text: [NParks](https://www.nparks.gov.sg) | [Singapore Statutes Online](htt
 
 ---
 
+# Subnational / Zonal Restrictions {#regional}
+
+Singapore is a **city-state** with no states, provinces, or other subnational jurisdictions — national legislation applies uniformly across the entire 733 km² territory. There are no separate regional environmental agencies or subnational legislatures. However, functionally significant spatial variation exists through **NParks' designated conservation zones**, **Urban Redevelopment Authority (URA) conservation area plans**, and **park management regulations** that create a de facto zonal restriction system for plant species.
+
+## NParks Conservation Areas — Management Zone System
+
+**National Parks Board (NParks)** manages Singapore's parks, nature reserves, and green corridors under the **National Parks Board Act (Cap. 198A)**. The four **Nature Reserves** designated under the **Parks and Trees Act Cap. 216** have the strongest protections:
+
+| Nature Reserve / Park | Location | Plant Species Restrictions |
+|----------------------|----------|--------------------------|
+| **Bukit Timah Nature Reserve** | Central Catchment | Primary rainforest remnant; absolute prohibition on plant collection, transplanting, or damage; *Shorea* dipterocarp species, *Hopea sangal*, and endemic *Livistona singapurensis* palm protected under NR designation; research access by NParks permit only |
+| **Central Catchment Nature Reserve (CCNR)** | Central Singapore | Singapore's largest forest reserve (3,043 ha); *Livistona singapurensis*, *Hopea*, and *Shorea* species; no collection; buffer zones with additional permit requirements |
+| **Labrador Nature Reserve** | Southern Ridge | Coastal cliff forest; rare coastal plants; collection prohibited; access controlled by NParks |
+| **Sungei Buloh Wetland Reserve** | Northern coast | Mangroves and coastal wetland plants; Ramsar site; all plant collection prohibited; mangrove species research requires NParks permit |
+
+## Parks and Trees Act — Street Tree and Heritage Tree Register
+
+Beyond nature reserves, the **Parks and Trees Act** regulates:
+
+1. **Streetside/roadside trees**: All trees along public roads are under NParks management; removal or pruning requires NParks approval regardless of the tree's protected status.
+
+2. **Heritage Tree Register**: NParks maintains a Heritage Tree Register of trees with high cultural, historical, or ecological significance. As of 2024, **261 Heritage Trees** are listed, spanning 53 species including:
+   - *Ficus benghalensis* (Banyan) — multiple specimens
+   - *Terminalia catappa* (Sea almond) — beachfront heritage trees
+   - *Tembusu* (*Fagraea fragrans*) — iconic Singapore tree on the $5 note
+   - **Penalties for damaging Heritage Trees**: Up to SGD $50,000 fine under the Parks and Trees Act.
+
+3. **Vacant Land (weed/invasive) regulations**: NEA and NParks jointly enforce clearance of invasive plants on vacant land; *Mimosa pigra*, *Mikania micrantha*, and *Chromolaena odorata* control is mandated.
+
+## Urban Redevelopment Authority (URA) — Conservation Area Green Rules
+
+URA's **Master Plan** designates conservation areas (e.g., Chinatown, Kampong Glam, Little India, Emerald Hill) where removal of existing mature trees on conserved buildings requires a **Conservation Technical Condition (CTC)** from URA — a layer above NParks requirements. This effectively creates additional tree protection in heritage districts.
+
+<div class="alert alert-info" role="alert">
+**Note on Subnational Absence** — Singapore has no subnational environmental legislation. All species and plant restrictions are implemented nationally through NParks, NEA, and AVA (Agri-Food and Veterinary Authority — now SFA). The zonal management system described above represents the functional equivalent of subnational variation in a city-state context.
+</div>
+
+<div class="alert alert-info" role="alert">
+**Source note** — NParks: [nparks.gov.sg](https://www.nparks.gov.sg) | Heritage Trees: [nparks.gov.sg/gardens-parks-and-nature/heritage-trees](https://www.nparks.gov.sg) | Parks and Trees Act: [Singapore Statutes Online](https://sso.agc.gov.sg) | URA Master Plan: [ura.gov.sg](https://www.ura.gov.sg).
+</div>
+
+---
+
 # Regulatory Institutions {#institutions}
 
 | Institution | Role |

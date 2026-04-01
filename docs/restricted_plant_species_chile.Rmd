@@ -99,6 +99,40 @@ Full text: [CONAF](https://www.conaf.cl) | [SAG](https://www.sag.gob.cl) | [FAOL
 
 ---
 
+# Regional / Subnational Restrictions {#regional}
+
+Chile's 16 regions each have a **Regional Government (GORE — Gobierno Regional)** and a **Regional CONAF Office** that administers forestry laws, protected areas, and species access permits at the regional level. Regional plans (*Estrategias Regionales de Biodiversidad*) set conservation priorities. While Chile's national species protection framework is relatively centralised, regional variation exists in enforcement intensity, permit processing, and the designation of regional nature sanctuaries (*Santuarios de la Naturaleza*).
+
+## Regions with Distinct Plant Conservation Significance
+
+| Region | Key Regional Instrument / Body | Notable Plant Restrictions |
+|--------|-------------------------------|--------------------------|
+| **Región Metropolitana (RM)** | SEREMI del Medio Ambiente RM; CONAF RM; municipal ordinances | Urban tree-cutting: requires CONAF / municipality permit; *Quillaja saponaria* (quillay) and *Cryptocarya alba* (peumo) protected in metropolitan native vegetation remnants; Santiago metro hillside (precordillera) vegetation cannot be cleared without Santuario de la Naturaleza permit |
+| **Valparaíso (V)** | Reserva de la Biosfera La Campana–Peñuelas; CONAF Region V | *Jubaea chilensis* (Chilean wine palm) — additional regional restrictions in Reserva Nacional La Campana; all *Jubaea* trees >50 years require Ministerio del Medio Ambiente approval to fell; Bosque de Tillandsia (air plant forests) protected locally |
+| **Araucanía (IX)** | CONAF Araucanía; CONADI (indigenous lands) | *Araucaria araucana* (monkey-puzzle tree) — designated as National Monument; CONAF Araucanía issues research permits; extraction from Mapuche *Pehuenco* territory requires community consent under ILO Convention 169 (Law 19.253) |
+| **Los Lagos (X) / Los Ríos (XIV)** | CONAF Region X/XIV; Chiloé Archipelago land use plans | *Fitzroya cupressoides* (alerce, larch) — already CITES Appendix I; regional CONAF maintains live tree registers; fellings of any alerce >500 years old are absolutely prohibited; dead alerce timber regulated by regional permit |
+| **Aysén (XI)** | CONAF Aysén; Parque Patagonia co-management | Patagonian steppe and Valdivian Temperate Forest species in protected areas; *Nothofagus* (southern beech) logging controls by regional CONAF; scientific collection in CONAF-managed reserves requires regional permit |
+| **Magallanes y Antártica (XII)** | CONAF Magallanes; INACH (Antarctic research permit authority) | Subantarctic Magellanic forest and peatland plant collections require CONAF permit; *Pernettya mucronata* and peat moss (*Sphagnum magellanicum*) harvest restricted; Antarctic plant collection governed by Protocol on Environmental Protection to the Antarctic Treaty |
+| **Atacama / Antofagasta (II–III)** | CONAF Norte Grande; SAG regional offices | Desert flowering plants — *Tillandsia* spp. and cacti (*Copiapoa*, *Echinopsis*) — export without SEREMI permit and CITES documentation prohibited; *Desierto Florido* (flowering desert) events trigger temporary access restrictions |
+
+## Santuarios de la Naturaleza — National Monument Designation
+
+Under **Ley 17.288 de Monumentos Nacionales**, regions may petition the Consejo de Monumentos Nacionales (CMN) to declare areas as **Santuarios de la Naturaleza**. There are over 60 such sanctuaries in Chile; within them:
+
+- Collection of any plant requires CMN approval.
+- Clearing of native vegetation is prohibited.
+- Notable examples: Río Blanco (Valparaíso), Laguna de Conchalí (Coquimbo), Yerba Loca (RM), Llanos de Challe (Atacama — *Alstroemeria* and cactus species).
+
+## Mapuche Customary Rights — Lafkenche and Pehuenche Territories
+
+**Law 20.249/2008 (Espacio Costero Marino de los Pueblos Originarios)** and **Law 19.253 (Ley Indígena)** give Mapuche coastal communities priority rights to *lafkén* (coastal) plant resources including coastal *junco* (bulrush) and medicinal seaweed. CONADI (National Corporation for Indigenous Development) administers indigenous land and resource rights; commercial plant extraction from Mapuche community lands (*tierras comunitarias*) requires community consent.
+
+<div class="alert alert-info" role="alert">
+**Source note** — CONAF Regional Offices: [conaf.cl](https://www.conaf.cl) | Consejo de Monumentos Nacionales: [monumentos.gob.cl](https://www.monumentos.gob.cl) | CONADI: [conadi.gob.cl](https://www.conadi.gob.cl) | SEREMI Medio Ambiente: [mma.gob.cl](https://www.mma.gob.cl).
+</div>
+
+---
+
 # Regulatory Institutions {#institutions}
 
 | Institution | Role |

@@ -98,6 +98,42 @@ Full text: [DWC — dwc.gov.lk](https://www.dwc.gov.lk) | [FAOLEX Sri Lanka](htt
 
 ---
 
+# Regional / Subnational Restrictions {#regional}
+
+Sri Lanka is a unitary state with 9 provinces and 25 districts, but environmental legislation is primarily national, administered by the **Department of Wildlife Conservation (DWC)**, **Forest Department (FD)**, and **Central Environmental Authority (CEA)**. Subnational variation occurs primarily through: (1) provincial implementation capacity differences; (2) heritage tree designations under local authority; and (3) the **Northern Province** post-conflict restoration context.
+
+## Wet Zone vs. Dry Zone — Practical Regulatory Variation
+
+Sri Lanka's biodiversity is concentrated in the **Wet Zone** (southwest, ~26% of land area, ~90% of plant endemics). While law applies uniformly, enforcement intensity differs significantly:
+
+- **Wet Zone** (Western, Sabaragamuwa, Southern Provinces): FD has more ranger capacity; permits for forest produce more actively enforced; medicinal plant collection from Sinharaja UNESCO World Heritage Site is subject to FD Research Permit + UNESCO obligations.
+- **Dry Zone** (Northern, Eastern, North Central, Uva Provinces): Larger areas per ranger; traditional community access to temple forest reserves (*Dematagolla*) is de facto recognised; REDD+ pilot areas in Uda Walawe buffer zone have specific NFA restrictions.
+
+## Northern Province — Post-Conflict Conservation Context
+
+Following the end of Sri Lanka's civil conflict (2009), the **Northern Province** (Jaffna Peninsula, Vanni) has undergone ecological recovery. The **FD Northern Province Range Office** (Vavuniya) has issued specific restrictions:
+
+- Palmyra palm (*Borassus flabellifer*) — culturally significant to Tamil communities; tapping and felling restricted under FD orders to prevent further loss following conflict-period deforestation.
+- Mangrove restoration areas in Jaffna Lagoon — CEA has designated specific mangrove restoration zones where any clearing or collection is prohibited pending recovery.
+
+## Provincial Heritage Tree Programs
+
+Several provincial councils and local authorities have designated **Heritage Trees** under local authority by-laws:
+
+- **Colombo Municipal Council**: Heritage tree register with approximately 400 trees (species including *Terminalia arjuna*, *Ficus religiosa*, *Mangifera indica* heritage varieties) — CMC permit required for pruning; felling is prohibited.
+- **Kandy Municipal Council**: Sacred Bo trees (*Ficus religiosa*) and rain trees in the Kandy World Heritage precinct — any interference requires both KMC and Buddhist Clergy consent.
+- **Galle Fort Heritage Zone**: UNESCO World Heritage Site designation restricts any vegetation clearing within the Fort; Galle Municipal Council enforces this.
+
+## Biodiversity Secretariat — Provincial Implementation
+
+The **Biodiversity Secretariat (BS)** under the Ministry of Environment coordinates implementation across provinces. The **National Biodiversity Strategy and Action Plan (NBSAP 2016–2022)** identifies provincial-level implementation as a key gap — most provinces lack dedicated biodiversity officers, resulting in highly variable enforcement of the FFPO and FDO species protections.
+
+<div class="alert alert-info" role="alert">
+**Source note** — DWC Sri Lanka: [dwc.gov.lk](https://www.dwc.gov.lk) | FD Sri Lanka: [forestdept.gov.lk](https://www.forestdept.gov.lk) | CEA: [cea.lk](https://www.cea.lk) | Biodiversity Secretariat: [biodiversity.lk](https://www.biodiversity.lk).
+</div>
+
+---
+
 # Regulatory Institutions {#institutions}
 
 | Institution | Role |

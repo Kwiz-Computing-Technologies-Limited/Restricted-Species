@@ -325,6 +325,48 @@ South Africa hosts significant populations of CITES-listed plant species includi
 
 ---
 
+# Regional / Subnational Restrictions {#regional}
+
+South Africa's Constitution (Schedule 4) places environment, nature conservation, and pollution as **concurrent national and provincial competencies**. Each of South Africa's 9 provinces has its own conservation legislation — mostly pre-democratic ordinances from the Apartheid era that have been partially retained, partially repealed, and partly superseded by post-1994 national laws. The **National Environmental Management: Biodiversity Act (NEMBA, 2004)** and **TOPS Regulations** establish national minimums; provinces may be stricter.
+
+## Provincial Conservation Legislation
+
+| Province | Key Instrument | Administering Body | Notable Plant Restrictions |
+|---------|---------------|-------------------|--------------------------|
+| **Western Cape** | Nature Conservation Ordinance 19/1974 (still partially active); Western Cape Nature Conservation Act 1974 + CapeNature regulations | **CapeNature** | Fynbos biome species — 3 protected plant lists maintained by CapeNature; *Cyclopia* (honeybush), *Aspalathus* (rooibos), and *Protea* spp. harvesting requires CapeNature permit; Rooibos harvesting in wild fynbos controlled under Western Cape permit system |
+| **KwaZulu-Natal** | KZN Nature Conservation Ordinance 15/1974 + Ezemvelo KZN Wildlife regulations; KZN Biodiversity Act 2008 (Act 2 of 2008) | **Ezemvelo KZN Wildlife** | Cycad (*Encephalartos*) possession registers — Ezemvelo maintains strict cycad ownership records; Natal Fig and Umtambo (*Syzygium cordatum*) in protected areas; medicinal plant market (muthi) monitoring at Warwick Junction |
+| **Gauteng** | GDARD (formerly DARD) Gauteng Nature Conservation Ordinance; Urban open space management plans | **GDARD (Gauteng DARD)** | *Aloe* collection in Gauteng requires GDARD permit; alien plant clearing mandated in all listed categories; urban tree removal requires local municipality and GDARD authorisation |
+| **Limpopo** | Limpopo Environmental Management Act 7/2003 | **Limpopo Department of Economic Development, Environment and Tourism (LEDET)** | Baobab (*Adansonia digitata*) — cutting prohibited; mopane (*Colophospermum mopane*) harvest restrictions; Mapungubwe landscape species management |
+| **Mpumalanga** | Mpumalanga Nature Conservation Act 10/1998; Lowveld NBG conservation regulations | **Mpumalanga Tourism and Parks Agency (MTPA)** | Cycad possession register maintained; mistletoe (*Viscum* spp.) and medicinal bark collection controlled; escarpment fern and orchid restrictions |
+| **Eastern Cape** | Eastern Cape Nature Conservation Act 10/1974 (Old Transkei/Ciskei provisions partially retained) | **Eastern Cape Parks and Tourism Agency (ECPTA)** | Albany thicket species; succulent euphorbia collection; *Pelargonium sidoides* (umckaloabo) — provincial harvesting regulation under development given high trade pressure |
+| **Northern Cape** | Ordinance 19/1974 successor + environmental management regulation | **Northern Cape DETEA** | Namaqualand succulent and Nama Karoo plant restrictions; *Hoodia gordonii* (appetite suppressant) — TOPS Critically Endangered listing + provincial monitoring; !Khomani San customary land use rights in Kalahari |
+| **North West** | North West Nature Conservation Act 19/2014 | **North West DEDECT** | Bushveld species restrictions; Magaliesberg cycad (*Encephalartos dyerianus*) critical populations protected |
+| **Free State** | Nature Conservation Ordinance 8/1969 (still active); OFS Nature Conservation Plan 2007 | **Free State DESTEA** | Grassland biome plant restrictions; *Aloe ferox* management; rooibos not applicable (not in biome) |
+
+## Western Cape — Fynbos Biome Special Regime
+
+The **Cape Floristic Region** (a UNESCO World Heritage site) has the world's highest plant diversity for its area — approximately 9,600 species in ~88,000 km². CapeNature maintains dedicated protected plant lists with three tiers:
+
+1. **Protected Plant List A** — may not be collected, damaged, transported, or traded without CapeNature permit (applies outside protected areas)
+2. **Protected Plant List B** — restricted harvest permits for commercial use
+3. **Protected Plant List C** — notification required for commercial harvest
+
+Commercially important species like *Agathosma betulina* (buchu — essential oil), *Aspalathus linearis* (rooibos — tea), and *Cyclopia* (honeybush) are subject to dedicated Wild Harvest Protocols under the **Rooibos Industry Development Trust** and CapeNature permit requirements.
+
+## Traditional Use and Medicinal Plant Markets
+
+South Africa's Constitution (Section 211) recognises traditional communities' rights. **Medicinal plant (muthi) trade** is a multi-billion rand industry — primarily regulated at provincial level:
+
+- **KZN Ezemvelo**: Warwick Avenue medicinal plant market in Durban — periodic inspections and TOPS compliance checks
+- **Gauteng GDARD**: Faraday Street muthi market — monitoring under Traditional Healers and Medicinal Plants Task Team
+- Key traded species with provincial monitoring: *Prunus africana* bark, cycad seeds, *Hypoxis hemerocallidea* (African potato), *Siphonochilus aethiopicus* (wild ginger)
+
+<div class="alert alert-info" role="alert">
+**Source note** — CapeNature: [capenature.co.za](https://www.capenature.co.za) | Ezemvelo KZN Wildlife: [kznwildlife.com](https://www.kznwildlife.com) | SANBI TOPS: [sanbi.org/biodiversity/foundations-research/plant-conservation/tops/](https://www.sanbi.org) | GDARD: [gdard.gpg.gov.za](https://www.gdard.gpg.gov.za).
+</div>
+
+---
+
 # Regulatory Institutions {#institutions}
 
 ```{r institutions-table}

@@ -98,6 +98,43 @@ Full text: [DNP Thailand](https://www.dnp.go.th) | [DOA Thailand](https://www.do
 
 ---
 
+# Regional / Subnational Restrictions {#regional}
+
+Thailand is a unitary state with 77 provinces administered by centrally-appointed governors, but the **Department of National Parks, Wildlife and Plant Conservation (DNP)** and **Royal Forest Department (RFD)** maintain regional offices that implement national legislation. Provincial and local administrative organisations (**PAO / Tambon Administrative Organisations — TAOs**) have limited environmental powers under the **Decentralisation Act 1999**. TAOs may designate local environment protection zones and enforce littering/clearing bans, but species-specific restrictions remain national.
+
+## Regional Offices — DNP and RFD
+
+Each of Thailand's 6 geographic regions has **DNP Regional Conservation Area Offices (RCAO)** and **RFD Regional Forest Offices**:
+
+| Region | Key RCAOs | Notable Species Focus |
+|--------|----------|----------------------|
+| **Northern Region** (Chiang Mai, Chiang Rai) | RCAO 1 (Chiang Mai) | Teak (*Tectona grandis*) in Doi Inthanon, Doi Pui, and Chiang Dao National Parks; *Cibotium barometz* (golden chicken fern); opium poppy (*Papaver somniferum*) — Highland alternative crops programme replaces cultivation |
+| **Northeastern Region** (Isan) | RCAO 7 (Udon Thani), RCAO 9 | Mukdahan RAMSAR site — aquatic plant restrictions; *Pterocarpus macrocarpus* (padauk) harvest restrictions; Phu Wiang National Park rare plant management |
+| **Central Region** | RCAO 3, RCAO 4 | Khao Yai WH Site — strict research permit regime; orchid and tree fern collection prohibited; *Hopea odorata* and Dipterocarp species in protected forests |
+| **Eastern Region** (Chonburi, Rayong) | RCAO 2 | Khao Chamao and Khao Wong NP — mangrove restoration zones; *Nypa fruticans* (mangrove palm) restricted; Rayong mangrove forest has special provincial conservation zone |
+| **Western Region** (Kanchanaburi) | RCAO 3 (shared) | Thong Pha Phum National Park — extensive research permit requirements; Karen indigenous plant use in Umphang WS |
+| **Southern Region** (Surat Thani to Songkhla) | RCAO 5, RCAO 6 | *Rafflesia kerrii* in Khao Sok NP — absolute no-collection zone; *Coelogyne* and *Dendrobium* orchids; *Aquilaria malaccensis* (agarwood) enforcement by RFD |
+
+## Northern Highlands — Highland Community Forest Programme
+
+Under the **Community Forest Act B.E. 2562 (2019)**, Thailand formalised community forest rights. Over 11,000 community forests have been registered with the RFD. In northern highland communities (Karen, Akha, Hmong, Lisu), **traditional resource use zones** within community forests may restrict or allow plant collection beyond national DNP regulations:
+
+- Community forest management plans may designate **conservation zones** (no collection) and **use zones** (NTFP harvest permitted).
+- The Northern Upland Area Development Centre (NUADC) coordinates with communities on medicinal plant access and conservation.
+- Opium replacement crops (coffee, macadamia, cherry) are managed under royal project schemes — some highland *Camellia sinensis* (tea) collection from wild populations is regulated under Royal Project Foundation rules.
+
+## Muang Boran / Historical Zones — Local Authority Tree Protection
+
+Under the **Ancient Monuments, Antiques, Objects of Art and National Museums Act BE 2504**, heritage trees in the precincts of:
+- **Sukhothai Historical Park** (UNESCO World Heritage Site): Any vegetation modification requires Fine Arts Department approval.
+- **Ayutthaya Historical Park**: Sacred fig (*Ficus religiosa*) and other temple trees protected; TAO Ayutthaya enforces by-law with fines.
+
+<div class="alert alert-info" role="alert">
+**Source note** — DNP Thailand: [dnp.go.th](https://www.dnp.go.th) | RFD: [forest.go.th](https://www.forest.go.th) | Community Forest Act 2019: [FAOLEX Thailand](https://faolex.fao.org/thailand) | Royal Project Foundation: [royalprojectthailand.com](https://www.royalprojectthailand.com).
+</div>
+
+---
+
 # Regulatory Institutions {#institutions}
 
 | Institution | Role |
