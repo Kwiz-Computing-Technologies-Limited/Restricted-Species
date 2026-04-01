@@ -40,8 +40,11 @@ suppressPackageStartupMessages({
 })
 
 # ── Load kwizbranding (watermark + footer) ────────────────────────────────────
-.kqb_pkg <- "/Users/kwizera.jvk/Desktop/Kwiz Computing Comes to Life/Kwiz Quants/libs/kwizbranding"
-suppressMessages(devtools::load_all(.kqb_pkg, quiet = TRUE))
+if (!requireNamespace("kwizbranding", quietly = TRUE)) {
+  remotes::install_github("Kwiz-Computing-Technologies-Limited/kwiz-R-packages",
+                          subdir = "kwizbranding", upgrade = "never")
+}
+library(kwizbranding)
 kqb_co  <- kqb_company("research")
 kqb_col <- kqb_colours()
 
