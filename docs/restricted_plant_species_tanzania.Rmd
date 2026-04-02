@@ -1,6 +1,6 @@
 ---
 title: "Restricted and Protected Plant Species in Tanzania"
-subtitle: "Wildlife Conservation Act, Forests Act, Environmental Management Act, and CITES"
+subtitle: "Wildlife Conservation Act, Forest Act, Environmental Management Act, and CITES"
 author: "Kwiz Research"
 date: "`r format(Sys.Date(), '%d %B %Y')`"
 output:
@@ -46,23 +46,23 @@ styled_kable <- function(df, caption=NULL, scroll=TRUE, height="450px") {
 }
 
 # ── Embedded species data ─────────────────────────────────────────────────────
-# Sources: Wildlife Conservation Act 2009 (Cap. 283); Forests Act 2002 (Cap. 323);
+# Sources: Wildlife Conservation Act 2009 (Cap. 283); Forest Act, 2002 (Cap. 323);
 #          Environmental Management Act 2004; Plant Protection Act 1997;
 #          CITES CoP19 2022; Tanzania Government Gazette.
 species <- tribble(
   ~common_name,                     ~scientific_name,               ~taxonomic_group, ~iucn_status,            ~cites_appendix, ~legal_status_tz,                        ~restriction_type,              ~governing_law,                     ~managing_institution,   ~notes,
-  "African blackwood / mpingo",     "Dalbergia melanoxylon",        "Magnoliopsida",  "Least Concern",          "Appendix II",   "Protected Timber Species",              "Export quota / permit req.",    "Forests Act 2002 / CITES",         "TFS / CITES Secretariat","Iconic Tanzanian timber; CITES Appendix II since 2017; global instrument-making",
-  "East African rosewood",          "Dalbergia lanceolaria",        "Magnoliopsida",  "Least Concern",          "Appendix II",   "Protected Timber Species",              "Export permit required",        "Forests Act 2002 / CITES",         "TFS",                   "All Dalbergia species added to CITES App II in 2017 due to trade concerns",
-  "Prunus africana",                "Prunus africana",              "Magnoliopsida",  "Least Concern",          "Appendix II",   "Regulated (CITES Appendix II)",         "Export permit required",        "CITES Regs / Forests Act",         "TFS / CITES Authority", "Over-exploited for European prostate medication market; Kilimanjaro populations",
+  "African blackwood / mpingo",     "Dalbergia melanoxylon",        "Magnoliopsida",  "Least Concern",          "Appendix II",   "Protected Timber Species",              "Export quota / permit req.",    "Forest Act, 2002 / CITES",         "TFS / CITES Secretariat","Iconic Tanzanian timber; CITES Appendix II since 2017; global instrument-making",
+  "East African rosewood",          "Dalbergia lanceolaria",        "Magnoliopsida",  "Least Concern",          "Appendix II",   "Protected Timber Species",              "Export permit required",        "Forest Act, 2002 / CITES",         "TFS",                   "All Dalbergia species added to CITES App II in 2017 due to trade concerns",
+  "Prunus africana",                "Prunus africana",              "Magnoliopsida",  "Least Concern",          "Appendix II",   "Regulated (CITES Appendix II)",         "Export permit required",        "CITES Regs / Forest Act",         "TFS / CITES Authority", "Over-exploited for European prostate medication market; Kilimanjaro populations",
   "East African sandalwood",        "Osyris lanceolata",            "Magnoliopsida",  "Least Concern",          "Not listed",    "Export Banned (TZ Govt Order)",         "Harvesting/export prohibited",  "Ministerial Order (2004)",         "TFS / MNRT",            "Total export ban due to severe over-exploitation across East Africa",
-  "Miombo woodland tree (miombo)",  "Brachystegia spiciformis",     "Magnoliopsida",  "Least Concern",          "Not listed",    "Protected Forest Species",              "Charcoal/harvest restricted",   "Forests Act 2002",                 "TFS",                   "Dominant miombo woodland tree; charcoal production major threat",
-  "Brachystegia (mwanga)",          "Brachystegia longifolia",      "Magnoliopsida",  "Least Concern",          "Not listed",    "Protected Forest Species",              "Harvest regulated",             "Forests Act 2002",                 "TFS",                   "Dry miombo woodland; timber and charcoal; restricted harvest",
-  "African camphor",                "Ocotea usambarensis",          "Magnoliopsida",  "Vulnerable",            "Not listed",    "Vulnerable — Forests Act Protected",    "Harvest restricted",            "Forests Act 2002",                 "TFS",                   "Usambara Mountains endemic; prized timber; declining due to illegal logging",
+  "Miombo woodland tree (miombo)",  "Brachystegia spiciformis",     "Magnoliopsida",  "Least Concern",          "Not listed",    "Protected Forest Species",              "Charcoal/harvest restricted",   "Forest Act, 2002",                 "TFS",                   "Dominant miombo woodland tree; charcoal production major threat",
+  "Brachystegia (mwanga)",          "Brachystegia longifolia",      "Magnoliopsida",  "Least Concern",          "Not listed",    "Protected Forest Species",              "Harvest regulated",             "Forest Act, 2002",                 "TFS",                   "Dry miombo woodland; timber and charcoal; restricted harvest",
+  "African camphor",                "Ocotea usambarensis",          "Magnoliopsida",  "Vulnerable",            "Not listed",    "Vulnerable — Forest Act Protected",    "Harvest restricted",            "Forest Act, 2002",                 "TFS",                   "Usambara Mountains endemic; prized timber; declining due to illegal logging",
   "Tanzanian violet",               "Saintpaulia ionantha",         "Magnoliopsida",  "Critically Endangered", "Not listed",    "Critically Endangered (WCA 2009)",      "Collection/trade prohibited",   "Wildlife Conservation Act 2009",   "TAWA / TAWIRI",         "African violet; wild ancestor of popular ornamental; East Usambara endemic",
   "African violet (Nguru)",         "Saintpaulia ionantha",         "Magnoliopsida",  "Critically Endangered", "Not listed",    "Critically Endangered — habitat loss",  "Collection prohibited",         "Wildlife Conservation Act 2009",   "TAWA",                  "Multiple Saintpaulia species — Taitense, Rupicola, Tongwensis — all threatened",
   "Usambara cycad",                 "Encephalartos hildebrandtii",  "Cycadopsida",    "Vulnerable",            "Appendix I",    "Protected (CITES Appendix I)",          "Collection/trade prohibited",   "Wildlife Conservation Act 2009",   "TAWA",                  "Coastal Tanzania cycad; CITES App I; poaching pressure significant",
   "East African aloe",              "Aloe rabaiensis",              "Magnoliopsida",  "Near Threatened",        "Appendix II",   "Regulated (CITES Appendix II)",         "Export permit required",        "CITES Regs / WCA 2009",            "TAWA / CITES Authority","Tanzania endemic aloe; all Aloe spp. regulated under CITES",
-  "Moringa",                        "Moringa oleifera",             "Magnoliopsida",  "Least Concern",          "Not listed",    "Commercial Collection Regulated",       "Export permit may be required", "Forests Act 2002 / TOSCI",         "TOSCI / MAFSC",         "Nutritional superfood; unregulated harvesting from wild populations possible",
+  "Moringa",                        "Moringa oleifera",             "Magnoliopsida",  "Least Concern",          "Not listed",    "Commercial Collection Regulated",       "Export permit may be required", "Forest Act, 2002 / TOSCI",         "TOSCI / MAFSC",         "Nutritional superfood; unregulated harvesting from wild populations possible",
   "Coelacanth palm",                "Dypsis madagascariensis",      "Magnoliopsida",  "Least Concern",          "Appendix II",   "Regulated (CITES Appendix II)",         "Collection permit required",    "CITES Regs",                       "TAWA",                  "All CITES Appendix II palm species; ornamental collection risk",
   "Tanzanian orchid",               "Eulophia petersii",            "Magnoliopsida",  "Least Concern",          "Appendix II",   "Regulated (CITES Appendix II)",         "Collection permit required",    "CITES Regs / WCA 2009",            "TAWA",                  "All Orchidaceae CITES Appendix II; collection pressure in Eastern Arc",
   "Elephant grass",                 "Cenchrus purpureus",           "Magnoliopsida",  "Least Concern",          "Not listed",    "Potentially Invasive Grass",            "Control in protected areas",    "EMA 2004 / Wildlife Act",          "NEMC / TAWA",           "Widely used for fodder; becoming invasive in disturbed forest edges",
@@ -74,7 +74,7 @@ species <- tribble(
 )
 
 n_species  <- nrow(species)
-n_protected<- sum(str_detect(species$governing_law, regex("Wildlife Conservation|Forests Act|WCA", ignore_case=TRUE)), na.rm=TRUE)
+n_protected<- sum(str_detect(species$governing_law, regex("Wildlife Conservation|Forest Act|WCA", ignore_case=TRUE)), na.rm=TRUE)
 n_invasive <- sum(str_detect(species$restriction_type, regex("invasive|eradication|control|noxious|mandated", ignore_case=TRUE)), na.rm=TRUE)
 n_cites_i  <- sum(species$cites_appendix == "Appendix I", na.rm=TRUE)
 n_cites_ii <- sum(species$cites_appendix == "Appendix II", na.rm=TRUE)
@@ -134,7 +134,7 @@ if (nzchar(uri)) cat(paste0('<style>\nbody::after {\n  content: "";\n  position:
 
 Tanzania is home to approximately **14,000 plant species**, with an estimated **1,100 endemics**, concentrated particularly in the **Eastern Arc Mountains** — one of Africa's most irreplaceable biodiversity hotspots. The country's plant diversity spans tropical lowland forests, montane forests, miombo and acacia woodlands, mangroves, and alpine moorlands. Tanzania also harbours globally significant populations of *Dalbergia* (rosewood/mpingo) species, which drive major international timber trade.
 
-This report covers **`r n_species` representative plant species** under legal restriction in Tanzania. **`r n_protected`** are protected under the Wildlife Conservation Act 2009 or Forests Act 2002. **`r n_invasive`** are notified invasive species. **`r n_cites_i`** hold CITES Appendix I status and **`r n_cites_ii`** are on CITES Appendix II. **`r n_cr`** are IUCN Critically Endangered.
+This report covers **`r n_species` representative plant species** under legal restriction in Tanzania. **`r n_protected`** are protected under the Wildlife Conservation Act 2009 or Forest Act, 2002. **`r n_invasive`** are notified invasive species. **`r n_cites_i`** hold CITES Appendix I status and **`r n_cites_ii`** are on CITES Appendix II. **`r n_cr`** are IUCN Critically Endangered.
 
 ---
 
@@ -151,18 +151,18 @@ The **Wildlife Conservation Act, 2009** (Cap. 283, Revised Edition 2016) is Tanz
 
 Plant species may be listed via subsidiary regulations and Gazette notices under this Act.
 
-Full text: [TanzLII — WCA 2009](https://tanzlii.org/tz/legislation/act/2009/5/)
+Full text: [TanzLII — WCA 2009](https://tanzlii.org/en/akn/tz/act/2009/5/)
 
-## Forests Act, 2002 (Cap. 323) {#forests}
+## Forest Act, 2002 (Cap. 323) {#forests}
 
-The **Forests Act, 2002** governs all forest resources in Tanzania Mainland. Key provisions:
+The **Forest Act, 2002** governs all forest resources in Tanzania Mainland. Key provisions:
 
 - **Section 46:** Regulates the harvesting of timber and non-timber forest products in forest reserves
 - **Gazette Notices:** The Minister may gazette specific tree species as protected
 - **Forest Reserves:** Covering approximately 9.5 million ha; all forest products within reserves require licences
 - Regulates export of logs, poles, and processed timber; export bans may be declared by Minister
 
-**Charcoal and wood fuel:** The 2020 Charcoal Regulations under the Forests Act regulate commercial charcoal production. Miombo woodland species (*Brachystegia* spp.) are primary charcoal sources with significant pressure on reserves.
+**Charcoal and wood fuel:** The 2020 Charcoal Regulations under the Forest Act regulate commercial charcoal production. Miombo woodland species (*Brachystegia* spp.) are primary charcoal sources with significant pressure on reserves.
 
 ## Environmental Management Act, 2004 {#ema}
 
@@ -235,7 +235,7 @@ tribble(
   ~`Abbrev.`, ~`Institution`,                                    ~`Ministry`,     ~`Mandate`,
   "TAWA",     "Tanzania Wildlife Management Authority",           "MNRT",          "Game Reserves management; WCA enforcement; wildlife permits; CITES authority (wildlife)",
   "TANAPA",   "Tanzania National Parks Authority",                "MNRT",          "National park management; invasive species control in parks; tourism regulation",
-  "TFS",      "Tanzania Forest Services Agency",                  "MNRT",          "Forests Act enforcement; timber licensing; charcoal regulation; protected tree species",
+  "TFS",      "Tanzania Forest Services Agency",                  "MNRT",          "Forest Act enforcement; timber licensing; charcoal regulation; protected tree species",
   "NEMC",     "National Environmental Management Council",        "VP Office",     "Environmental regulation; EMA enforcement; invasive species monitoring; EIA review",
   "TAWIRI",   "Tanzania Wildlife Research Institute",             "MNRT",          "Wildlife research; biodiversity assessments; monitoring; Red List contributions for Tanzania",
   "MAFSC",    "Ministry of Agriculture — Plant Health Directorate","MAFSC",        "Plant Protection Act enforcement; phytosanitary; quarantine; noxious weed control",
@@ -268,7 +268,7 @@ Tanzania's *Dalbergia melanoxylon* (African blackwood, mpingo) is one of the wor
 ```{r timber-table}
 species |>
   filter(cites_appendix %in% c("Appendix I","Appendix II") |
-         str_detect(governing_law, regex("Forests Act|CITES", ignore_case=TRUE))) |>
+         str_detect(governing_law, regex("Forest Act|CITES", ignore_case=TRUE))) |>
   arrange(cites_appendix, common_name) |>
   mutate(`Scientific Name` = paste0("*", scientific_name, "*")) |>
   select(`Common Name`=common_name, `Scientific Name`,
@@ -336,7 +336,7 @@ tribble(
 
 ## Eastern Arc Mountains — A Plant Biodiversity Hotspot Without Adequate Protection
 
-The Eastern Arc Mountains (EAM) — a chain of 13 ancient forest blocks from southern Kenya to southern Tanzania — are recognised as one of the world's top biodiversity hotspots, with over **2,000 endemic plant species**. Despite this global significance, the vast majority of EAM endemic plant species lack specific domestic legal protection in Tanzania. The WCA 2009 and Forests Act 2002 protect the forest reserves where these plants occur, but species-level listing and monitoring is absent. IUCN assessments document significant threats to EAM endemics including habitat loss, climate change, and collection.
+The Eastern Arc Mountains (EAM) — a chain of 13 ancient forest blocks from southern Kenya to southern Tanzania — are recognised as one of the world's top biodiversity hotspots, with over **2,000 endemic plant species**. Despite this global significance, the vast majority of EAM endemic plant species lack specific domestic legal protection in Tanzania. The WCA 2009 and Forest Act, 2002 protect the forest reserves where these plants occur, but species-level listing and monitoring is absent. IUCN assessments document significant threats to EAM endemics including habitat loss, climate change, and collection.
 
 ---
 
@@ -344,8 +344,8 @@ The Eastern Arc Mountains (EAM) — a chain of 13 ancient forest blocks from sou
 
 | Resource | Link |
 |----------|------|
-| Wildlife Conservation Act 2009 — TanzLII | [tanzlii.org](https://tanzlii.org/tz/legislation/act/2009/5/) |
-| Forests Act 2002 (Cap. 323) — TanzLII | [tanzlii.org](https://tanzlii.org) |
+| Wildlife Conservation Act 2009 — TanzLII | [tanzlii.org](https://tanzlii.org/en/akn/tz/act/2009/5/) |
+| Forest Act, 2002 (Cap. 323) — TanzLII | [tanzlii.org](https://tanzlii.org) |
 | Environmental Management Act 2004 | [tanzlii.org](https://tanzlii.org) |
 | Tanzania Forest Services | [tfs.go.tz](https://www.tfs.go.tz) |
 | GBIF Tanzania | [gbif.org/country/TZ](https://www.gbif.org/country/TZ/summary) |
