@@ -97,7 +97,7 @@ Thailand hosts approximately **11,000–12,000 plant species** within a diverse 
 | Environmental Quality Promotion and Conservation Act B.E. 2535 | 1992 | EIA; environmental quality management; ONEP coordination |
 | Logging Ban Policy | 1989 | Blanket ban on commercial logging in natural forests |
 
-Full text: [DNP Thailand](https://www.dnp.go.th) | [DOA Thailand](https://www.doa.go.th) | [FAOLEX Thailand](https://faolex.fao.org/thailand)
+Full text: [DNP Thailand](https://www.dnp.go.th) | [DOA Thailand](https://www.doa.go.th) | [FAOLEX Thailand](https://www.fao.org/faolex/country-profiles/general-profile/en/?iso3=THA)
 
 ---
 
@@ -133,7 +133,7 @@ Under the **Ancient Monuments, Antiques, Objects of Art and National Museums Act
 - **Ayutthaya Historical Park**: Sacred fig (*Ficus religiosa*) and other temple trees protected; TAO Ayutthaya enforces by-law with fines.
 
 <div class="alert alert-info" role="alert">
-**Source note** — DNP Thailand: [dnp.go.th](https://www.dnp.go.th) | RFD: [forest.go.th](https://www.forest.go.th) | Community Forest Act 2019: [FAOLEX Thailand](https://faolex.fao.org/thailand) | Royal Project Foundation: [royalprojectthailand.com](https://www.royalprojectthailand.com).
+**Source note** — DNP Thailand: [dnp.go.th](https://www.dnp.go.th) | RFD: [forest.go.th](https://www.forest.go.th) | Community Forest Act 2019: [FAOLEX Thailand](https://www.fao.org/faolex/country-profiles/general-profile/en/?iso3=THA) | Royal Project Foundation: [royalprojectthailand.com](https://www.royalprojectthailand.com).
 </div>
 
 ---
