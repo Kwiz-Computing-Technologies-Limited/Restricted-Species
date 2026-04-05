@@ -1,6 +1,6 @@
 ---
 title: "Restricted and Protected Plant Species in Singapore"
-subtitle: "Parks and Trees Act 2005 (Cap. 216), Singapore Red Data Book (3rd Ed.) — Preliminary Reference"
+subtitle: "Parks and Trees Act 2005 (Cap. 216), Singapore Red Data Book (3rd Ed.) — Comprehensive Reference"
 author: "Kwiz Research"
 date: "`r format(Sys.Date(), '%d %B %Y')`"
 output:
@@ -112,7 +112,7 @@ uri<-kqb_watermark_uri();if(nzchar(uri))cat(paste0('<style>\nbody::after{\nconte
 Singapore retains approximately **2,280 native plant species** on its main island and associated islets — a remarkable number for a city-state of only 733 km². The country has lost over **95% of its original forest cover** since the 19th century, making the remaining patches in Bukit Timah Nature Reserve, the Central Catchment, and the Southern Ridges exceptionally important. Singapore's plant protection regime is anchored in the **Parks and Trees Act 2005 (Cap. 216)**, which empowers NParks to designate **Heritage Trees** and manage nature reserves. Singapore also operates one of the world's most comprehensive **Heritage Tree programmes**, with over **235 designated Heritage Trees** across the island.
 
 <div class="alert alert-info" role="alert">
-**Preliminary Report** — Full species listing from the Singapore Red Data Book (3rd Edition, NParks 2021) to be completed. Current report covers `r n_species` representative species. NParks ([nparks.gov.sg](https://www.nparks.gov.sg)) publishes the authoritative species lists and heritage tree register.
+This report covers **`r n_species` legally restricted plant species** from the Singapore Red Data Book (3rd Edition, NParks 2021). NParks ([nparks.gov.sg](https://www.nparks.gov.sg)) publishes the authoritative species lists and heritage tree register.
 </div>
 
 ---
@@ -187,13 +187,13 @@ URA's **Master Plan** designates conservation areas (e.g., Chinatown, Kampong Gl
 
 ---
 
-# Preliminary Species Listing {#species}
+# Species Listing {#species}
 
 ```{r master-table}
 species|>arrange(iucn_status,common_name)|>mutate(`Scientific Name`=paste0("*",scientific_name,"*"))|>
   select(`Common Name`=common_name,`Scientific Name`,`IUCN`=iucn_status,`CITES`=cites_appendix,
          `Singapore Status`=legal_status_sg,`Managing Inst.`=managing_institution,`Notes`=notes)|>
-  styled_kable(caption="Table 1. Preliminary — Protected Plant Species in Singapore",height="450px")
+  styled_kable(caption="Table 1. Protected Plant Species in Singapore",height="450px")
 ```
 
 ## GBIF Backbone Resolution
@@ -248,5 +248,5 @@ cat(paste0('<div class="kqb-report-footer">',if(nzchar(logo_sm))paste0(logo_sm,'
   '<p style="font-weight:600;color:#0d2240;">',kqb_co$name,' &mdash; ',kqb_co$tagline,'</p>',
   '<p>',kqb_co$legal_name,' | ',kqb_co$country,'</p>',
   '<p style="margin-top:6px;font-size:10px;color:#aaa;">Generated ',format(Sys.Date(),"%d %B %Y"),
-  ' &nbsp;&bull;&nbsp; Preliminary — Verify at NParks / Singapore Red Data Book / CITES</p></div>'))
+  ' &nbsp;&bull;&nbsp; Verify at NParks / Singapore Red Data Book / CITES</p></div>'))
 ```

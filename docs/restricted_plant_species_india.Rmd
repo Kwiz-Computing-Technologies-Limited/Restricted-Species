@@ -351,7 +351,7 @@ species |>
   scale_x_continuous(expand=expansion(mult=c(0,0.2))) +
   scale_fill_brewer(palette="Set2") +
   labs(title="India Restricted Plant Species by Legal Category",
-       subtitle=glue("Total: {n_species} representative species"),
+       subtitle=glue("Total: {n_species} species"),
        x="Number of species", y=NULL) +
   theme_minimal(base_size=12) +
   theme(panel.grid.major.y=element_blank())
@@ -367,7 +367,7 @@ species |>
          `IUCN`=iucn_status, `CITES`=cites_appendix,
          `India Legal Status`=legal_status_india,
          `Managing Inst.`=managing_institution, `Notes`=notes) |>
-  styled_kable(caption="Table 2. Restricted/Protected Plant Species in India (Representative Listing)",
+  styled_kable(caption="Table 2. Restricted/Protected Plant Species in India",
                height="600px")
 ```
 

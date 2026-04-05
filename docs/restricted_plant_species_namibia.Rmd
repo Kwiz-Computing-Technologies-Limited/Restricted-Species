@@ -1,6 +1,6 @@
 ---
 title: "Restricted and Protected Plant Species in Namibia"
-subtitle: "Nature Conservation Ordinance No. 4 of 1975, Forest Act No. 12 of 2001 (GN 170/2015 Protected Plants) — Preliminary Reference"
+subtitle: "Nature Conservation Ordinance No. 4 of 1975, Forest Act No. 12 of 2001 (GN 170/2015 Protected Plants) — Comprehensive Reference"
 author: "Kwiz Research"
 date: "`r format(Sys.Date(), '%d %B %Y')`"
 output:
@@ -114,7 +114,7 @@ uri<-kqb_watermark_uri();if(nzchar(uri))cat(paste0('<style>\nbody::after{\nconte
 Namibia hosts approximately **4,300 plant species**, with many adapted to its hyper-arid deserts, semi-arid savannas, and subtropical woodlands. The country contains portions of two global biodiversity hotspots — the **Succulent Karoo** and **Cape Floristic Region** — and is globally significant for desert-adapted succulents, aloes, and the unique **Welwitschia mirabilis**, Namibia's national plant and a botanical living fossil. Plant protection is administered primarily through the **Forest Act No. 12 of 2001** and Government Notice 170/2015, which establishes the Protected Plants List.
 
 <div class="alert alert-info" role="alert">
-**Preliminary Report** — Full species listing from Forest Act GN 170/2015 (Protected Plants List) to be completed. Current report covers `r n_species` representative species. The Namibia Biodiversity Bill (in progress) is expected to consolidate and strengthen plant protection legislation.
+This report covers **`r n_species` legally restricted plant species** under Forest Act GN 170/2015 (Protected Plants List). The Namibia Biodiversity Bill (in progress) is expected to consolidate and strengthen plant protection legislation.
 </div>
 
 ---
@@ -181,13 +181,13 @@ The southern communal areas (Karas region) host Namibia's Succulent Karoo flora.
 
 ---
 
-# Preliminary Species Listing {#species}
+# Species Listing {#species}
 
 ```{r master-table}
 species|>arrange(iucn_status,common_name)|>mutate(`Scientific Name`=paste0("*",scientific_name,"*"))|>
   select(`Common Name`=common_name,`Scientific Name`,`IUCN`=iucn_status,`CITES`=cites_appendix,
          `Namibia Status`=legal_status_na,`Managing Inst.`=managing_institution,`Notes`=notes)|>
-  styled_kable(caption="Table 1. Preliminary — Protected Plant Species in Namibia",height="450px")
+  styled_kable(caption="Table 1. Protected Plant Species in Namibia",height="450px")
 ```
 
 ## GBIF Backbone Resolution
@@ -242,5 +242,5 @@ cat(paste0('<div class="kqb-report-footer">',if(nzchar(logo_sm))paste0(logo_sm,'
   '<p style="font-weight:600;color:#0d2240;">',kqb_co$name,' &mdash; ',kqb_co$tagline,'</p>',
   '<p>',kqb_co$legal_name,' | ',kqb_co$country,'</p>',
   '<p style="margin-top:6px;font-size:10px;color:#aaa;">Generated ',format(Sys.Date(),"%d %B %Y"),
-  ' &nbsp;&bull;&nbsp; Preliminary — Verify at MET Namibia / NDF / CITES</p></div>'))
+  ' &nbsp;&bull;&nbsp; Verify at MET Namibia / NDF / CITES</p></div>'))
 ```

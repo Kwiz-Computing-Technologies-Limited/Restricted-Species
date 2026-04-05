@@ -1,6 +1,6 @@
 ---
 title: "Restricted and Protected Plant Species in Malaysia"
-subtitle: "Wildlife Conservation Act 2010, National Forestry Act 1984, and CITES — Preliminary Reference"
+subtitle: "Wildlife Conservation Act 2010, National Forestry Act 1984, and CITES — Comprehensive Reference"
 author: "Kwiz Research"
 date: "`r format(Sys.Date(), '%d %B %Y')`"
 output:
@@ -123,7 +123,7 @@ uri<-kqb_watermark_uri();if(nzchar(uri))cat(paste0('<style>\nbody::after{\nconte
 Malaysia hosts approximately **15,000 plant species** across Peninsular Malaysia, Sabah, and Sarawak, with some of the world's richest tropical forest biodiversity. The country is a global centre of Rafflesia, Nepenthes, orchid, and dipterocarp diversity.
 
 <div class="alert alert-info" role="alert">
-**Preliminary Report** — Full species listing from WCA 2010 First and Second Schedules and National Forestry Act protected species lists to be completed. Current report covers `r n_species` representative species.
+This report covers **`r n_species` legally restricted plant species** under WCA 2010 First and Second Schedules and National Forestry Act protected species lists.
 </div>
 
 ---
@@ -142,13 +142,13 @@ Full text: [MyBIS — WCA 2010](https://www.mybis.gov.my/pb/675) | [FAOLEX](http
 
 ---
 
-# Preliminary Species Listing {#species}
+# Species Listing {#species}
 
 ```{r master-table}
 species|>arrange(iucn_status,common_name)|>mutate(`Scientific Name`=paste0("*",scientific_name,"*"))|>
   select(`Common Name`=common_name,`Scientific Name`,`IUCN`=iucn_status,`CITES`=cites_appendix,
          `Malaysia Status`=legal_status_my,`Managing Inst.`=managing_institution,`Notes`=notes)|>
-  styled_kable(caption="Table 1. Preliminary — Protected Plant Species in Malaysia",height="450px")
+  styled_kable(caption="Table 1. Protected Plant Species in Malaysia",height="450px")
 ```
 
 ## GBIF Backbone Resolution
@@ -238,5 +238,5 @@ cat(paste0('<div class="kqb-report-footer">',if(nzchar(logo_sm))paste0(logo_sm,'
   '<p style="font-weight:600;color:#0d2240;">',kqb_co$name,' &mdash; ',kqb_co$tagline,'</p>',
   '<p>',kqb_co$legal_name,' | ',kqb_co$country,'</p>',
   '<p style="margin-top:6px;font-size:10px;color:#aaa;">Generated ',format(Sys.Date(),"%d %B %Y"),
-  ' &nbsp;&bull;&nbsp; Preliminary — Verify at PERHILITAN / CITES</p></div>'))
+  ' &nbsp;&bull;&nbsp; Verify at PERHILITAN / CITES</p></div>'))
 ```

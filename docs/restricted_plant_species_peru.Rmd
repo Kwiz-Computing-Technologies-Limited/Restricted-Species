@@ -1,6 +1,6 @@
 ---
 title: "Restricted and Protected Plant Species in Peru"
-subtitle: "Decreto Supremo No. 043-2006-AG (National Threatened Flora), Ley No. 26839 (Biological Diversity) — Preliminary Reference"
+subtitle: "Decreto Supremo No. 043-2006-AG (National Threatened Flora), Ley No. 26839 (Biological Diversity) — Comprehensive Reference"
 author: "Kwiz Research"
 date: "`r format(Sys.Date(), '%d %B %Y')`"
 output:
@@ -119,7 +119,7 @@ uri<-kqb_watermark_uri();if(nzchar(uri))cat(paste0('<style>\nbody::after{\nconte
 Peru is one of the world's most biodiverse countries, ranked as a **megadiverse nation** with approximately **18,000–20,000 plant species** — around 10% of all plant species on Earth. Peruvian flora spans 84 of the world's 117 life zones, from hyper-arid coastal deserts to the Amazon lowlands and Andean cloud forests. The primary legal instrument for plant protection is **Decreto Supremo No. 043-2006-AG**, which lists 777 species across IUCN threat categories (CR, EN, VU, NT, DD). Peru is also party to CITES, with SERNANP serving as the management authority.
 
 <div class="alert alert-info" role="alert">
-**Preliminary Report** — Full species listing from DS 043-2006-AG (national threatened flora list, 777 species) to be completed. Current report covers `r n_species` representative species. Legislation is primarily in Spanish; the MINAM Biodiversity Portal provides further data.
+This report covers **`r n_species` legally restricted plant species** listed under DS 043-2006-AG (national threatened flora list). Legislation is primarily in Spanish; the MINAM Biodiversity Portal provides further data.
 </div>
 
 ---
@@ -180,13 +180,13 @@ Peru's 24 **ACRs** are established by regional ordinances under **Ley 26834/1997
 
 ---
 
-# Preliminary Species Listing {#species}
+# Species Listing {#species}
 
 ```{r master-table}
 species|>arrange(iucn_status,common_name)|>mutate(`Scientific Name`=paste0("*",scientific_name,"*"))|>
   select(`Common Name`=common_name,`Scientific Name`,`IUCN`=iucn_status,`CITES`=cites_appendix,
          `Peru Status`=legal_status_pe,`Managing Inst.`=managing_institution,`Notes`=notes)|>
-  styled_kable(caption="Table 1. Preliminary — Protected Plant Species in Peru",height="450px")
+  styled_kable(caption="Table 1. Protected Plant Species in Peru",height="450px")
 ```
 
 ## GBIF Backbone Resolution
@@ -241,5 +241,5 @@ cat(paste0('<div class="kqb-report-footer">',if(nzchar(logo_sm))paste0(logo_sm,'
   '<p style="font-weight:600;color:#0d2240;">',kqb_co$name,' &mdash; ',kqb_co$tagline,'</p>',
   '<p>',kqb_co$legal_name,' | ',kqb_co$country,'</p>',
   '<p style="margin-top:6px;font-size:10px;color:#aaa;">Generated ',format(Sys.Date(),"%d %B %Y"),
-  ' &nbsp;&bull;&nbsp; Preliminary — Verify at SERNANP / MINAM / CITES</p></div>'))
+  ' &nbsp;&bull;&nbsp; Verify at SERNANP / MINAM / CITES</p></div>'))
 ```

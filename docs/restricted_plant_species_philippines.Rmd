@@ -170,7 +170,7 @@ if (nzchar(uri)) cat(paste0('<style>\nbody::after {\n  content: "";\n  position:
 
 The Philippines is an **archipelagic megadiverse** country and a global biodiversity hotspot, encompassing approximately **9,250 vascular plant species** with an endemism rate exceeding **60%**. Its forests harbour some of the world's most ecologically unique plants — from the giant *Rafflesia* flowers to an extraordinary diversity of pitcher plants, orchids, and dipterocarps. Despite this biological richness, the Philippines has lost over **90% of its original forest cover** and faces ongoing threats from habitat conversion, commercial logging, and international plant trade.
 
-This report compiles **`r n_species` representative plant species** under restriction in the Philippines. **`r n_dao`** are listed in the DENR Administrative Order 2019-09 Threatened Species List under Republic Act 9147. **`r n_invasive`** are designated invasive or noxious species. **`r n_cites_i`** carry CITES Appendix I status and **`r n_cites_ii`** are on CITES Appendix II. **`r n_cr`** are Critically Endangered and **`r n_en`** are Endangered on the IUCN Red List.
+This report compiles **`r n_species` legally restricted plant species** under restriction in the Philippines. **`r n_dao`** are listed in the DENR Administrative Order 2019-09 Threatened Species List under Republic Act 9147. **`r n_invasive`** are designated invasive or noxious species. **`r n_cites_i`** carry CITES Appendix I status and **`r n_cites_ii`** are on CITES Appendix II. **`r n_cr`** are Critically Endangered and **`r n_en`** are Endangered on the IUCN Red List.
 
 ---
 
@@ -236,7 +236,7 @@ Under **RA 11054 (Bangsamoro Organic Law, 2018)**, the Bangsamoro Autonomous Reg
 
 ## Protected Area Management Boards (PAMBs)
 
-Each of the Philippines' **240+ protected areas** under the **National Integrated Protected Areas System Act (RA 7586, 1992)** is managed by a PAMB that includes LGU representatives and DENR. PAMBs have authority to impose species-specific collection bans within their protected areas, creating a layer of restrictions above national law:
+Each of the Philippines' **240+ protected areas** under the **National Integrated Protected Areas System Act (RA 7586, 1992)** is managed by a PAMB that includes LGU officials and DENR. PAMBs have authority to impose species-specific collection bans within their protected areas, creating a layer of restrictions above national law:
 
 - **Mt. Apo Natural Park PAMB** (Davao) — absolute collection ban on *Nepenthes* and all wild orchids.
 - **Mt. Kitanglad Range Natural Park PAMB** (Bukidnon) — *Vanda sanderiana* (*Waling-waling*) banned even for CITES-permitted entities.

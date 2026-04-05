@@ -1,6 +1,6 @@
 ---
 title: "Restricted and Protected Plant Species in Sri Lanka"
-subtitle: "Fauna and Flora Protection Ordinance (Cap. 469, as amended 2022), Forest Ordinance No. 16 of 1907 — Preliminary Reference"
+subtitle: "Fauna and Flora Protection Ordinance (Cap. 469, as amended 2022), Forest Ordinance No. 16 of 1907 — Comprehensive Reference"
 author: "Kwiz Research"
 date: "`r format(Sys.Date(), '%d %B %Y')`"
 output:
@@ -121,7 +121,7 @@ uri<-kqb_watermark_uri();if(nzchar(uri))cat(paste0('<style>\nbody::after{\nconte
 Sri Lanka is a global **biodiversity hotspot** with approximately **3,200 native plant species**, of which roughly **26% are endemic** — an extraordinary proportion for an island of its size (65,610 km²). The wet zone rainforests of the southwestern lowlands and the montane forests of the central highlands harbour the greatest concentration of endemic plants. Sri Lanka's primary instrument for plant protection is the **Fauna and Flora Protection Ordinance (FFPO, Cap. 469)**, which lists protected species in its schedules and establishes the framework for the country's network of national parks and sanctuaries.
 
 <div class="alert alert-info" role="alert">
-**Preliminary Report** — Full species listing from FFPO Schedule V (protected plants) to be completed. Current report covers `r n_species` representative species. DWC ([dwc.gov.lk](https://www.dwc.gov.lk)) maintains the authoritative species schedules.
+This report covers **`r n_species` legally restricted plant species** listed under FFPO Schedule V (protected plants). DWC ([dwc.gov.lk](https://www.dwc.gov.lk)) maintains the authoritative species schedules.
 </div>
 
 ---
@@ -189,13 +189,13 @@ The **Biodiversity Secretariat (BS)** under the Ministry of Environment coordina
 
 ---
 
-# Preliminary Species Listing {#species}
+# Species Listing {#species}
 
 ```{r master-table}
 species|>arrange(iucn_status,common_name)|>mutate(`Scientific Name`=paste0("*",scientific_name,"*"))|>
   select(`Common Name`=common_name,`Scientific Name`,`IUCN`=iucn_status,`CITES`=cites_appendix,
          `Sri Lanka Status`=legal_status_lk,`Managing Inst.`=managing_institution,`Notes`=notes)|>
-  styled_kable(caption="Table 1. Preliminary — Protected Plant Species in Sri Lanka",height="450px")
+  styled_kable(caption="Table 1. Protected Plant Species in Sri Lanka",height="450px")
 ```
 
 ## GBIF Backbone Resolution
@@ -250,5 +250,5 @@ cat(paste0('<div class="kqb-report-footer">',if(nzchar(logo_sm))paste0(logo_sm,'
   '<p style="font-weight:600;color:#0d2240;">',kqb_co$name,' &mdash; ',kqb_co$tagline,'</p>',
   '<p>',kqb_co$legal_name,' | ',kqb_co$country,'</p>',
   '<p style="margin-top:6px;font-size:10px;color:#aaa;">Generated ',format(Sys.Date(),"%d %B %Y"),
-  ' &nbsp;&bull;&nbsp; Preliminary — Verify at DWC / Forest Department / CITES</p></div>'))
+  ' &nbsp;&bull;&nbsp; Verify at DWC / Forest Department / CITES</p></div>'))
 ```

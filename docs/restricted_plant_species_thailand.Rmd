@@ -1,6 +1,6 @@
 ---
 title: "Restricted and Protected Plant Species in Thailand"
-subtitle: "Plants Act B.E. 2518 (1975), Wild Animal and Plant Conservation and Protection Act B.E. 2562 (2019) — Preliminary Reference"
+subtitle: "Plants Act B.E. 2518 (1975), Wild Animal and Plant Conservation and Protection Act B.E. 2562 (2019) — Comprehensive Reference"
 author: "Kwiz Research"
 date: "`r format(Sys.Date(), '%d %B %Y')`"
 output:
@@ -128,7 +128,7 @@ uri<-kqb_watermark_uri();if(nzchar(uri))cat(paste0('<style>\nbody::after{\nconte
 Thailand hosts approximately **11,000–12,000 plant species** within a diverse landscape spanning tropical rainforests, monsoon forests, mangroves, and montane cloud forests. The country is part of the Indo-Burma biodiversity hotspot. Thailand's plant protection regime operates under the **Plants Act B.E. 2518 (1975)**, which classifies plants into three categories — **conserved** (strictly protected), **controlled** (export/import regulated), and **prohibited** (import banned) — and the newer **Wild Animal and Plant Conservation and Protection Act B.E. 2562 (2019)**, which implements CITES obligations domestically.
 
 <div class="alert alert-info" role="alert">
-**Preliminary Report** — Full species listing from the Plants Act B.E. 2518 conserved and controlled plant lists to be completed. Current report covers `r n_species` representative species. The Plants Act list is maintained by the Department of Agriculture (DOA) with DNP coordinating CITES implementation.
+This report covers **`r n_species` legally restricted plant species** under Thailand's Plants Act B.E. 2518 conserved and controlled plant lists. The Plants Act list is maintained by the Department of Agriculture (DOA) with DNP coordinating CITES implementation.
 </div>
 
 ---
@@ -197,13 +197,13 @@ Under the **Ancient Monuments, Antiques, Objects of Art and National Museums Act
 
 ---
 
-# Preliminary Species Listing {#species}
+# Species Listing {#species}
 
 ```{r master-table}
 species|>arrange(iucn_status,common_name)|>mutate(`Scientific Name`=paste0("*",scientific_name,"*"))|>
   select(`Common Name`=common_name,`Scientific Name`,`IUCN`=iucn_status,`CITES`=cites_appendix,
          `Thailand Status`=legal_status_th,`Managing Inst.`=managing_institution,`Notes`=notes)|>
-  styled_kable(caption="Table 1. Preliminary — Protected Plant Species in Thailand",height="450px")
+  styled_kable(caption="Table 1. Protected Plant Species in Thailand",height="450px")
 ```
 
 ## GBIF Backbone Resolution
@@ -258,5 +258,5 @@ cat(paste0('<div class="kqb-report-footer">',if(nzchar(logo_sm))paste0(logo_sm,'
   '<p style="font-weight:600;color:#0d2240;">',kqb_co$name,' &mdash; ',kqb_co$tagline,'</p>',
   '<p>',kqb_co$legal_name,' | ',kqb_co$country,'</p>',
   '<p style="margin-top:6px;font-size:10px;color:#aaa;">Generated ',format(Sys.Date(),"%d %B %Y"),
-  ' &nbsp;&bull;&nbsp; Preliminary — Verify at DNP / DOA Thailand / CITES</p></div>'))
+  ' &nbsp;&bull;&nbsp; Verify at DNP / DOA Thailand / CITES</p></div>'))
 ```

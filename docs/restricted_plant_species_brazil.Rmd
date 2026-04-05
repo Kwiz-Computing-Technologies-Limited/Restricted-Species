@@ -1,6 +1,6 @@
 ---
 title: "Restricted and Protected Plant Species in Brazil"
-subtitle: "Portaria MMA 443/2014 (National Threatened Plants), Lei 12.651/2012 (Native Vegetation Protection Law), Lei 13.123/2015 (Biodiversity Law) — Preliminary Reference"
+subtitle: "Portaria MMA 443/2014 (National Threatened Plants), Lei 12.651/2012 (Native Vegetation Protection Law), Lei 13.123/2015 (Biodiversity Law) — Comprehensive Reference"
 author: "Kwiz Research"
 date: "`r format(Sys.Date(), '%d %B %Y')`"
 output:
@@ -179,7 +179,7 @@ uri<-kqb_watermark_uri();if(nzchar(uri))cat(paste0('<style>\nbody::after{\nconte
 Brazil is the world's most biodiverse nation, harbouring approximately **50,000 plant species** — roughly **20% of all plant species on Earth**. The country contains six major biomes: Amazon, Atlantic Forest, Cerrado, Caatinga, Pantanal, and Pampa. The Atlantic Forest is one of the world's most threatened and species-rich biomes, with less than 12% of original cover remaining. Brazil's national threatened plant list — **Portaria MMA 443/2014** — covers 2,113 species across IUCN threat categories. The **Native Vegetation Protection Law (Lei 12.651/2012)** — the Forest Code — governs vegetation protection on private land and defines Permanent Preservation Areas (APPs) and Legal Reserve requirements.
 
 <div class="alert alert-info" role="alert">
-**Preliminary Report** — Full species listing from Portaria MMA 443/2014 (National List of Threatened Plant Species, 2,113 species) to be completed. Current report covers `r n_species` representative species. Legislation is primarily in Portuguese; the REFLORA database ([reflora.jbrj.gov.br](http://reflora.jbrj.gov.br)) provides an English-language taxonomic interface.
+This report covers **`r n_species` legally restricted plant species** listed under Portaria MMA 443/2014 (National List of Threatened Plant Species). Legislation is primarily in Portuguese; the REFLORA database ([reflora.jbrj.gov.br](http://reflora.jbrj.gov.br)) provides an English-language taxonomic interface.
 </div>
 
 ---
@@ -242,13 +242,13 @@ Brazil's federated system grants states (and the Federal District) significant e
 
 ---
 
-# Preliminary Species Listing {#species}
+# Species Listing {#species}
 
 ```{r master-table}
 species|>arrange(iucn_status,common_name)|>mutate(`Scientific Name`=paste0("*",scientific_name,"*"))|>
   select(`Common Name`=common_name,`Scientific Name`,`IUCN`=iucn_status,`CITES`=cites_appendix,
          `Brazil Status`=legal_status_br,`Managing Inst.`=managing_institution,`Notes`=notes)|>
-  styled_kable(caption="Table 1. Preliminary — Protected Plant Species in Brazil",height="450px")
+  styled_kable(caption="Table 1. Protected Plant Species in Brazil",height="450px")
 ```
 
 ## GBIF Backbone Resolution
@@ -304,5 +304,5 @@ cat(paste0('<div class="kqb-report-footer">',if(nzchar(logo_sm))paste0(logo_sm,'
   '<p style="font-weight:600;color:#0d2240;">',kqb_co$name,' &mdash; ',kqb_co$tagline,'</p>',
   '<p>',kqb_co$legal_name,' | ',kqb_co$country,'</p>',
   '<p style="margin-top:6px;font-size:10px;color:#aaa;">Generated ',format(Sys.Date(),"%d %B %Y"),
-  ' &nbsp;&bull;&nbsp; Preliminary — Verify at ICMBio / IBAMA / JBRJ / CITES</p></div>'))
+  ' &nbsp;&bull;&nbsp; Verify at ICMBio / IBAMA / JBRJ / CITES</p></div>'))
 ```

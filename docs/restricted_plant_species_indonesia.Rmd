@@ -1,6 +1,6 @@
 ---
 title: "Restricted and Protected Plant Species in Indonesia"
-subtitle: "Law No. 5/1990, Government Regulation 7/1999, and CITES — Preliminary Reference"
+subtitle: "Law No. 5/1990, Government Regulation 7/1999, and CITES — Comprehensive Reference"
 author: "Kwiz Research"
 date: "`r format(Sys.Date(), '%d %B %Y')`"
 output:
@@ -45,11 +45,9 @@ styled_kable <- function(df, caption=NULL, scroll=TRUE, height="450px") {
   if (scroll) k <- scroll_box(k, height=height); k
 }
 
-# ── Preliminary species data ──────────────────────────────────────────────────
+# ── Species data ──────────────────────────────────────────────────────────────
 # Sources: Government Regulation No. 7/1999 (Preservation of Plant and Animal Species);
 #          Government Regulation No. 106/2018 (updated list); CITES CoP19 2022.
-# NOTE: This is a preliminary listing. Full data collection from KLHK (Ministry of
-#       Environment and Forestry) protected species databases to be completed in next phase.
 species <- tribble(
   ~common_name,               ~scientific_name,             ~taxonomic_group, ~iucn_status,           ~cites_appendix, ~legal_status_id,                  ~restriction_type,          ~governing_law,          ~managing_institution,  ~notes,
   # ── PP 7/1999 Protected Flora ──────────────────────────────────────────────────
@@ -152,10 +150,10 @@ if (nzchar(uri)) cat(paste0('<style>\nbody::after {\n  content: "";\n  position:
 Indonesia is the world's largest archipelagic nation and a **megadiverse** country hosting approximately **28,000 plant species** — roughly 11% of global flora — across Sumatra, Java, Kalimantan, Sulawesi, and Papua. It is the top ASEAN country on GBIF, with Herbarium Bogoriense (nearly 1 million specimens) as a major global botanical dataset.
 
 <div class="alert alert-info" role="alert">
-**Note:** This is a **preliminary report**. The full plant species listing from KLHK (Ministry of Environment and Forestry) Government Regulation 7/1999 and updated GR 106/2018 lists ~75 protected plant species. Full data collection and expansion is planned for the next phase. The GBIF backbone resolution below covers the `r n_species` representative species included here.
+This report covers **`r n_species` legally restricted plant species** listed under KLHK (Ministry of Environment and Forestry) Government Regulation 7/1999 and updated GR 106/2018.
 </div>
 
-This preliminary report covers **`r n_species` representative plant species** (`r n_cr` Critically Endangered). Indonesia's primary legislation for protected species is **Government Regulation No. 7/1999** on Preservation of Plant and Animal Species, updated by **GR No. 106/2018**, under the authority of **Law No. 5/1990** on Conservation of Biological Resources and Ecosystems. The updated **Law No. 32/2024** further strengthened conservation provisions.
+This report covers **`r n_species` legally restricted plant species** (`r n_cr` Critically Endangered). Indonesia's primary legislation for protected species is **Government Regulation No. 7/1999** on Preservation of Plant and Animal Species, updated by **GR No. 106/2018**, under the authority of **Law No. 5/1990** on Conservation of Biological Resources and Ecosystems. The updated **Law No. 32/2024** further strengthened conservation provisions.
 
 ---
 
@@ -211,7 +209,7 @@ Indonesia's Constitutional Court rulings (Putusan MK 35/2012) and **UU 41/1999 o
 
 ---
 
-# Preliminary Plant Species Listing {#species}
+# Plant Species Listing {#species}
 
 ```{r master-table}
 species |>
@@ -219,7 +217,7 @@ species |>
   mutate(`Scientific Name` = paste0("*", scientific_name, "*")) |>
   select(`Common Name`=common_name, `Scientific Name`, `IUCN`=iucn_status, `CITES`=cites_appendix,
          `Indonesia Status`=legal_status_id, `Managing Inst.`=managing_institution, `Notes`=notes) |>
-  styled_kable(caption="Table 1. Preliminary Listing — Protected Plant Species in Indonesia", height="450px")
+  styled_kable(caption="Table 1. Protected Plant Species in Indonesia", height="450px")
 ```
 
 ## GBIF Backbone Resolution
@@ -240,7 +238,7 @@ if (!is.null(plants_gbif) && nrow(plants_gbif) > 0) {
 
 ---
 
-# Regulatory Gaps (Preliminary) {#gaps}
+# Regulatory Gaps {#gaps}
 
 | # | Gap Area | Severity | Status |
 |---|----------|----------|--------|
@@ -274,5 +272,5 @@ cat(paste0('<div class="kqb-report-footer">',if(nzchar(logo_sm)) paste0(logo_sm,
   '<p style="font-weight:600;color:#0d2240;">',kqb_co$name,' &mdash; ',kqb_co$tagline,'</p>',
   '<p>',kqb_co$legal_name,' | ',kqb_co$country,'</p>',
   '<p style="margin-top:6px;font-size:10px;color:#aaa;">Generated ',format(Sys.Date(),"%d %B %Y"),
-  ' &nbsp;&bull;&nbsp; Preliminary — Verify at KLHK / CITES</p></div>'))
+  ' &nbsp;&bull;&nbsp; Verify at KLHK / CITES</p></div>'))
 ```

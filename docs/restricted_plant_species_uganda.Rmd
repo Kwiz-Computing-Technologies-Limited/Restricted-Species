@@ -169,7 +169,7 @@ if (nzchar(uri)) cat(paste0('<style>\nbody::after {\n  content: "";\n  position:
 
 Uganda is one of Africa's most biologically diverse countries, occupying less than 1% of the continent's land area but supporting approximately **18% of Africa's plant species** (~5,000 species) and exceptional forest biodiversity across tropical rainforests, montane forests, savanna woodlands, and wetland ecosystems. The country straddles two major biodiversity regions — the Albertine Rift and the Congo Basin — and provides critical habitat for globally threatened tree species and rare endemics.
 
-This report compiles **`r n_species` representative plant species** subject to legal restriction in Uganda. **`r n_protected`** are protected under the National Forestry and Tree Planting Act 2003, the Uganda Wildlife Act 2019, or CITES regulations. **`r n_invasive`** are designated invasive species under the National Environment Act 2019 or MAAIF regulations. **`r n_cites_i`** carry CITES Appendix I status and **`r n_cites_ii`** are on CITES Appendix II. **`r n_cr`** are IUCN Critically Endangered.
+This report compiles **`r n_species` legally restricted plant species** subject to legal restriction in Uganda. **`r n_protected`** are protected under the National Forestry and Tree Planting Act 2003, the Uganda Wildlife Act 2019, or CITES regulations. **`r n_invasive`** are designated invasive species under the National Environment Act 2019 or MAAIF regulations. **`r n_cites_i`** carry CITES Appendix I status and **`r n_cites_ii`** are on CITES Appendix II. **`r n_cr`** are IUCN Critically Endangered.
 
 ---
 

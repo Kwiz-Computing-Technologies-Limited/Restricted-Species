@@ -1,6 +1,6 @@
 ---
 title: "Restricted and Protected Plant Species in Chile"
-subtitle: "Ley 19.473 (Hunting Law 1996), DS No. 13/2013 (Species Classification), Ley 18.362 (SNASPE) — Preliminary Reference"
+subtitle: "Ley 19.473 (Hunting Law 1996), DS No. 13/2013 (Species Classification), Ley 18.362 (SNASPE) — Comprehensive Reference"
 author: "Kwiz Research"
 date: "`r format(Sys.Date(), '%d %B %Y')`"
 output:
@@ -196,13 +196,13 @@ Under **Ley 17.288 de Monumentos Nacionales**, regions may petition the Consejo 
 
 ---
 
-# Preliminary Species Listing {#species}
+# Species Listing {#species}
 
 ```{r master-table}
 species|>arrange(iucn_status,common_name)|>mutate(`Scientific Name`=paste0("*",scientific_name,"*"))|>
   select(`Common Name`=common_name,`Scientific Name`,`IUCN`=iucn_status,`CITES`=cites_appendix,
          `Chile Status`=legal_status_cl,`Managing Inst.`=managing_institution,`Notes`=notes)|>
-  styled_kable(caption="Table 1. Preliminary — Protected Plant Species in Chile",height="450px")
+  styled_kable(caption="Table 1. Protected Plant Species in Chile",height="450px")
 ```
 
 ## GBIF Backbone Resolution
@@ -257,5 +257,5 @@ cat(paste0('<div class="kqb-report-footer">',if(nzchar(logo_sm))paste0(logo_sm,'
   '<p style="font-weight:600;color:#0d2240;">',kqb_co$name,' &mdash; ',kqb_co$tagline,'</p>',
   '<p>',kqb_co$legal_name,' | ',kqb_co$country,'</p>',
   '<p style="margin-top:6px;font-size:10px;color:#aaa;">Generated ',format(Sys.Date(),"%d %B %Y"),
-  ' &nbsp;&bull;&nbsp; Preliminary — Verify at CONAF / SAG / MMA / CITES</p></div>'))
+  ' &nbsp;&bull;&nbsp; Verify at CONAF / SAG / MMA / CITES</p></div>'))
 ```

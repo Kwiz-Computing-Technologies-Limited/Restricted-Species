@@ -163,7 +163,7 @@ if (nzchar(uri)) cat(paste0('<style>\nbody::after {\n  content: "";\n  position:
 
 Tanzania is home to approximately **14,000 plant species**, with an estimated **1,100 endemics**, concentrated particularly in the **Eastern Arc Mountains** — one of Africa's most irreplaceable biodiversity hotspots. The country's plant diversity spans tropical lowland forests, montane forests, miombo and acacia woodlands, mangroves, and alpine moorlands. Tanzania also harbours globally significant populations of *Dalbergia* (rosewood/mpingo) species, which drive major international timber trade.
 
-This report covers **`r n_species` representative plant species** under legal restriction in Tanzania. **`r n_protected`** are protected under the Wildlife Conservation Act 2009 or Forests Act 2002. **`r n_invasive`** are notified invasive species. **`r n_cites_i`** hold CITES Appendix I status and **`r n_cites_ii`** are on CITES Appendix II. **`r n_cr`** are IUCN Critically Endangered.
+This report covers **`r n_species` legally restricted plant species** under legal restriction in Tanzania. **`r n_protected`** are protected under the Wildlife Conservation Act 2009 or Forests Act 2002. **`r n_invasive`** are notified invasive species. **`r n_cites_i`** hold CITES Appendix I status and **`r n_cites_ii`** are on CITES Appendix II. **`r n_cr`** are IUCN Critically Endangered.
 
 ---
 
