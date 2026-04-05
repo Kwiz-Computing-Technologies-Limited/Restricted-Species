@@ -1,6 +1,6 @@
 ---
 title: "Restricted Plant Species — Global Country Reports Index"
-subtitle: "Africa · South America · Asia | Kwiz Research"
+subtitle: "Africa · South America · Asia"
 author: "Kwiz Research"
 date: "`r format(Sys.Date(), '%d %B %Y')`"
 output:
@@ -51,7 +51,7 @@ if (nzchar(uri)) cat(paste0('<style>\nbody::after {\n  content: "";\n  position:
 
 ## About This Project {.unnumbered}
 
-This index lists all country-level reports in the **Kwiz Research Restricted Plant Species** database — a comprehensive reference covering laws, institutions, species listings (with GBIF backbone taxonomy), and regulatory gaps for restricted, prohibited, and protected plant species across Africa, South America, and Asia.
+This index lists all country-level reports in the **Restricted Plant Species** database — a comprehensive reference covering laws, institutions, species listings (with GBIF backbone taxonomy), and regulatory gaps for restricted, prohibited, and protected plant species across Africa, South America, and Asia.
 
 Each report follows a consistent structure:
 
@@ -75,18 +75,18 @@ reports <- tribble(
   "Africa",        "South Africa",   "restricted_plant_species_south_africa.html",        "NEMBA 2004 (TOPS); AIS Regs 2020; NFA 1998",    "Complete",     "Excellent",
   "Africa",        "Tanzania",       "restricted_plant_species_tanzania.html",            "Wildlife Conservation Act 2009; Forests Act 2002","Complete",   "Moderate",
   "Africa",        "Uganda",         "restricted_plant_species_uganda.html",              "NFA 2003; NEA 2019; Wildlife Act 2019",          "Complete",     "Moderate",
-  "Africa",        "Namibia",        "restricted_plant_species_namibia.html",             "Forest Act 2001; NC Ordinance 1975",             "Preliminary",  "Moderate",
+  "Africa",        "Namibia",        "restricted_plant_species_namibia.html",             "Forest Act 2001; NC Ordinance 1975",             "Complete",     "Moderate",
   "Asia",          "India",          "restricted_plant_species_india.html",               "WPA 1972 Schedule VI; Biological Diversity Act 2002","Complete", "Excellent",
   "Asia",          "Philippines",    "restricted_plant_species_philippines.html",         "RA 9147 (2001); DENR DAO 2019-09",               "Complete",     "Good",
-  "Asia",          "Indonesia",      "restricted_plant_species_indonesia.html",           "Law 5/1990; GR 7/1999; GR 106/2018",            "Preliminary",  "Excellent",
-  "Asia",          "Malaysia",       "restricted_plant_species_malaysia.html",            "WCA Act 716 (2010); NFA 1984",                   "Preliminary",  "Good",
-  "Asia",          "Sri Lanka",      "restricted_plant_species_sri_lanka.html",           "FFPO Cap. 469 (amended 2022)",                   "Preliminary",  "Moderate",
-  "Asia",          "Thailand",       "restricted_plant_species_thailand.html",            "Plants Act B.E. 2518; WACPPA B.E. 2562",         "Preliminary",  "Good",
-  "Asia",          "Singapore",      "restricted_plant_species_singapore.html",           "Parks and Trees Act 2005",                       "Preliminary",  "Limited",
-  "South America", "Colombia",       "restricted_plant_species_colombia.html",            "Decreto 1076/2015; Resolución 1912/2017",        "Preliminary",  "Excellent",
-  "South America", "Peru",           "restricted_plant_species_peru.html",                "DS 043-2006-AG; Ley 26839",                      "Preliminary",  "Good",
-  "South America", "Chile",          "restricted_plant_species_chile.html",               "DS 13/2013; Ley 19.473 de Caza",                 "Preliminary",  "Good",
-  "South America", "Brazil",         "restricted_plant_species_brazil.html",              "Portaria MMA 443/2014; Lei 12.651/2012",         "Preliminary",  "Excellent"
+  "Asia",          "Indonesia",      "restricted_plant_species_indonesia.html",           "Law 5/1990; GR 7/1999; GR 106/2018",            "Complete",     "Excellent",
+  "Asia",          "Malaysia",       "restricted_plant_species_malaysia.html",            "WCA Act 716 (2010); NFA 1984",                   "Complete",     "Good",
+  "Asia",          "Sri Lanka",      "restricted_plant_species_sri_lanka.html",           "FFPO Cap. 469 (amended 2022)",                   "Complete",     "Moderate",
+  "Asia",          "Thailand",       "restricted_plant_species_thailand.html",            "Plants Act B.E. 2518; WACPPA B.E. 2562",         "Complete",     "Good",
+  "Asia",          "Singapore",      "restricted_plant_species_singapore.html",           "Parks and Trees Act 2005",                       "Complete",     "Limited",
+  "South America", "Colombia",       "restricted_plant_species_colombia.html",            "Decreto 1076/2015; Resolución 1912/2017",        "Complete",     "Excellent",
+  "South America", "Peru",           "restricted_plant_species_peru.html",                "DS 043-2006-AG; Ley 26839",                      "Complete",     "Good",
+  "South America", "Chile",          "restricted_plant_species_chile.html",               "DS 13/2013; Ley 19.473 de Caza",                 "Complete",     "Good",
+  "South America", "Brazil",         "restricted_plant_species_brazil.html",              "Portaria MMA 443/2014; Lei 12.651/2012",         "Complete",     "Excellent"
 )
 
 reports |>
