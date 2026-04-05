@@ -312,7 +312,18 @@ if (!file.exists(gbif_cache)) {
 
   dir.create(file.path(proj_root, "output", "tables"), recursive = TRUE, showWarnings = FALSE)
   plants_enriched |>
-    mutate(country="South Africa",region="",jurisdiction="NATIONAL",jurisdiction_group="",
+    mutate(country="South Africa",
+      region = case_when(
+        str_detect(managing_institution, "CapeNature")  ~ "Western Cape",
+        str_detect(managing_institution, "Ezemvelo")    ~ "KwaZulu-Natal",
+        str_detect(managing_institution, "ECPTA")       ~ "Eastern Cape",
+        str_detect(managing_institution, "LEDET")       ~ "Limpopo",
+        str_detect(managing_institution, "MTPA")        ~ "Mpumalanga",
+        str_detect(managing_institution, "GDARD")       ~ "Gauteng",
+        TRUE ~ ""
+      ),
+      jurisdiction = if_else(region == "", "NATIONAL", "REGION"),
+      jurisdiction_group="",
       classification=taxonomic_group,taxonLevel="species",Note=notes,genus_I=word(prefName,1),is_aquatic="no",aquatic_type_I="") |>
     select(GBIFusageKey,country,region,jurisdiction,jurisdiction_group,prefName,classification,taxonLevel,family,englishName,synonyms,Note,genus_I,is_aquatic,aquatic_type_I,
            legal_status_sa, restriction_type, governing_law) |>

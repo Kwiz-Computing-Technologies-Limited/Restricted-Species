@@ -195,7 +195,25 @@ if (!file.exists(gbif_cache)) {
   enriched <- species_matched |> left_join(vd, by="GBIFusageKey") |>
     mutate(englishName=coalesce(gbif_english, common_name), synonyms=gbif_synonyms, family=gbif_family)
   dir.create(file.path(proj_root,"output","tables"), recursive=TRUE, showWarnings=FALSE)
-  enriched |> mutate(country="India",region="",jurisdiction="NATIONAL",jurisdiction_group="",
+  enriched |> mutate(country="India",
+    region = case_when(
+      str_detect(managing_institution, "APFD")           ~ "Andhra Pradesh",
+      str_detect(managing_institution, "Assam FD")       ~ "Assam",
+      str_detect(managing_institution, "Rajasthan")      ~ "Rajasthan",
+      str_detect(governing_law, "Karnataka.*Forest Act") ~ "Karnataka",
+      str_detect(governing_law, "Assam Forest")          ~ "Assam",
+      str_detect(governing_law, "Rajasthan Forest Act")  ~ "Rajasthan",
+      str_detect(governing_law, "State Forest Acts")     ~ "",
+      str_detect(managing_institution, "State FDs|State Forest|State SBBs|State Govts|State PCBs") ~ "",
+      TRUE ~ ""
+    ),
+    jurisdiction = case_when(
+      region != ""                                                      ~ "REGION",
+      str_detect(managing_institution, "State FDs|State Forest|State SBBs|State Govts|State PCBs|State Depts|ICAR / State") |
+        str_detect(governing_law, "State Forest Acts|State Agricultural|State rules|State wetland") ~ "REGION",
+      TRUE                                                              ~ "NATIONAL"
+    ),
+    jurisdiction_group="",
     classification=taxonomic_group,taxonLevel="species",Note=notes,genus_I=word(prefName,1),is_aquatic="no",aquatic_type_I="") |>
     select(GBIFusageKey,country,region,jurisdiction,jurisdiction_group,prefName,classification,taxonLevel,family,englishName,synonyms,Note,genus_I,is_aquatic,aquatic_type_I,
                      legal_status_india, restriction_type, governing_law) |> write_csv(gbif_cache)

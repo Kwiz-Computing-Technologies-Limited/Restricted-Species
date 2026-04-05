@@ -106,7 +106,14 @@ if (!file.exists(gbif_cache)) {
   vd<-tibble(GBIFusageKey=names(vl),gbif_english=unlist(vl),gbif_synonyms=unlist(sl[names(vl)]))
   en<-sm|>left_join(vd,by="GBIFusageKey")|>mutate(englishName=coalesce(gbif_english,common_name),synonyms=gbif_synonyms,family=gbif_family)
   dir.create(file.path(proj_root,"output","tables"),recursive=TRUE,showWarnings=FALSE)
-  en|>mutate(country="Malaysia",region="",jurisdiction="NATIONAL",jurisdiction_group="",
+  en|>mutate(country="Malaysia",
+    region = case_when(
+      str_detect(managing_institution, "Sabah")   ~ "Sabah",
+      str_detect(managing_institution, "Sarawak") ~ "Sarawak",
+      TRUE ~ ""
+    ),
+    jurisdiction = if_else(region == "", "NATIONAL", "REGION"),
+    jurisdiction_group="",
     classification=taxonomic_group,taxonLevel="species",Note=notes,genus_I=word(prefName,1),is_aquatic="no",aquatic_type_I="")|>
     select(GBIFusageKey,country,region,jurisdiction,jurisdiction_group,prefName,classification,taxonLevel,family,englishName,synonyms,Note,genus_I,is_aquatic,aquatic_type_I,legal_status_my,restriction_type,governing_law)|>write_csv(gbif_cache)
 }
