@@ -245,7 +245,10 @@ template_output <- plants_enriched |>
     Note             = notes,
     genus_I          = genus,
     is_aquatic       = is_aquatic,
-    aquatic_type_I   = aquatic_type_I
+    aquatic_type_I   = aquatic_type_I,
+    legal_status_ke  = legal_status_kenya,
+    restriction_type = restriction_type,
+    governing_law    = governing_laws
   )
 
 csv_path <- file.path(output_tbl, "kenya_regulated_plants_gbif.csv")

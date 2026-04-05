@@ -312,7 +312,9 @@ if (!file.exists(gbif_cache)) {
 
   dir.create(file.path(proj_root, "output", "tables"), recursive = TRUE, showWarnings = FALSE)
   plants_enriched |>
-    select(GBIFusageKey, prefName, family, englishName, synonyms,
+    mutate(country="South Africa",region="",jurisdiction="NATIONAL",jurisdiction_group="",
+      classification=taxonomic_group,taxonLevel="species",Note=notes,genus_I=word(prefName,1),is_aquatic="no",aquatic_type_I="") |>
+    select(GBIFusageKey,country,region,jurisdiction,jurisdiction_group,prefName,classification,taxonLevel,family,englishName,synonyms,Note,genus_I,is_aquatic,aquatic_type_I,
            legal_status_sa, restriction_type, governing_law) |>
     write_csv(gbif_cache)
 }

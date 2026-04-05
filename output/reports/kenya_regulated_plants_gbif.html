@@ -1,0 +1,1927 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kenya Regulated Plant Species <U+2014> GBIF Backbone</title>
+  <link rel="stylesheet"
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+  <style>
+    /* <e2><94><80><e2><94><80> Typography <e2><94><80><e2><94><80> */
+body {
+  font-family: "Source Sans Pro", "Helvetica Neue", Arial, sans-serif;
+  font-size: 15px;
+  color: #333;
+  line-height: 1.65;
+}
+
+h1, h2, h3, h4 {
+  font-family: "Georgia", serif;
+}
+
+h1.title {
+  font-size: 2.2em;
+  font-weight: bold;
+  border-bottom: 3px solid #2e7d32;
+  padding-bottom: 10px;
+}
+
+h2.subtitle {
+  font-size: 1.3em;
+  color: #555;
+  font-style: italic;
+}
+
+/* <e2><94><80><e2><94><80> Navigation <e2><94><80><e2><94><80> */
+.tocify {
+  border: 1px solid #e0e0e0;
+  border-radius: 4px;
+}
+
+.tocify-header .tocify-item.active {
+  background-color: #2e7d32;
+  color: white;
+}
+
+/* <e2><94><80><e2><94><80> Section anchors <e2><80><94> prevent header/banner overlap when navigating via TOC <e2><94><80><e2><94><80> */
+h1[id], h2[id], h3[id], h4[id],
+.section > h1:first-child,
+.section > h2:first-child,
+.section > h3:first-child {
+  scroll-margin-top: 80px;
+  padding-top: 15px;
+}
+
+/* <e2><94><80><e2><94><80> Tables <e2><94><80><e2><94><80> */
+table.table {
+  font-size: 12px;
+}
+
+/* Ensure table headers are not hidden behind fixed elements */
+.kable-table, .scroll-box {
+  margin-top: 10px;
+}
+
+table.table th {
+  font-weight: 600;
+}
+
+table.table-striped > tbody > tr:nth-of-type(odd) {
+  background-color: #f0f7f0;
+}
+
+/* <e2><94><80><e2><94><80> Callout boxes <e2><94><80><e2><94><80> */
+.alert-info {
+  background-color: #e8f4f8;
+  border-left: 5px solid #1a8cb5;
+}
+
+.alert-warning {
+  background-color: #fef9e7;
+  border-left: 5px solid #f39c12;
+  border-radius: 4px;
+  padding: 12px 16px;
+  margin: 12px 0 18px 0;
+  font-size: 13px;
+  line-height: 1.6;
+  color: #555;
+}
+
+.alert-warning a {
+  color: #2e7d32;
+}
+
+.alert-warning strong {
+  color: #b7770d;
+}
+
+.alert-danger {
+  background-color: #fdedec;
+  border-left: 5px solid #c0392b;
+  border-radius: 4px;
+  padding: 12px 16px;
+  margin: 12px 0 18px 0;
+  font-size: 13px;
+}
+
+/* <e2><94><80><e2><94><80> Code blocks <e2><94><80><e2><94><80> */
+pre {
+  background-color: #f8f8f8;
+  border: 1px solid #e0e0e0;
+  border-radius: 4px;
+  font-size: 12px;
+}
+
+/* <e2><94><80><e2><94><80> Links <e2><94><80><e2><94><80> */
+a {
+  color: #2e7d32;
+}
+
+a:hover {
+  color: #1a3c5a;
+  text-decoration: underline;
+}
+
+/* <e2><94><80><e2><94><80> Figure captions <e2><94><80><e2><94><80> */
+.caption {
+  font-size: 11px;
+  color: #666;
+  font-style: italic;
+}
+
+/* <e2><94><80><e2><94><80> Branded Footer <e2><94><80><e2><94><80> */
+.kqb-report-footer {
+  margin-top: 40px;
+  padding: 20px 30px;
+  background: #f5f5f5;
+  border-top: 3px solid #c9a84c;
+  text-align: center;
+  font-size: 11px;
+  color: #666666;
+}
+
+.kqb-report-footer p {
+  margin: 4px 0;
+}
+
+/* <e2><94><80><e2><94><80> Watermark support: element the watermark pseudo-element lives on <e2><94><80><e2><94><80> */
+.kqb-body {
+  position: relative;
+}
+
+.kqb-body > * {
+  position: relative;
+  z-index: 1;
+}
+
+    body {
+      font-family: "Source Sans Pro", "Helvetica Neue", Arial, sans-serif;
+      font-size: 15px; color: #333; line-height: 1.65;
+      padding: 30px 50px; max-width: 1400px; margin: 0 auto;
+    }
+    h1.title {
+      font-family: Georgia, serif; font-size: 2.2em; font-weight: bold;
+      border-bottom: 3px solid #2e7d32; padding-bottom: 10px;
+    }
+    .subtitle { font-size: 1.3em; color: #555; font-style: italic; }
+    .stats-banner {
+      background: #f0f7f0; border-left: 5px solid #2e7d32;
+      padding: 15px 20px; margin: 20px 0; border-radius: 4px;
+    }
+    .stats-banner strong { color: #2e7d32; }
+    .download-section { margin: 25px 0; display: flex; gap: 12px; flex-wrap: wrap; }
+    .btn-download {
+      display: inline-block; padding: 10px 24px; background-color: #2e7d32;
+      color: white; text-decoration: none; border-radius: 6px;
+      font-weight: 600; font-size: 14px; border: none; cursor: pointer;
+      transition: background 0.2s;
+    }
+    .btn-download:hover { background-color: #1b5e20; color: white; }
+    .method-note {
+      background: #e8f4f8; border-left: 5px solid #1a8cb5;
+      padding: 12px 16px; margin: 20px 0; border-radius: 4px; font-size: 13px;
+    }
+    .method-note a { color: #2e7d32; }
+    .kqb-report-footer {
+      margin-top: 40px; padding: 20px 30px; background: #f5f5f5;
+      border-top: 3px solid #c9a84c; text-align: center;
+      font-size: 11px; color: #666666;
+    }
+    table.table { font-size: 12px; }
+    table.table th {
+      font-weight: 600; position: sticky; top: 0; background: white; z-index: 2;
+    }
+    table.table-striped > tbody > tr:nth-of-type(odd) { background-color: #f0f7f0; }
+  </style>
+</head>
+<body>
+  <h1 class="title">Kenya Regulated Plant Species</h1>
+  <p class="subtitle">GBIF Backbone Taxonomy <U+2014> National-Level Restrictions</p>
+
+  <div class="stats-banner">
+    <strong>125</strong> plant species |
+    <strong>125</strong> resolved via GBIF Backbone |
+    <strong>50</strong> families |
+    Jurisdiction: <strong>NATIONAL</strong> (Kenya)
+  </div>
+
+  <div class="method-note">
+    <strong>Methodology:</strong> Scientific names resolved via the
+    <a href="https://www.gbif.org/developer/species" target="_blank">GBIF Backbone
+    Taxonomy API</a> using the <code>rgbif</code> R package.
+    English names and synonyms fetched from GBIF vernacular-names and synonyms endpoints.
+    Classification reflects Kenya legal status under WCMA 2013, EMCA 1999, FCMA 2016,
+    CITES (L.N. 241/2017), Plant Protection Act Cap. 324, and Biosafety Act 2009.
+    <br><em>Generated: 2026-04-05</em>
+  </div>
+
+  <div class="download-section">
+    <button class="btn-download" onclick="downloadCSV()">
+      &#11015; Download CSV (template format)
+    </button>
+    <button class="btn-download" onclick="downloadTableCSV()">
+      &#11015; Download display table as CSV
+    </button>
+  </div>
+
+  <div style="border: 1px solid #ddd; padding: 0px; overflow-y: scroll; height:700px; "><table class="table table-striped table-hover table-condensed table-responsive" style="font-size: 12px; margin-left: auto; margin-right: auto;">
+<caption style="font-size: initial !important;">Kenya Regulated Plant Species <U+2014> GBIF Backbone Resolved</caption>
+ <thead>
+  <tr>
+   <th style="text-align:right;position: sticky; top:0; background-color: #FFFFFF;"> # </th>
+   <th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;"> Scientific Name </th>
+   <th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;"> Common Name </th>
+   <th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;"> Family </th>
+   <th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;"> GBIF Key </th>
+   <th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;"> IUCN Status </th>
+   <th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;"> CITES </th>
+   <th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;"> Kenya Class. </th>
+   <th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;"> IUCN </th>
+   <th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;"> CITES Check </th>
+   <th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;"> Synonyms </th>
+  </tr>
+ </thead>
+<tbody>
+  <tr>
+   <td style="text-align:right;"> 1 </td>
+   <td style="text-align:left;width: 180px; "> <a href="https://www.gbif.org/species/2765940" target="_blank"><em>Pontederia crassipes</em></a> </td>
+   <td style="text-align:left;width: 150px; "> Common water hyacinth, Kachuripana, Water hyacinth, common water hyacinth, common water-hyacinth, floating water hyacinth, floating waterhyacinth, lilac-devil, water hyacinth, water-hyacinth, Water-hyacinth </td>
+   <td style="text-align:left;"> Pontederiaceae </td>
+   <td style="text-align:left;"> 2765940 </td>
+   <td style="text-align:left;"> Not assessed (invasive) </td>
+   <td style="text-align:left;"> Not listed </td>
+   <td style="text-align:left;"> Prohibited </td>
+   <td style="text-align:left;"> <a href="https://www.iucnredlist.org/search?query=Eichhornia%20crassipes" target="_blank">IUCN</a> </td>
+   <td style="text-align:left;">  </td>
+   <td style="text-align:left;width: 200px; ">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:right;"> 2 </td>
+   <td style="text-align:left;width: 180px; "> <a href="https://www.gbif.org/species/5274863" target="_blank"><em>Salvinia molesta</em></a> </td>
+   <td style="text-align:left;width: 150px; "> African payal, Giant salvinia, Kariba weed, Water fern, African payal, African pyle, Aquarium watermoss, Giant water fern, Velvet weed, Kariba weed, Salvinia moss, aquarium watermoss, giant salvinia, kariba weed, kariba-weed, water fern, Giant Salvinia </td>
+   <td style="text-align:left;"> Salviniaceae </td>
+   <td style="text-align:left;"> 5274863 </td>
+   <td style="text-align:left;"> Not assessed (invasive) </td>
+   <td style="text-align:left;"> Not listed </td>
+   <td style="text-align:left;"> Prohibited </td>
+   <td style="text-align:left;"> <a href="https://www.iucnredlist.org/search?query=Salvinia%20molesta" target="_blank">IUCN</a> </td>
+   <td style="text-align:left;">  </td>
+   <td style="text-align:left;width: 200px; "> Salvinia adnata </td>
+  </tr>
+  <tr>
+   <td style="text-align:right;"> 3 </td>
+   <td style="text-align:left;width: 180px; "> <a href="https://www.gbif.org/species/5358460" target="_blank"><em>Prosopis juliflora</em></a> </td>
+   <td style="text-align:left;width: 150px; "> Mesquite, Prosopis, Mesquite, Algaroba bean, Mexican thorn, Ironwood, algarroba-bean, ironwood, mesquite </td>
+   <td style="text-align:left;"> Fabaceae </td>
+   <td style="text-align:left;"> 5358460 </td>
+   <td style="text-align:left;"> Not assessed (invasive) </td>
+   <td style="text-align:left;"> Not listed </td>
+   <td style="text-align:left;"> Restricted </td>
+   <td style="text-align:left;"> <a href="https://www.iucnredlist.org/search?query=Prosopis%20juliflora" target="_blank">IUCN</a> </td>
+   <td style="text-align:left;">  </td>
+   <td style="text-align:left;width: 200px; "> Acacia juliflora, Algarobia juliflora, Entada juliflora, Mimosa furcata, Mimo... </td>
+  </tr>
+  <tr>
+   <td style="text-align:right;"> 4 </td>
+   <td style="text-align:left;width: 180px; "> <a href="https://www.gbif.org/species/2925303" target="_blank"><em>Lantana camara</em></a> </td>
+   <td style="text-align:left;width: 150px; "> Black Sage, Lantana, Largeleaf Lantana, Sage, Scrubby Cup, Scrubby Tree, Statia Sage, Wild Lantana, Yellow Sage, common lantana, kamara lantana, largeleaf lantana, wild sage, Common Lantana, Wild Sage, shrub verbena, wild sage bush </td>
+   <td style="text-align:left;"> Verbenaceae </td>
+   <td style="text-align:left;"> 2925303 </td>
+   <td style="text-align:left;"> Not assessed (invasive) </td>
+   <td style="text-align:left;"> Not listed </td>
+   <td style="text-align:left;"> Restricted </td>
+   <td style="text-align:left;"> <a href="https://www.iucnredlist.org/search?query=Lantana%20camara" target="_blank">IUCN</a> </td>
+   <td style="text-align:left;">  </td>
+   <td style="text-align:left;width: 200px; "> Camara vulgaris, Lantana camara camara, Lantana camara parvifolia, Lantana co... </td>
+  </tr>
+  <tr>
+   <td style="text-align:right;"> 5 </td>
+   <td style="text-align:left;width: 180px; "> <a href="https://www.gbif.org/species/5384075" target="_blank"><em>Opuntia stricta</em></a> </td>
+   <td style="text-align:left;width: 150px; "> Araluen pear, Common pest pear, Prickly pear, Erect Pricklypear, Erect Pricklypear, Erect prickly pear, Prickle, Sour Prickle, erect prickly-pear </td>
+   <td style="text-align:left;"> Cactaceae </td>
+   <td style="text-align:left;"> 5384075 </td>
+   <td style="text-align:left;"> Not assessed (invasive) </td>
+   <td style="text-align:left;"> Not listed </td>
+   <td style="text-align:left;"> Restricted </td>
+   <td style="text-align:left;"> <a href="https://www.iucnredlist.org/search?query=Opuntia%20stricta" target="_blank">IUCN</a> </td>
+   <td style="text-align:left;">  </td>
+   <td style="text-align:left;width: 200px; "> Cactus opuntia inermis, Cactus strictus, Consolea bahamana, Opuntia airampo, ... </td>
+  </tr>
+  <tr>
+   <td style="text-align:right;"> 6 </td>
+   <td style="text-align:left;width: 180px; "> <a href="https://www.gbif.org/species/2929892" target="_blank"><em>Solanum elaeagnifolium</em></a> </td>
+   <td style="text-align:left;width: 150px; "> Bull-nettle, Silverleaf nightshade, White Nightshade, bull-nettle, prairie-berry, silverleaf bitter-apple, silverleaf nightshade, silverleaf-nettle, tomato weed, tomato-weed, white horse-nettle, white horsenettle, white nightshade </td>
+   <td style="text-align:left;"> Solanaceae </td>
+   <td style="text-align:left;"> 2929892 </td>
+   <td style="text-align:left;"> Not assessed (invasive) </td>
+   <td style="text-align:left;"> Not listed </td>
+   <td style="text-align:left;"> Prohibited </td>
+   <td style="text-align:left;"> <a href="https://www.iucnredlist.org/search?query=Solanum%20elaeagnifolium" target="_blank">IUCN</a> </td>
+   <td style="text-align:left;">  </td>
+   <td style="text-align:left;width: 200px; "> Solanum dealbatum, Solanum elaeagnifolium albiflorum, Solanum elaeagnifolium ... </td>
+  </tr>
+  <tr>
+   <td style="text-align:right;"> 7 </td>
+   <td style="text-align:left;width: 180px; "> <a href="https://www.gbif.org/species/7473922" target="_blank"><em>Osyris lanceolata</em></a> </td>
+   <td style="text-align:left;width: 150px; "> East African sandalwood </td>
+   <td style="text-align:left;"> Santalaceae </td>
+   <td style="text-align:left;"> 7473922 </td>
+   <td style="text-align:left;"> Vulnerable </td>
+   <td style="text-align:left;"> Not listed </td>
+   <td style="text-align:left;"> Prohibited </td>
+   <td style="text-align:left;"> <a href="https://www.iucnredlist.org/search?query=Osyris%20lanceolata" target="_blank">IUCN</a> </td>
+   <td style="text-align:left;">  </td>
+   <td style="text-align:left;width: 200px; "> Osyris arborea, Osyris arborea puberula, Osyris arborea rotundifolia, Osyris ... </td>
+  </tr>
+  <tr>
+   <td style="text-align:right;"> 8 </td>
+   <td style="text-align:left;width: 180px; "> <a href="https://www.gbif.org/species/3022853" target="_blank"><em>Prunus africana</em></a> </td>
+   <td style="text-align:left;width: 150px; "> African Almond, African cherry, Red Stinkwood, pygeum, African Cherry </td>
+   <td style="text-align:left;"> Rosaceae </td>
+   <td style="text-align:left;"> 3022853 </td>
+   <td style="text-align:left;"> Vulnerable </td>
+   <td style="text-align:left;"> Appendix II </td>
+   <td style="text-align:left;"> Protected / Regulated </td>
+   <td style="text-align:left;"> <a href="https://www.iucnredlist.org/search?query=Prunus%20africana" target="_blank">IUCN</a> </td>
+   <td style="text-align:left;"> <a href="https://checklist.cites.org/#/en/search/output_layout=alphabetical&amp;scientific_name=Prunus%20africana" target="_blank">CITES</a> </td>
+   <td style="text-align:left;width: 200px; "> Laurocerasus africana, Laurocerasus crassifolia, Prunus crassifolia, Pygeum a... </td>
+  </tr>
+  <tr>
+   <td style="text-align:right;"> 9 </td>
+   <td style="text-align:left;width: 180px; "> <a href="https://www.gbif.org/species/2770879" target="_blank"><em>Aloe</em></a> </td>
+   <td style="text-align:left;width: 150px; "> Aloes, aloe, aloes </td>
+   <td style="text-align:left;"> Asphodelaceae </td>
+   <td style="text-align:left;"> 2770879 </td>
+   <td style="text-align:left;"> Various (some threatened) </td>
+   <td style="text-align:left;"> Appendix II (all Aloe spp.) </td>
+   <td style="text-align:left;"> Protected / Regulated </td>
+   <td style="text-align:left;"> <a href="https://www.iucnredlist.org/search?query=Aloe%20spp." target="_blank">IUCN</a> </td>
+   <td style="text-align:left;"> <a href="https://checklist.cites.org/#/en/search/output_layout=alphabetical&amp;scientific_name=Aloe%20spp." target="_blank">CITES</a> </td>
+   <td style="text-align:left;width: 200px; "> Agriodendron, Aloe qaharensis, Aloinella, Aloe, Atevala, Busipho, Chamaealoe,... </td>
+  </tr>
+  <tr>
+   <td style="text-align:right;"> 10 </td>
+   <td style="text-align:left;width: 180px; "> <a href="https://www.gbif.org/species/6365236" target="_blank"><em>Streptocarpus ionanthus</em></a> </td>
+   <td style="text-align:left;width: 150px; "> African-violet, Usambara-violet </td>
+   <td style="text-align:left;"> Gesneriaceae </td>
+   <td style="text-align:left;"> 6365236 </td>
+   <td style="text-align:left;"> Several Critically Endangered or Extinct </td>
+   <td style="text-align:left;"> Appendix I </td>
+   <td style="text-align:left;"> Prohibited </td>
+   <td style="text-align:left;"> <a href="https://www.iucnredlist.org/search?query=Saintpaulia%20ionantha%20sensu%20lato" target="_blank">IUCN</a> </td>
+   <td style="text-align:left;"> <a href="https://checklist.cites.org/#/en/search/output_layout=alphabetical&amp;scientific_name=Saintpaulia%20ionantha" target="_blank">CITES</a> </td>
+   <td style="text-align:left;width: 200px; ">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:right;"> 11 </td>
+   <td style="text-align:left;width: 180px; "> <a href="https://www.gbif.org/species/3819564" target="_blank"><em>Streptocarpus teitensis</em></a> </td>
+   <td style="text-align:left;width: 150px; "> Taita Hills violet </td>
+   <td style="text-align:left;"> Gesneriaceae </td>
+   <td style="text-align:left;"> 3819564 </td>
+   <td style="text-align:left;"> Critically Endangered </td>
+   <td style="text-align:left;"> Appendix I </td>
+   <td style="text-align:left;"> Protected / Regulated </td>
+   <td style="text-align:left;"> <a href="https://www.iucnredlist.org/search?query=Saintpaulia%20teitensis" target="_blank">IUCN</a> </td>
+   <td style="text-align:left;"> <a href="https://checklist.cites.org/#/en/search/output_layout=alphabetical&amp;scientific_name=Saintpaulia%20teitensis" target="_blank">CITES</a> </td>
+   <td style="text-align:left;width: 200px; ">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:right;"> 12 </td>
+   <td style="text-align:left;width: 180px; "> <a href="https://www.gbif.org/species/2683713" target="_blank"><em>Encephalartos hildebrandtii</em></a> </td>
+   <td style="text-align:left;width: 150px; "> Mombasa Cycad </td>
+   <td style="text-align:left;"> Zamiaceae </td>
+   <td style="text-align:left;"> 2683713 </td>
+   <td style="text-align:left;"> Vulnerable </td>
+   <td style="text-align:left;"> Appendix I </td>
+   <td style="text-align:left;"> Protected / Regulated </td>
+   <td style="text-align:left;"> <a href="https://www.iucnredlist.org/search?query=Encephalartos%20hildebrandtii" target="_blank">IUCN</a> </td>
+   <td style="text-align:left;"> <a href="https://checklist.cites.org/#/en/search/output_layout=alphabetical&amp;scientific_name=Encephalartos%20hildebrandtii" target="_blank">CITES</a> </td>
+   <td style="text-align:left;width: 200px; "> Encephalartos hildebrandtii dentatus, Encephalartos hildebrandtii hildebrandt... </td>
+  </tr>
+  <tr>
+   <td style="text-align:right;"> 13 </td>
+   <td style="text-align:left;width: 180px; "> <a href="https://www.gbif.org/species/9606396" target="_blank"><em>Ornithogalum</em></a> </td>
+   <td style="text-align:left;width: 150px; "> Star Of Bethlehem, Star-of-bethlehems, star of Bethlehem, star-of-Bethlehem, star-of-Bethlehems </td>
+   <td style="text-align:left;"> Asparagaceae </td>
+   <td style="text-align:left;"> 9606396 </td>
+   <td style="text-align:left;"> Various </td>
+   <td style="text-align:left;"> Appendix II </td>
+   <td style="text-align:left;"> Protected / Regulated </td>
+   <td style="text-align:left;"> <a href="https://www.iucnredlist.org/search?query=Ornithogalum%20spp." target="_blank">IUCN</a> </td>
+   <td style="text-align:left;"> <a href="https://checklist.cites.org/#/en/search/output_layout=alphabetical&amp;scientific_name=Ornithogalum%20spp." target="_blank">CITES</a> </td>
+   <td style="text-align:left;width: 200px; "> Albucea, Aspasia, Avonsera, Beryllis, Brizophile, Caruelia, Cathissa, Celsia,... </td>
+  </tr>
+  <tr>
+   <td style="text-align:right;"> 14 </td>
+   <td style="text-align:left;width: 180px; "> <a href="https://www.gbif.org/species/7792960" target="_blank"><em>Allium vineale</em></a> </td>
+   <td style="text-align:left;width: 150px; "> Crow Garlic, Crow garlic, False Garlic, Field Garlic, Stag Garlic, Wild Garlic, Wild Onion, crow garlic, false garlic, field garlic, stag garlic, wild garlic, wild onion </td>
+   <td style="text-align:left;"> Amaryllidaceae </td>
+   <td style="text-align:left;"> 7792960 </td>
+   <td style="text-align:left;"> Not assessed (invasive) </td>
+   <td style="text-align:left;"> Not listed </td>
+   <td style="text-align:left;"> Prohibited </td>
+   <td style="text-align:left;"> <a href="https://www.iucnredlist.org/search?query=Allium%20vineale" target="_blank">IUCN</a> </td>
+   <td style="text-align:left;">  </td>
+   <td style="text-align:left;width: 200px; "> Allium affine, Allium arenarium, Allium arvense, Allium assimile, Allium camp... </td>
+  </tr>
+  <tr>
+   <td style="text-align:right;"> 15 </td>
+   <td style="text-align:left;width: 180px; "> <a href="https://www.gbif.org/species/3088481" target="_blank"><em>Tagetes minuta</em></a> </td>
+   <td style="text-align:left;width: 150px; "> Aztec marigold, Mexican marigold, Muster John Henry, Muster john henry, Southern Marigold, Southern marigold, Muster-John-Henry, Marigold, dwarf marigold, khakibush, little marigold, minute marigold, muster John Henry, southern marigold, stinking-Roger, wild marigold, Stinking Roger </td>
+   <td style="text-align:left;"> Asteraceae </td>
+   <td style="text-align:left;"> 3088481 </td>
+   <td style="text-align:left;"> Not assessed (invasive) </td>
+   <td style="text-align:left;"> Not listed </td>
+   <td style="text-align:left;"> Prohibited </td>
+   <td style="text-align:left;"> <a href="https://www.iucnredlist.org/search?query=Tagetes%20minuta" target="_blank">IUCN</a> </td>
+   <td style="text-align:left;">  </td>
+   <td style="text-align:left;width: 200px; "> Tagetes bonariensis, Tagetes glandulifera, Tagetes glandulosa, Tagetes montan... </td>
+  </tr>
+  <tr>
+   <td style="text-align:right;"> 16 </td>
+   <td style="text-align:left;width: 180px; "> <a href="https://www.gbif.org/species/2928509" target="_blank"><em>Ipomoea</em></a> </td>
+   <td style="text-align:left;width: 150px; "> Morning-glory, Morningglory, morning glory, morning-glories, morning-glory, morningglory, Morning-glories </td>
+   <td style="text-align:left;"> Convolvulaceae </td>
+   <td style="text-align:left;"> 2928509 </td>
+   <td style="text-align:left;"> Not assessed (invasive) </td>
+   <td style="text-align:left;"> Not listed </td>
+   <td style="text-align:left;"> Prohibited </td>
+   <td style="text-align:left;"> <a href="https://www.iucnredlist.org/search?query=Ipomoea%20spp." target="_blank">IUCN</a> </td>
+   <td style="text-align:left;">  </td>
+   <td style="text-align:left;width: 200px; "> Acmostemon, Adamboe, Amphione, Apopleumon, Batatas, Bombycospermum, Bonanox, ... </td>
+  </tr>
+  <tr>
+   <td style="text-align:right;"> 17 </td>
+   <td style="text-align:left;width: 180px; "> <a href="https://www.gbif.org/species/7493935" target="_blank"><em>Eucalyptus</em></a> </td>
+   <td style="text-align:left;width: 150px; "> Gum, Gums, gum, gums </td>
+   <td style="text-align:left;"> Myrtaceae </td>
+   <td style="text-align:left;"> 7493935 </td>
+   <td style="text-align:left;"> Not assessed (invasive) </td>
+   <td style="text-align:left;"> Not listed </td>
+   <td style="text-align:left;"> Protected / Regulated </td>
+   <td style="text-align:left;"> <a href="https://www.iucnredlist.org/search?query=Eucalyptus%20spp." target="_blank">IUCN</a> </td>
+   <td style="text-align:left;">  </td>
+   <td style="text-align:left;width: 200px; "> Aromadendron, Aromadendrum, Eucalypton, Eudesmia, Symphyomyrtus </td>
+  </tr>
+  <tr>
+   <td style="text-align:right;"> 18 </td>
+   <td style="text-align:left;width: 180px; "> <a href="https://www.gbif.org/species/6288592" target="_blank"><em>Vangueriopsis shimbaensis</em></a> </td>
+   <td style="text-align:left;width: 150px; "> Shimba Hills vangueria </td>
+   <td style="text-align:left;"> Rubiaceae </td>
+   <td style="text-align:left;"> 6288592 </td>
+   <td style="text-align:left;"> Critically Endangered </td>
+   <td style="text-align:left;"> Not listed </td>
+   <td style="text-align:left;"> Protected / Regulated </td>
+   <td style="text-align:left;"> <a href="https://www.iucnredlist.org/search?query=Vangueriopsis%20shimbaensis" target="_blank">IUCN</a> </td>
+   <td style="text-align:left;">  </td>
+   <td style="text-align:left;width: 200px; ">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:right;"> 19 </td>
+   <td style="text-align:left;width: 180px; "> <a href="https://www.gbif.org/species/3066425" target="_blank"><em>Euphorbia tanaensis</em></a> </td>
+   <td style="text-align:left;width: 150px; "> Tana River euphorbia </td>
+   <td style="text-align:left;"> Euphorbiaceae </td>
+   <td style="text-align:left;"> 3066425 </td>
+   <td style="text-align:left;"> Critically Endangered </td>
+   <td style="text-align:left;"> Not listed </td>
+   <td style="text-align:left;"> Protected / Regulated </td>
+   <td style="text-align:left;"> <a href="https://www.iucnredlist.org/search?query=Euphorbia%20tanaensis" target="_blank">IUCN</a> </td>
+   <td style="text-align:left;">  </td>
+   <td style="text-align:left;width: 200px; ">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:right;"> 20 </td>
+   <td style="text-align:left;width: 180px; "> <a href="https://www.gbif.org/species/3063946" target="_blank"><em>Euphorbia cussonioides</em></a> </td>
+   <td style="text-align:left;width: 150px; "> Euphorbia cussonioides </td>
+   <td style="text-align:left;"> Euphorbiaceae </td>
+   <td style="text-align:left;"> 3063946 </td>
+   <td style="text-align:left;"> Critically Endangered </td>
+   <td style="text-align:left;"> Not listed </td>
+   <td style="text-align:left;"> Protected / Regulated </td>
+   <td style="text-align:left;"> <a href="https://www.iucnredlist.org/search?query=Euphorbia%20cussonioides" target="_blank">IUCN</a> </td>
+   <td style="text-align:left;">  </td>
+   <td style="text-align:left;width: 200px; ">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:right;"> 21 </td>
+   <td style="text-align:left;width: 180px; "> <a href="https://www.gbif.org/species/3699610" target="_blank"><em>Combretum tenuipetiolatum</em></a> </td>
+   <td style="text-align:left;width: 150px; "> Combretum tenuipetiolatum </td>
+   <td style="text-align:left;"> Combretaceae </td>
+   <td style="text-align:left;"> 3699610 </td>
+   <td style="text-align:left;"> Critically Endangered </td>
+   <td style="text-align:left;"> Not listed </td>
+   <td style="text-align:left;"> Protected / Regulated </td>
+   <td style="text-align:left;"> <a href="https://www.iucnredlist.org/search?query=Combretum%20tenuipetiolatum" target="_blank">IUCN</a> </td>
+   <td style="text-align:left;">  </td>
+   <td style="text-align:left;width: 200px; ">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:right;"> 22 </td>
+   <td style="text-align:left;width: 180px; "> <a href="https://www.gbif.org/species/5547585" target="_blank"><em>Cola porphyrantha</em></a> </td>
+   <td style="text-align:left;width: 150px; "> Cola porphyrantha </td>
+   <td style="text-align:left;"> Malvaceae </td>
+   <td style="text-align:left;"> 5547585 </td>
+   <td style="text-align:left;"> Critically Endangered </td>
+   <td style="text-align:left;"> Not listed </td>
+   <td style="text-align:left;"> Protected / Regulated </td>
+   <td style="text-align:left;"> <a href="https://www.iucnredlist.org/search?query=Cola%20porphyrantha" target="_blank">IUCN</a> </td>
+   <td style="text-align:left;">  </td>
+   <td style="text-align:left;width: 200px; ">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:right;"> 23 </td>
+   <td style="text-align:left;width: 180px; "> <a href="https://www.gbif.org/species/3896540" target="_blank"><em>Karomia gigas</em></a> </td>
+   <td style="text-align:left;width: 150px; "> Karomia gigas </td>
+   <td style="text-align:left;"> Lamiaceae </td>
+   <td style="text-align:left;"> 3896540 </td>
+   <td style="text-align:left;"> Critically Endangered </td>
+   <td style="text-align:left;"> Not listed </td>
+   <td style="text-align:left;"> Protected / Regulated </td>
+   <td style="text-align:left;"> <a href="https://www.iucnredlist.org/search?query=Karomia%20gigas" target="_blank">IUCN</a> </td>
+   <td style="text-align:left;">  </td>
+   <td style="text-align:left;width: 200px; "> Holmskioldia gigas </td>
+  </tr>
+  <tr>
+   <td style="text-align:right;"> 24 </td>
+   <td style="text-align:left;width: 180px; "> <a href="https://www.gbif.org/species/3662348" target="_blank"><em>Sorindeia calantha</em></a> </td>
+   <td style="text-align:left;width: 150px; "> Sorindeia calantha </td>
+   <td style="text-align:left;"> Anacardiaceae </td>
+   <td style="text-align:left;"> 3662348 </td>
+   <td style="text-align:left;"> Critically Endangered </td>
+   <td style="text-align:left;"> Not listed </td>
+   <td style="text-align:left;"> Protected / Regulated </td>
+   <td style="text-align:left;"> <a href="https://www.iucnredlist.org/search?query=Sorindeia%20calantha" target="_blank">IUCN</a> </td>
+   <td style="text-align:left;">  </td>
+   <td style="text-align:left;width: 200px; ">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:right;"> 25 </td>
+   <td style="text-align:left;width: 180px; "> <a href="https://www.gbif.org/species/3849915" target="_blank"><em>Turraea elephantina</em></a> </td>
+   <td style="text-align:left;width: 150px; "> Turraea elephantina </td>
+   <td style="text-align:left;"> Meliaceae </td>
+   <td style="text-align:left;"> 3849915 </td>
+   <td style="text-align:left;"> Critically Endangered </td>
+   <td style="text-align:left;"> Not listed </td>
+   <td style="text-align:left;"> Protected / Regulated </td>
+   <td style="text-align:left;"> <a href="https://www.iucnredlist.org/search?query=Turraea%20elephantina" target="_blank">IUCN</a> </td>
+   <td style="text-align:left;">  </td>
+   <td style="text-align:left;width: 200px; ">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:right;"> 26 </td>
+   <td style="text-align:left;width: 180px; "> <a href="https://www.gbif.org/species/3867919" target="_blank"><em>Memecylon buxoides</em></a> </td>
+   <td style="text-align:left;width: 150px; "> Memecylon buxoides </td>
+   <td style="text-align:left;"> Melastomataceae </td>
+   <td style="text-align:left;"> 3867919 </td>
+   <td style="text-align:left;"> Critically Endangered </td>
+   <td style="text-align:left;"> Not listed </td>
+   <td style="text-align:left;"> Protected / Regulated </td>
+   <td style="text-align:left;"> <a href="https://www.iucnredlist.org/search?query=Memecylon%20buxoides" target="_blank">IUCN</a> </td>
+   <td style="text-align:left;">  </td>
+   <td style="text-align:left;width: 200px; ">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:right;"> 27 </td>
+   <td style="text-align:left;width: 180px; "> <a href="https://www.gbif.org/species/2905392" target="_blank"><em>Ixora scheffleri</em></a> </td>
+   <td style="text-align:left;width: 150px; "> Ixora scheffleri subsp. keniensis </td>
+   <td style="text-align:left;"> Rubiaceae </td>
+   <td style="text-align:left;"> 2905392 </td>
+   <td style="text-align:left;"> Critically Endangered </td>
+   <td style="text-align:left;"> Not listed </td>
+   <td style="text-align:left;"> Protected / Regulated </td>
+   <td style="text-align:left;"> <a href="https://www.iucnredlist.org/search?query=Ixora%20scheffleri%20subsp.%20keniensis" target="_blank">IUCN</a> </td>
+   <td style="text-align:left;">  </td>
+   <td style="text-align:left;width: 200px; ">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:right;"> 28 </td>
+   <td style="text-align:left;width: 180px; "> <a href="https://www.gbif.org/species/2925262" target="_blank"><em>Pavetta tarennoides</em></a> </td>
+   <td style="text-align:left;width: 150px; "> Pavetta tarennoides </td>
+   <td style="text-align:left;"> Rubiaceae </td>
+   <td style="text-align:left;"> 2925262 </td>
+   <td style="text-align:left;"> Critically Endangered </td>
+   <td style="text-align:left;"> Not listed </td>
+   <td style="text-align:left;"> Protected / Regulated </td>
+   <td style="text-align:left;"> <a href="https://www.iucnredlist.org/search?query=Pavetta%20tarennoides" target="_blank">IUCN</a> </td>
+   <td style="text-align:left;">  </td>
+   <td style="text-align:left;width: 200px; ">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:right;"> 29 </td>
+   <td style="text-align:left;width: 180px; "> <a href="https://www.gbif.org/species/3081127" target="_blank"><em>Meineckia ovata</em></a> </td>
+   <td style="text-align:left;width: 150px; "> Meineckia ovata </td>
+   <td style="text-align:left;"> Phyllanthaceae </td>
+   <td style="text-align:left;"> 3081127 </td>
+   <td style="text-align:left;"> Critically Endangered </td>
+   <td style="text-align:left;"> Not listed </td>
+   <td style="text-align:left;"> Protected / Regulated </td>
+   <td style="text-align:left;"> <a href="https://www.iucnredlist.org/search?query=Meineckia%20ovata" target="_blank">IUCN</a> </td>
+   <td style="text-align:left;">  </td>
+   <td style="text-align:left;width: 200px; "> Meineckia ovata, Zimmermannia ovata </td>
+  </tr>
+  <tr>
+   <td style="text-align:right;"> 30 </td>
+   <td style="text-align:left;width: 180px; "> <a href="https://www.gbif.org/species/3904972" target="_blank"><em>Vitex fischeri</em></a> </td>
+   <td style="text-align:left;width: 150px; "> Meru Oak </td>
+   <td style="text-align:left;"> Lamiaceae </td>
+   <td style="text-align:left;"> 3904972 </td>
+   <td style="text-align:left;"> Endangered </td>
+   <td style="text-align:left;"> Not listed </td>
+   <td style="text-align:left;"> Protected / Regulated </td>
+   <td style="text-align:left;"> <a href="https://www.iucnredlist.org/search?query=Vitex%20keniensis" target="_blank">IUCN</a> </td>
+   <td style="text-align:left;">  </td>
+   <td style="text-align:left;width: 200px; ">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:right;"> 31 </td>
+   <td style="text-align:left;width: 180px; "> <a href="https://www.gbif.org/species/5547618" target="_blank"><em>Cola octoloboides</em></a> </td>
+   <td style="text-align:left;width: 150px; "> Cola octoloboides </td>
+   <td style="text-align:left;"> Malvaceae </td>
+   <td style="text-align:left;"> 5547618 </td>
+   <td style="text-align:left;"> Endangered </td>
+   <td style="text-align:left;"> Not listed </td>
+   <td style="text-align:left;"> Protected / Regulated </td>
+   <td style="text-align:left;"> <a href="https://www.iucnredlist.org/search?query=Cola%20octoloboides" target="_blank">IUCN</a> </td>
+   <td style="text-align:left;">  </td>
+   <td style="text-align:left;width: 200px; ">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:right;"> 32 </td>
+   <td style="text-align:left;width: 180px; "> <a href="https://www.gbif.org/species/3066060" target="_blank"><em>Euphorbia wakefieldii</em></a> </td>
+   <td style="text-align:left;width: 150px; "> Wakefield's euphorbia </td>
+   <td style="text-align:left;"> Euphorbiaceae </td>
+   <td style="text-align:left;"> 3066060 </td>
+   <td style="text-align:left;"> Endangered </td>
+   <td style="text-align:left;"> Not listed </td>
+   <td style="text-align:left;"> Protected / Regulated </td>
+   <td style="text-align:left;"> <a href="https://www.iucnredlist.org/search?query=Euphorbia%20wakefieldii" target="_blank">IUCN</a> </td>
+   <td style="text-align:left;">  </td>
+   <td style="text-align:left;width: 200px; ">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:right;"> 33 </td>
+   <td style="text-align:left;width: 180px; "> <a href="https://www.gbif.org/species/2966840" target="_blank"><em>Cynometra lukei</em></a> </td>
+   <td style="text-align:left;width: 150px; "> Luke's cynometra </td>
+   <td style="text-align:left;"> Fabaceae </td>
+   <td style="text-align:left;"> 2966840 </td>
+   <td style="text-align:left;"> Endangered </td>
+   <td style="text-align:left;"> Not listed </td>
+   <td style="text-align:left;"> Protected / Regulated </td>
+   <td style="text-align:left;"> <a href="https://www.iucnredlist.org/search?query=Cynometra%20lukei" target="_blank">IUCN</a> </td>
+   <td style="text-align:left;">  </td>
+   <td style="text-align:left;width: 200px; ">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:right;"> 34 </td>
+   <td style="text-align:left;width: 180px; "> <a href="https://www.gbif.org/species/3874948" target="_blank"><em>Ziziphus robertsoniana</em></a> </td>
+   <td style="text-align:left;width: 150px; "> Robertson's jujube </td>
+   <td style="text-align:left;"> Rhamnaceae </td>
+   <td style="text-align:left;"> 3874948 </td>
+   <td style="text-align:left;"> Endangered </td>
+   <td style="text-align:left;"> Not listed </td>
+   <td style="text-align:left;"> Protected / Regulated </td>
+   <td style="text-align:left;"> <a href="https://www.iucnredlist.org/search?query=Ziziphus%20robertsoniana" target="_blank">IUCN</a> </td>
+   <td style="text-align:left;">  </td>
+   <td style="text-align:left;width: 200px; ">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:right;"> 35 </td>
+   <td style="text-align:left;width: 180px; "> <a href="https://www.gbif.org/species/3850068" target="_blank"><em>Turraea barbata</em></a> </td>
+   <td style="text-align:left;width: 150px; "> Turraea barbata </td>
+   <td style="text-align:left;"> Meliaceae </td>
+   <td style="text-align:left;"> 3850068 </td>
+   <td style="text-align:left;"> Endangered </td>
+   <td style="text-align:left;"> Not listed </td>
+   <td style="text-align:left;"> Protected / Regulated </td>
+   <td style="text-align:left;"> <a href="https://www.iucnredlist.org/search?query=Turraea%20barbata" target="_blank">IUCN</a> </td>
+   <td style="text-align:left;">  </td>
+   <td style="text-align:left;width: 200px; ">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:right;"> 36 </td>
+   <td style="text-align:left;width: 180px; "> <a href="https://www.gbif.org/species/5576098" target="_blank"><em>Anisotes ukambensis</em></a> </td>
+   <td style="text-align:left;width: 150px; "> Anisotes ukambensis </td>
+   <td style="text-align:left;"> Acanthaceae </td>
+   <td style="text-align:left;"> 5576098 </td>
+   <td style="text-align:left;"> Endangered </td>
+   <td style="text-align:left;"> Not listed </td>
+   <td style="text-align:left;"> Protected / Regulated </td>
+   <td style="text-align:left;"> <a href="https://www.iucnredlist.org/search?query=Anisotes%20ukambensis" target="_blank">IUCN</a> </td>
+   <td style="text-align:left;">  </td>
+   <td style="text-align:left;width: 200px; "> Anisotes ukambanensis </td>
+  </tr>
+  <tr>
+   <td style="text-align:right;"> 37 </td>
+   <td style="text-align:left;width: 180px; "> <a href="https://www.gbif.org/species/2953238" target="_blank"><em>Bauhinia mombassae</em></a> </td>
+   <td style="text-align:left;width: 150px; "> Mombasa bauhinia </td>
+   <td style="text-align:left;"> Fabaceae </td>
+   <td style="text-align:left;"> 2953238 </td>
+   <td style="text-align:left;"> Endangered </td>
+   <td style="text-align:left;"> Not listed </td>
+   <td style="text-align:left;"> Protected / Regulated </td>
+   <td style="text-align:left;"> <a href="https://www.iucnredlist.org/search?query=Bauhinia%20mombassae" target="_blank">IUCN</a> </td>
+   <td style="text-align:left;">  </td>
+   <td style="text-align:left;width: 200px; "> Bauhinia loeseneriana, Bauhinia loesneriana, Pauletia loeseneriana </td>
+  </tr>
+  <tr>
+   <td style="text-align:right;"> 38 </td>
+   <td style="text-align:left;width: 180px; "> <a href="https://www.gbif.org/species/11104253" target="_blank"><em>Warneckea sansibarica</em></a> </td>
+   <td style="text-align:left;width: 150px; "> Warneckea maritima </td>
+   <td style="text-align:left;"> Melastomataceae </td>
+   <td style="text-align:left;"> 11104253 </td>
+   <td style="text-align:left;"> Endangered </td>
+   <td style="text-align:left;"> Not listed </td>
+   <td style="text-align:left;"> Protected / Regulated </td>
+   <td style="text-align:left;"> <a href="https://www.iucnredlist.org/search?query=Warneckea%20maritima" target="_blank">IUCN</a> </td>
+   <td style="text-align:left;">  </td>
+   <td style="text-align:left;width: 200px; ">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:right;"> 39 </td>
+   <td style="text-align:left;width: 180px; "> <a href="https://www.gbif.org/species/8021703" target="_blank"><em>Warneckea melindensis</em></a> </td>
+   <td style="text-align:left;width: 150px; "> Warneckea melindensis </td>
+   <td style="text-align:left;"> Melastomataceae </td>
+   <td style="text-align:left;"> 8021703 </td>
+   <td style="text-align:left;"> Endangered </td>
+   <td style="text-align:left;"> Not listed </td>
+   <td style="text-align:left;"> Protected / Regulated </td>
+   <td style="text-align:left;"> <a href="https://www.iucnredlist.org/search?query=Warneckea%20melindensis" target="_blank">IUCN</a> </td>
+   <td style="text-align:left;">  </td>
+   <td style="text-align:left;width: 200px; "> Memecylon melindense </td>
+  </tr>
+  <tr>
+   <td style="text-align:right;"> 40 </td>
+   <td style="text-align:left;width: 180px; "> <a href="https://www.gbif.org/species/2895576" target="_blank"><em>Coffea fadenii</em></a> </td>
+   <td style="text-align:left;width: 150px; "> Faden's coffee </td>
+   <td style="text-align:left;"> Rubiaceae </td>
+   <td style="text-align:left;"> 2895576 </td>
+   <td style="text-align:left;"> Endangered </td>
+   <td style="text-align:left;"> Not listed </td>
+   <td style="text-align:left;"> Protected / Regulated </td>
+   <td style="text-align:left;"> <a href="https://www.iucnredlist.org/search?query=Coffea%20fadenii" target="_blank">IUCN</a> </td>
+   <td style="text-align:left;">  </td>
+   <td style="text-align:left;width: 200px; ">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:right;"> 41 </td>
+   <td style="text-align:left;width: 180px; "> <a href="https://www.gbif.org/species/2687617" target="_blank"><em>Afrocarpus usambarensis</em></a> </td>
+   <td style="text-align:left;width: 150px; "> East African yellowwood </td>
+   <td style="text-align:left;"> Podocarpaceae </td>
+   <td style="text-align:left;"> 2687617 </td>
+   <td style="text-align:left;"> Endangered </td>
+   <td style="text-align:left;"> Not listed </td>
+   <td style="text-align:left;"> Protected / Regulated </td>
+   <td style="text-align:left;"> <a href="https://www.iucnredlist.org/search?query=Afrocarpus%20usambarensis" target="_blank">IUCN</a> </td>
+   <td style="text-align:left;">  </td>
+   <td style="text-align:left;width: 200px; "> Afrocarpus mannii usambarensis, Afrocarpus usambarensis, Nageia mannii usamba... </td>
+  </tr>
+  <tr>
+   <td style="text-align:right;"> 42 </td>
+   <td style="text-align:left;width: 180px; "> <a href="https://www.gbif.org/species/5348472" target="_blank"><em>Newtonia erlangeri</em></a> </td>
+   <td style="text-align:left;width: 150px; "> Newtonia erlangeri </td>
+   <td style="text-align:left;"> Fabaceae </td>
+   <td style="text-align:left;"> 5348472 </td>
+   <td style="text-align:left;"> Endangered </td>
+   <td style="text-align:left;"> Not listed </td>
+   <td style="text-align:left;"> Protected / Regulated </td>
+   <td style="text-align:left;"> <a href="https://www.iucnredlist.org/search?query=Newtonia%20erlangeri" target="_blank">IUCN</a> </td>
+   <td style="text-align:left;">  </td>
+   <td style="text-align:left;width: 200px; "> Piptadenia erlangeri </td>
+  </tr>
+  <tr>
+   <td style="text-align:right;"> 43 </td>
+   <td style="text-align:left;width: 180px; "> <a href="https://www.gbif.org/species/2977460" target="_blank"><em>Gigasiphon macrosiphon</em></a> </td>
+   <td style="text-align:left;width: 150px; "> Gigasiphon macrosiphon </td>
+   <td style="text-align:left;"> Fabaceae </td>
+   <td style="text-align:left;"> 2977460 </td>
+   <td style="text-align:left;"> Endangered </td>
+   <td style="text-align:left;"> Not listed </td>
+   <td style="text-align:left;"> Protected / Regulated </td>
+   <td style="text-align:left;"> <a href="https://www.iucnredlist.org/search?query=Gigasiphon%20macrosiphon" target="_blank">IUCN</a> </td>
+   <td style="text-align:left;">  </td>
+   <td style="text-align:left;width: 200px; "> Bauhinia macrosiphon, Gigasiphon humblotianum </td>
+  </tr>
+  <tr>
+   <td style="text-align:right;"> 44 </td>
+   <td style="text-align:left;width: 180px; "> <a href="https://www.gbif.org/species/3158252" target="_blank"><em>Isolona cauliflora</em></a> </td>
+   <td style="text-align:left;width: 150px; "> Isolona cauliflora </td>
+   <td style="text-align:left;"> Annonaceae </td>
+   <td style="text-align:left;"> 3158252 </td>
+   <td style="text-align:left;"> Endangered </td>
+   <td style="text-align:left;"> Not listed </td>
+   <td style="text-align:left;"> Protected / Regulated </td>
+   <td style="text-align:left;"> <a href="https://www.iucnredlist.org/search?query=Isolona%20cauliflora" target="_blank">IUCN</a> </td>
+   <td style="text-align:left;">  </td>
+   <td style="text-align:left;width: 200px; ">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:right;"> 45 </td>
+   <td style="text-align:left;width: 180px; "> <a href="https://www.gbif.org/species/4070825" target="_blank"><em>Diospyros shimbaensis</em></a> </td>
+   <td style="text-align:left;width: 150px; "> Shimba Hills ebony </td>
+   <td style="text-align:left;"> Ebenaceae </td>
+   <td style="text-align:left;"> 4070825 </td>
+   <td style="text-align:left;"> Endangered </td>
+   <td style="text-align:left;"> Not listed </td>
+   <td style="text-align:left;"> Protected / Regulated </td>
+   <td style="text-align:left;"> <a href="https://www.iucnredlist.org/search?query=Diospyros%20shimbaensis" target="_blank">IUCN</a> </td>
+   <td style="text-align:left;">  </td>
+   <td style="text-align:left;width: 200px; ">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:right;"> 46 </td>
+   <td style="text-align:left;width: 180px; "> <a href="https://www.gbif.org/species/3156633" target="_blank"><em>Toussaintia orientalis</em></a> </td>
+   <td style="text-align:left;width: 150px; "> Toussaintia orientalis </td>
+   <td style="text-align:left;"> Annonaceae </td>
+   <td style="text-align:left;"> 3156633 </td>
+   <td style="text-align:left;"> Endangered </td>
+   <td style="text-align:left;"> Not listed </td>
+   <td style="text-align:left;"> Protected / Regulated </td>
+   <td style="text-align:left;"> <a href="https://www.iucnredlist.org/search?query=Toussaintia%20orientalis" target="_blank">IUCN</a> </td>
+   <td style="text-align:left;">  </td>
+   <td style="text-align:left;width: 200px; ">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:right;"> 47 </td>
+   <td style="text-align:left;width: 180px; "> <a href="https://www.gbif.org/species/5792509" target="_blank"><em>Uvariodendron gorgonis</em></a> </td>
+   <td style="text-align:left;width: 150px; "> Uvariodendron gorgonis </td>
+   <td style="text-align:left;"> Annonaceae </td>
+   <td style="text-align:left;"> 5792509 </td>
+   <td style="text-align:left;"> Endangered </td>
+   <td style="text-align:left;"> Not listed </td>
+   <td style="text-align:left;"> Protected / Regulated </td>
+   <td style="text-align:left;"> <a href="https://www.iucnredlist.org/search?query=Uvariodendron%20gorgonis" target="_blank">IUCN</a> </td>
+   <td style="text-align:left;">  </td>
+   <td style="text-align:left;width: 200px; ">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:right;"> 48 </td>
+   <td style="text-align:left;width: 180px; "> <a href="https://www.gbif.org/species/3661906" target="_blank"><em>Sclerocarya gillettii</em></a> </td>
+   <td style="text-align:left;width: 150px; "> Sclerocarya gillettii </td>
+   <td style="text-align:left;"> Anacardiaceae </td>
+   <td style="text-align:left;"> 3661906 </td>
+   <td style="text-align:left;"> Endangered </td>
+   <td style="text-align:left;"> Not listed </td>
+   <td style="text-align:left;"> Protected / Regulated </td>
+   <td style="text-align:left;"> <a href="https://www.iucnredlist.org/search?query=Sclerocarya%20gillettii" target="_blank">IUCN</a> </td>
+   <td style="text-align:left;">  </td>
+   <td style="text-align:left;width: 200px; ">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:right;"> 49 </td>
+   <td style="text-align:left;width: 180px; "> <a href="https://www.gbif.org/species/3790694" target="_blank"><em>Gymnosporia keniensis</em></a> </td>
+   <td style="text-align:left;width: 150px; "> Gymnosporia keniensis </td>
+   <td style="text-align:left;"> Celastraceae </td>
+   <td style="text-align:left;"> 3790694 </td>
+   <td style="text-align:left;"> Endangered </td>
+   <td style="text-align:left;"> Not listed </td>
+   <td style="text-align:left;"> Protected / Regulated </td>
+   <td style="text-align:left;"> <a href="https://www.iucnredlist.org/search?query=Gymnosporia%20keniensis" target="_blank">IUCN</a> </td>
+   <td style="text-align:left;">  </td>
+   <td style="text-align:left;width: 200px; "> Gymnosporia serrata keniensis, Maytenus keniensis </td>
+  </tr>
+  <tr>
+   <td style="text-align:right;"> 50 </td>
+   <td style="text-align:left;width: 180px; "> <a href="https://www.gbif.org/species/5417563" target="_blank"><em>Eugenia tanaensis</em></a> </td>
+   <td style="text-align:left;width: 150px; "> Tana River eugenia </td>
+   <td style="text-align:left;"> Myrtaceae </td>
+   <td style="text-align:left;"> 5417563 </td>
+   <td style="text-align:left;"> Endangered </td>
+   <td style="text-align:left;"> Not listed </td>
+   <td style="text-align:left;"> Protected / Regulated </td>
+   <td style="text-align:left;"> <a href="https://www.iucnredlist.org/search?query=Eugenia%20tanaensis" target="_blank">IUCN</a> </td>
+   <td style="text-align:left;">  </td>
+   <td style="text-align:left;width: 200px; ">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:right;"> 51 </td>
+   <td style="text-align:left;width: 180px; "> <a href="https://www.gbif.org/species/3059788" target="_blank"><em>Croton alienus</em></a> </td>
+   <td style="text-align:left;width: 150px; "> Croton alienus </td>
+   <td style="text-align:left;"> Euphorbiaceae </td>
+   <td style="text-align:left;"> 3059788 </td>
+   <td style="text-align:left;"> Endangered </td>
+   <td style="text-align:left;"> Not listed </td>
+   <td style="text-align:left;"> Protected / Regulated </td>
+   <td style="text-align:left;"> <a href="https://www.iucnredlist.org/search?query=Croton%20alienus" target="_blank">IUCN</a> </td>
+   <td style="text-align:left;">  </td>
+   <td style="text-align:left;width: 200px; "> Mildbraedia balboana </td>
+  </tr>
+  <tr>
+   <td style="text-align:right;"> 52 </td>
+   <td style="text-align:left;width: 180px; "> <a href="https://www.gbif.org/species/5555202" target="_blank"><em>Brucea macrocarpa</em></a> </td>
+   <td style="text-align:left;width: 150px; "> Brucea macrocarpa </td>
+   <td style="text-align:left;"> Simaroubaceae </td>
+   <td style="text-align:left;"> 5555202 </td>
+   <td style="text-align:left;"> Endangered </td>
+   <td style="text-align:left;"> Not listed </td>
+   <td style="text-align:left;"> Protected / Regulated </td>
+   <td style="text-align:left;"> <a href="https://www.iucnredlist.org/search?query=Brucea%20macrocarpa" target="_blank">IUCN</a> </td>
+   <td style="text-align:left;">  </td>
+   <td style="text-align:left;width: 200px; ">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:right;"> 53 </td>
+   <td style="text-align:left;width: 180px; "> <a href="https://www.gbif.org/species/7797879" target="_blank"><em>Dalbergia gloveri</em></a> </td>
+   <td style="text-align:left;width: 150px; "> Glover's rosewood </td>
+   <td style="text-align:left;"> Fabaceae </td>
+   <td style="text-align:left;"> 7797879 </td>
+   <td style="text-align:left;"> Endangered </td>
+   <td style="text-align:left;"> Appendix II </td>
+   <td style="text-align:left;"> Protected / Regulated </td>
+   <td style="text-align:left;"> <a href="https://www.iucnredlist.org/search?query=Dalbergia%20gloveri" target="_blank">IUCN</a> </td>
+   <td style="text-align:left;"> <a href="https://checklist.cites.org/#/en/search/output_layout=alphabetical&amp;scientific_name=Dalbergia%20gloveri" target="_blank">CITES</a> </td>
+   <td style="text-align:left;width: 200px; ">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:right;"> 54 </td>
+   <td style="text-align:left;width: 180px; "> <a href="https://www.gbif.org/species/3834498" target="_blank"><em>Vepris glandulosa</em></a> </td>
+   <td style="text-align:left;width: 150px; "> Vepris glandulosa </td>
+   <td style="text-align:left;"> Rutaceae </td>
+   <td style="text-align:left;"> 3834498 </td>
+   <td style="text-align:left;"> Endangered </td>
+   <td style="text-align:left;"> Not listed </td>
+   <td style="text-align:left;"> Protected / Regulated </td>
+   <td style="text-align:left;"> <a href="https://www.iucnredlist.org/search?query=Vepris%20glandulosa" target="_blank">IUCN</a> </td>
+   <td style="text-align:left;">  </td>
+   <td style="text-align:left;width: 200px; "> Tecleopsis glandulosa </td>
+  </tr>
+  <tr>
+   <td style="text-align:right;"> 55 </td>
+   <td style="text-align:left;width: 180px; "> <a href="https://www.gbif.org/species/3035932" target="_blank"><em>Polyscias stuhlmannii</em></a> </td>
+   <td style="text-align:left;width: 150px; "> Polyscias stuhlmannii </td>
+   <td style="text-align:left;"> Araliaceae </td>
+   <td style="text-align:left;"> 3035932 </td>
+   <td style="text-align:left;"> Endangered </td>
+   <td style="text-align:left;"> Not listed </td>
+   <td style="text-align:left;"> Protected / Regulated </td>
+   <td style="text-align:left;"> <a href="https://www.iucnredlist.org/search?query=Polyscias%20stuhlmannii" target="_blank">IUCN</a> </td>
+   <td style="text-align:left;">  </td>
+   <td style="text-align:left;width: 200px; "> Gastonia stuhlmannii, Polyscias stuhlmannii, Polyscias stuhlmannii inarticula... </td>
+  </tr>
+  <tr>
+   <td style="text-align:right;"> 56 </td>
+   <td style="text-align:left;width: 180px; "> <a href="https://www.gbif.org/species/2683779" target="_blank"><em>Encephalartos kisambo</em></a> </td>
+   <td style="text-align:left;width: 150px; "> Voi Cycad, Voi cycad </td>
+   <td style="text-align:left;"> Zamiaceae </td>
+   <td style="text-align:left;"> 2683779 </td>
+   <td style="text-align:left;"> Endangered </td>
+   <td style="text-align:left;"> Appendix I </td>
+   <td style="text-align:left;"> Prohibited </td>
+   <td style="text-align:left;"> <a href="https://www.iucnredlist.org/search?query=Encephalartos%20kisambo" target="_blank">IUCN</a> </td>
+   <td style="text-align:left;"> <a href="https://checklist.cites.org/#/en/search/output_layout=alphabetical&amp;scientific_name=Encephalartos%20kisambo" target="_blank">CITES</a> </td>
+   <td style="text-align:left;width: 200px; "> Encephalartos kanga, Encephalartos voiensis </td>
+  </tr>
+  <tr>
+   <td style="text-align:right;"> 57 </td>
+   <td style="text-align:left;width: 180px; "> <a href="https://www.gbif.org/species/2901546" target="_blank"><em>Oxyanthus pyriformis</em></a> </td>
+   <td style="text-align:left;width: 150px; "> Oxyanthus pyriformis subsp. longitubus </td>
+   <td style="text-align:left;"> Rubiaceae </td>
+   <td style="text-align:left;"> 2901546 </td>
+   <td style="text-align:left;"> Endangered </td>
+   <td style="text-align:left;"> Not listed </td>
+   <td style="text-align:left;"> Protected / Regulated </td>
+   <td style="text-align:left;"> <a href="https://www.iucnredlist.org/search?query=Oxyanthus%20pyriformis%20subsp.%20longitubus" target="_blank">IUCN</a> </td>
+   <td style="text-align:left;">  </td>
+   <td style="text-align:left;width: 200px; ">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:right;"> 58 </td>
+   <td style="text-align:left;width: 180px; "> <a href="https://www.gbif.org/species/3768874" target="_blank"><em>Grevea eggelingii</em></a> </td>
+   <td style="text-align:left;width: 150px; "> Grevea eggelingii var. keniensis </td>
+   <td style="text-align:left;"> Montiniaceae </td>
+   <td style="text-align:left;"> 3768874 </td>
+   <td style="text-align:left;"> Endangered </td>
+   <td style="text-align:left;"> Not listed </td>
+   <td style="text-align:left;"> Protected / Regulated </td>
+   <td style="text-align:left;"> <a href="https://www.iucnredlist.org/search?query=Grevea%20eggelingii%20var.%20keniensis" target="_blank">IUCN</a> </td>
+   <td style="text-align:left;">  </td>
+   <td style="text-align:left;width: 200px; "> Grevea madagascariensis keniensis </td>
+  </tr>
+  <tr>
+   <td style="text-align:right;"> 59 </td>
+   <td style="text-align:left;width: 180px; "> <a href="https://www.gbif.org/species/2944936" target="_blank"><em>Craibia brevicaudata</em></a> </td>
+   <td style="text-align:left;width: 150px; "> Craibia brevicaudata subsp. burttii </td>
+   <td style="text-align:left;"> Fabaceae </td>
+   <td style="text-align:left;"> 2944936 </td>
+   <td style="text-align:left;"> Endangered </td>
+   <td style="text-align:left;"> Not listed </td>
+   <td style="text-align:left;"> Protected / Regulated </td>
+   <td style="text-align:left;"> <a href="https://www.iucnredlist.org/search?query=Craibia%20brevicaudata%20subsp.%20burttii" target="_blank">IUCN</a> </td>
+   <td style="text-align:left;">  </td>
+   <td style="text-align:left;width: 200px; "> Craibia burttii, Dalbergia brevicaudata, Lonchocarpus brevicaudatus </td>
+  </tr>
+  <tr>
+   <td style="text-align:right;"> 60 </td>
+   <td style="text-align:left;width: 180px; "> <a href="https://www.gbif.org/species/3897062" target="_blank"><em>Premna maxima</em></a> </td>
+   <td style="text-align:left;width: 150px; "> Premna maxima </td>
+   <td style="text-align:left;"> Lamiaceae </td>
+   <td style="text-align:left;"> 3897062 </td>
+   <td style="text-align:left;"> Endangered </td>
+   <td style="text-align:left;"> Not listed </td>
+   <td style="text-align:left;"> Protected / Regulated </td>
+   <td style="text-align:left;"> <a href="https://www.iucnredlist.org/search?query=Premna%20maxima" target="_blank">IUCN</a> </td>
+   <td style="text-align:left;">  </td>
+   <td style="text-align:left;width: 200px; ">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:right;"> 61 </td>
+   <td style="text-align:left;width: 180px; "> <a href="https://www.gbif.org/species/3155988" target="_blank"><em>Monanthotaxis faulknerae</em></a> </td>
+   <td style="text-align:left;width: 150px; "> Monanthotaxis faulknerae </td>
+   <td style="text-align:left;"> Annonaceae </td>
+   <td style="text-align:left;"> 3155988 </td>
+   <td style="text-align:left;"> Endangered </td>
+   <td style="text-align:left;"> Not listed </td>
+   <td style="text-align:left;"> Protected / Regulated </td>
+   <td style="text-align:left;"> <a href="https://www.iucnredlist.org/search?query=Monanthotaxis%20faulknerae" target="_blank">IUCN</a> </td>
+   <td style="text-align:left;">  </td>
+   <td style="text-align:left;width: 200px; ">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:right;"> 62 </td>
+   <td style="text-align:left;width: 180px; "> <a href="https://www.gbif.org/species/3852095" target="_blank"><em>Khaya anthotheca</em></a> </td>
+   <td style="text-align:left;width: 150px; "> East African Mahogany, Nyasaland mahogany, White Mahogany, white-mahogany </td>
+   <td style="text-align:left;"> Meliaceae </td>
+   <td style="text-align:left;"> 3852095 </td>
+   <td style="text-align:left;"> Vulnerable </td>
+   <td style="text-align:left;"> Appendix II </td>
+   <td style="text-align:left;"> Protected / Regulated </td>
+   <td style="text-align:left;"> <a href="https://www.iucnredlist.org/search?query=Khaya%20anthotheca" target="_blank">IUCN</a> </td>
+   <td style="text-align:left;"> <a href="https://checklist.cites.org/#/en/search/output_layout=alphabetical&amp;scientific_name=Khaya%20anthotheca" target="_blank">CITES</a> </td>
+   <td style="text-align:left;width: 200px; "> Azedarach elegans, Garretia anthoteca, Khaya wildemanii, Melia elegans </td>
+  </tr>
+  <tr>
+   <td style="text-align:right;"> 63 </td>
+   <td style="text-align:left;width: 180px; "> <a href="https://www.gbif.org/species/2966842" target="_blank"><em>Cynometra webberi</em></a> </td>
+   <td style="text-align:left;width: 150px; "> Webb's cynometra </td>
+   <td style="text-align:left;"> Fabaceae </td>
+   <td style="text-align:left;"> 2966842 </td>
+   <td style="text-align:left;"> Vulnerable </td>
+   <td style="text-align:left;"> Not listed </td>
+   <td style="text-align:left;"> Protected / Regulated </td>
+   <td style="text-align:left;"> <a href="https://www.iucnredlist.org/search?query=Cynometra%20webberi" target="_blank">IUCN</a> </td>
+   <td style="text-align:left;">  </td>
+   <td style="text-align:left;width: 200px; ">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:right;"> 64 </td>
+   <td style="text-align:left;width: 180px; "> <a href="https://www.gbif.org/species/5603222" target="_blank"><em>Warburgia stuhlmannii</em></a> </td>
+   <td style="text-align:left;width: 150px; "> Warburgia stuhlmannii </td>
+   <td style="text-align:left;"> Canellaceae </td>
+   <td style="text-align:left;"> 5603222 </td>
+   <td style="text-align:left;"> Vulnerable </td>
+   <td style="text-align:left;"> Not listed </td>
+   <td style="text-align:left;"> Protected / Regulated </td>
+   <td style="text-align:left;"> <a href="https://www.iucnredlist.org/search?query=Warburgia%20stuhlmannii" target="_blank">IUCN</a> </td>
+   <td style="text-align:left;">  </td>
+   <td style="text-align:left;width: 200px; ">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:right;"> 65 </td>
+   <td style="text-align:left;width: 180px; "> <a href="https://www.gbif.org/species/5348471" target="_blank"><em>Newtonia paucijuga</em></a> </td>
+   <td style="text-align:left;width: 150px; "> Newtonia paucijuga </td>
+   <td style="text-align:left;"> Fabaceae </td>
+   <td style="text-align:left;"> 5348471 </td>
+   <td style="text-align:left;"> Vulnerable </td>
+   <td style="text-align:left;"> Not listed </td>
+   <td style="text-align:left;"> Protected / Regulated </td>
+   <td style="text-align:left;"> <a href="https://www.iucnredlist.org/search?query=Newtonia%20paucijuga" target="_blank">IUCN</a> </td>
+   <td style="text-align:left;">  </td>
+   <td style="text-align:left;width: 200px; "> Cylicodiscus battiscombei, Cylicodiscus paucijugus, Piptadenia paucijuga </td>
+  </tr>
+  <tr>
+   <td style="text-align:right;"> 66 </td>
+   <td style="text-align:left;width: 180px; "> <a href="https://www.gbif.org/species/5355656" target="_blank"><em>Prioria msoo</em></a> </td>
+   <td style="text-align:left;width: 150px; "> Msoo </td>
+   <td style="text-align:left;"> Fabaceae </td>
+   <td style="text-align:left;"> 5355656 </td>
+   <td style="text-align:left;"> Vulnerable </td>
+   <td style="text-align:left;"> Not listed </td>
+   <td style="text-align:left;"> Protected / Regulated </td>
+   <td style="text-align:left;"> <a href="https://www.iucnredlist.org/search?query=Oxystigma%20msoo" target="_blank">IUCN</a> </td>
+   <td style="text-align:left;">  </td>
+   <td style="text-align:left;width: 200px; ">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:right;"> 67 </td>
+   <td style="text-align:left;width: 180px; "> <a href="https://www.gbif.org/species/5564620" target="_blank"><em>Brochoneura usambarensis</em></a> </td>
+   <td style="text-align:left;width: 150px; "> Cephalosphaera usambarensis </td>
+   <td style="text-align:left;"> Myristicaceae </td>
+   <td style="text-align:left;"> 5564620 </td>
+   <td style="text-align:left;"> Vulnerable </td>
+   <td style="text-align:left;"> Not listed </td>
+   <td style="text-align:left;"> Protected / Regulated </td>
+   <td style="text-align:left;"> <a href="https://www.iucnredlist.org/search?query=Cephalosphaera%20usambarensis" target="_blank">IUCN</a> </td>
+   <td style="text-align:left;">  </td>
+   <td style="text-align:left;width: 200px; ">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:right;"> 68 </td>
+   <td style="text-align:left;width: 180px; "> <a href="https://www.gbif.org/species/2883730" target="_blank"><em>Mimusops riparia</em></a> </td>
+   <td style="text-align:left;width: 150px; "> Mimusops riparia </td>
+   <td style="text-align:left;"> Sapotaceae </td>
+   <td style="text-align:left;"> 2883730 </td>
+   <td style="text-align:left;"> Vulnerable </td>
+   <td style="text-align:left;"> Not listed </td>
+   <td style="text-align:left;"> Protected / Regulated </td>
+   <td style="text-align:left;"> <a href="https://www.iucnredlist.org/search?query=Mimusops%20riparia" target="_blank">IUCN</a> </td>
+   <td style="text-align:left;">  </td>
+   <td style="text-align:left;width: 200px; "> Mimusops dependens, Mimusops useguhensis </td>
+  </tr>
+  <tr>
+   <td style="text-align:right;"> 69 </td>
+   <td style="text-align:left;width: 180px; "> <a href="https://www.gbif.org/species/2884716" target="_blank"><em>Aningeria pseudoracemosa</em></a> </td>
+   <td style="text-align:left;width: 150px; "> Pouteria pseudoracemosa </td>
+   <td style="text-align:left;"> Sapotaceae </td>
+   <td style="text-align:left;"> 2884716 </td>
+   <td style="text-align:left;"> Vulnerable </td>
+   <td style="text-align:left;"> Not listed </td>
+   <td style="text-align:left;"> Protected / Regulated </td>
+   <td style="text-align:left;"> <a href="https://www.iucnredlist.org/search?query=Pouteria%20pseudoracemosa" target="_blank">IUCN</a> </td>
+   <td style="text-align:left;">  </td>
+   <td style="text-align:left;width: 200px; ">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:right;"> 70 </td>
+   <td style="text-align:left;width: 180px; "> <a href="https://www.gbif.org/species/5571654" target="_blank"><em>Ficus faulkneriana</em></a> </td>
+   <td style="text-align:left;width: 150px; "> Faulkner's fig </td>
+   <td style="text-align:left;"> Moraceae </td>
+   <td style="text-align:left;"> 5571654 </td>
+   <td style="text-align:left;"> Vulnerable </td>
+   <td style="text-align:left;"> Not listed </td>
+   <td style="text-align:left;"> Protected / Regulated </td>
+   <td style="text-align:left;"> <a href="https://www.iucnredlist.org/search?query=Ficus%20faulkneriana" target="_blank">IUCN</a> </td>
+   <td style="text-align:left;">  </td>
+   <td style="text-align:left;width: 200px; ">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:right;"> 71 </td>
+   <td style="text-align:left;width: 180px; "> <a href="https://www.gbif.org/species/3786858" target="_blank"><em>Chytranthus obliquinervis</em></a> </td>
+   <td style="text-align:left;width: 150px; "> Chytranthus obliquinervis </td>
+   <td style="text-align:left;"> Sapindaceae </td>
+   <td style="text-align:left;"> 3786858 </td>
+   <td style="text-align:left;"> Vulnerable </td>
+   <td style="text-align:left;"> Not listed </td>
+   <td style="text-align:left;"> Protected / Regulated </td>
+   <td style="text-align:left;"> <a href="https://www.iucnredlist.org/search?query=Chytranthus%20obliquinervis" target="_blank">IUCN</a> </td>
+   <td style="text-align:left;">  </td>
+   <td style="text-align:left;width: 200px; "> Chytranthus obliquinervis </td>
+  </tr>
+  <tr>
+   <td style="text-align:right;"> 72 </td>
+   <td style="text-align:left;width: 180px; "> <a href="https://www.gbif.org/species/2906217" target="_blank"><em>Rothmannia macrosiphon</em></a> </td>
+   <td style="text-align:left;width: 150px; "> Rothmannia macrosiphon </td>
+   <td style="text-align:left;"> Rubiaceae </td>
+   <td style="text-align:left;"> 2906217 </td>
+   <td style="text-align:left;"> Vulnerable </td>
+   <td style="text-align:left;"> Not listed </td>
+   <td style="text-align:left;"> Protected / Regulated </td>
+   <td style="text-align:left;"> <a href="https://www.iucnredlist.org/search?query=Rothmannia%20macrosiphon" target="_blank">IUCN</a> </td>
+   <td style="text-align:left;">  </td>
+   <td style="text-align:left;width: 200px; "> Randia macrosiphon </td>
+  </tr>
+  <tr>
+   <td style="text-align:right;"> 73 </td>
+   <td style="text-align:left;width: 180px; "> <a href="https://www.gbif.org/species/3616440" target="_blank"><em>Pleioceras orientale</em></a> </td>
+   <td style="text-align:left;width: 150px; "> Pleioceras orientale </td>
+   <td style="text-align:left;"> Apocynaceae </td>
+   <td style="text-align:left;"> 3616440 </td>
+   <td style="text-align:left;"> Vulnerable </td>
+   <td style="text-align:left;"> Not listed </td>
+   <td style="text-align:left;"> Protected / Regulated </td>
+   <td style="text-align:left;"> <a href="https://www.iucnredlist.org/search?query=Pleioceras%20orientale" target="_blank">IUCN</a> </td>
+   <td style="text-align:left;">  </td>
+   <td style="text-align:left;width: 200px; ">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:right;"> 74 </td>
+   <td style="text-align:left;width: 180px; "> <a href="https://www.gbif.org/species/2895921" target="_blank"><em>Tarenna drummondii</em></a> </td>
+   <td style="text-align:left;width: 150px; "> Tarenna drummondii </td>
+   <td style="text-align:left;"> Rubiaceae </td>
+   <td style="text-align:left;"> 2895921 </td>
+   <td style="text-align:left;"> Vulnerable </td>
+   <td style="text-align:left;"> Not listed </td>
+   <td style="text-align:left;"> Protected / Regulated </td>
+   <td style="text-align:left;"> <a href="https://www.iucnredlist.org/search?query=Tarenna%20drummondii" target="_blank">IUCN</a> </td>
+   <td style="text-align:left;">  </td>
+   <td style="text-align:left;width: 200px; ">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:right;"> 75 </td>
+   <td style="text-align:left;width: 180px; "> <a href="https://www.gbif.org/species/10810950" target="_blank"><em>Dovyalis keniensis</em></a> </td>
+   <td style="text-align:left;width: 150px; "> Kenya dovyalis </td>
+   <td style="text-align:left;"> Salicaceae </td>
+   <td style="text-align:left;"> 10810950 </td>
+   <td style="text-align:left;"> Vulnerable </td>
+   <td style="text-align:left;"> Not listed </td>
+   <td style="text-align:left;"> Protected / Regulated </td>
+   <td style="text-align:left;"> <a href="https://www.iucnredlist.org/search?query=Dovyalis%20keniensis" target="_blank">IUCN</a> </td>
+   <td style="text-align:left;">  </td>
+   <td style="text-align:left;width: 200px; ">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:right;"> 76 </td>
+   <td style="text-align:left;width: 180px; "> <a href="https://www.gbif.org/species/2886053" target="_blank"><em>Synsepalum subverticillatum</em></a> </td>
+   <td style="text-align:left;width: 150px; "> Synsepalum subverticillatum </td>
+   <td style="text-align:left;"> Sapotaceae </td>
+   <td style="text-align:left;"> 2886053 </td>
+   <td style="text-align:left;"> Vulnerable </td>
+   <td style="text-align:left;"> Not listed </td>
+   <td style="text-align:left;"> Protected / Regulated </td>
+   <td style="text-align:left;"> <a href="https://www.iucnredlist.org/search?query=Synsepalum%20subverticillatum" target="_blank">IUCN</a> </td>
+   <td style="text-align:left;">  </td>
+   <td style="text-align:left;width: 200px; "> Pachystela subverticillata, Pseudoboivinella subverticillata </td>
+  </tr>
+  <tr>
+   <td style="text-align:right;"> 77 </td>
+   <td style="text-align:left;width: 180px; "> <a href="https://www.gbif.org/species/8177267" target="_blank"><em>Vepris robertsoniae</em></a> </td>
+   <td style="text-align:left;width: 150px; "> Robertson's vepris </td>
+   <td style="text-align:left;"> Rutaceae </td>
+   <td style="text-align:left;"> 8177267 </td>
+   <td style="text-align:left;"> Vulnerable </td>
+   <td style="text-align:left;"> Not listed </td>
+   <td style="text-align:left;"> Protected / Regulated </td>
+   <td style="text-align:left;"> <a href="https://www.iucnredlist.org/search?query=Vepris%20robertsoniae" target="_blank">IUCN</a> </td>
+   <td style="text-align:left;">  </td>
+   <td style="text-align:left;width: 200px; ">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:right;"> 78 </td>
+   <td style="text-align:left;width: 180px; "> <a href="https://www.gbif.org/species/3834564" target="_blank"><em>Vepris fadenii</em></a> </td>
+   <td style="text-align:left;width: 150px; "> Faden's vepris </td>
+   <td style="text-align:left;"> Rutaceae </td>
+   <td style="text-align:left;"> 3834564 </td>
+   <td style="text-align:left;"> Vulnerable </td>
+   <td style="text-align:left;"> Not listed </td>
+   <td style="text-align:left;"> Protected / Regulated </td>
+   <td style="text-align:left;"> <a href="https://www.iucnredlist.org/search?query=Vepris%20fadenii" target="_blank">IUCN</a> </td>
+   <td style="text-align:left;">  </td>
+   <td style="text-align:left;width: 200px; "> Diphasiopsis fadenii </td>
+  </tr>
+  <tr>
+   <td style="text-align:right;"> 79 </td>
+   <td style="text-align:left;width: 180px; "> <a href="https://www.gbif.org/species/2893042" target="_blank"><em>Psydrax polhillii</em></a> </td>
+   <td style="text-align:left;width: 150px; "> Psydrax polhillii </td>
+   <td style="text-align:left;"> Rubiaceae </td>
+   <td style="text-align:left;"> 2893042 </td>
+   <td style="text-align:left;"> Vulnerable </td>
+   <td style="text-align:left;"> Not listed </td>
+   <td style="text-align:left;"> Protected / Regulated </td>
+   <td style="text-align:left;"> <a href="https://www.iucnredlist.org/search?query=Psydrax%20polhillii" target="_blank">IUCN</a> </td>
+   <td style="text-align:left;">  </td>
+   <td style="text-align:left;width: 200px; ">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:right;"> 80 </td>
+   <td style="text-align:left;width: 180px; "> <a href="https://www.gbif.org/species/5357232" target="_blank"><em>Parkinsonia anacantha</em></a> </td>
+   <td style="text-align:left;width: 150px; "> Parkinsonia anacantha </td>
+   <td style="text-align:left;"> Fabaceae </td>
+   <td style="text-align:left;"> 5357232 </td>
+   <td style="text-align:left;"> Vulnerable </td>
+   <td style="text-align:left;"> Not listed </td>
+   <td style="text-align:left;"> Protected / Regulated </td>
+   <td style="text-align:left;"> <a href="https://www.iucnredlist.org/search?query=Parkinsonia%20anacantha" target="_blank">IUCN</a> </td>
+   <td style="text-align:left;">  </td>
+   <td style="text-align:left;width: 200px; ">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:right;"> 81 </td>
+   <td style="text-align:left;width: 180px; "> <a href="https://www.gbif.org/species/3863755" target="_blank"><em>Memecylon teitense</em></a> </td>
+   <td style="text-align:left;width: 150px; "> Taita Hills memecylon </td>
+   <td style="text-align:left;"> Melastomataceae </td>
+   <td style="text-align:left;"> 3863755 </td>
+   <td style="text-align:left;"> Vulnerable </td>
+   <td style="text-align:left;"> Not listed </td>
+   <td style="text-align:left;"> Protected / Regulated </td>
+   <td style="text-align:left;"> <a href="https://www.iucnredlist.org/search?query=Memecylon%20teitense" target="_blank">IUCN</a> </td>
+   <td style="text-align:left;">  </td>
+   <td style="text-align:left;width: 200px; ">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:right;"> 82 </td>
+   <td style="text-align:left;width: 180px; "> <a href="https://www.gbif.org/species/3863444" target="_blank"><em>Memecylon verruculosum</em></a> </td>
+   <td style="text-align:left;width: 150px; "> Memecylon verruculosum </td>
+   <td style="text-align:left;"> Melastomataceae </td>
+   <td style="text-align:left;"> 3863444 </td>
+   <td style="text-align:left;"> Vulnerable </td>
+   <td style="text-align:left;"> Not listed </td>
+   <td style="text-align:left;"> Protected / Regulated </td>
+   <td style="text-align:left;"> <a href="https://www.iucnredlist.org/search?query=Memecylon%20verruculosum" target="_blank">IUCN</a> </td>
+   <td style="text-align:left;">  </td>
+   <td style="text-align:left;width: 200px; ">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:right;"> 83 </td>
+   <td style="text-align:left;width: 180px; "> <a href="https://www.gbif.org/species/5355691" target="_blank"><em>Millettia oblata</em></a> </td>
+   <td style="text-align:left;width: 150px; "> Taita Hills millettia </td>
+   <td style="text-align:left;"> Fabaceae </td>
+   <td style="text-align:left;"> 5355691 </td>
+   <td style="text-align:left;"> Vulnerable </td>
+   <td style="text-align:left;"> Not listed </td>
+   <td style="text-align:left;"> Protected / Regulated </td>
+   <td style="text-align:left;"> <a href="https://www.iucnredlist.org/search?query=Millettia%20oblata%20subsp.%20teitensis" target="_blank">IUCN</a> </td>
+   <td style="text-align:left;">  </td>
+   <td style="text-align:left;width: 200px; ">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:right;"> 84 </td>
+   <td style="text-align:left;width: 180px; "> <a href="https://www.gbif.org/species/7223938" target="_blank"><em>Syzygium micklethwaitii</em></a> </td>
+   <td style="text-align:left;width: 150px; "> Syzygium micklethwaitii </td>
+   <td style="text-align:left;"> Myrtaceae </td>
+   <td style="text-align:left;"> 7223938 </td>
+   <td style="text-align:left;"> Vulnerable </td>
+   <td style="text-align:left;"> Not listed </td>
+   <td style="text-align:left;"> Protected / Regulated </td>
+   <td style="text-align:left;"> <a href="https://www.iucnredlist.org/search?query=Syzygium%20micklethwaitii%20subsp.%20micklethwaitii" target="_blank">IUCN</a> </td>
+   <td style="text-align:left;">  </td>
+   <td style="text-align:left;width: 200px; ">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:right;"> 85 </td>
+   <td style="text-align:left;width: 180px; "> <a href="https://www.gbif.org/species/3804010" target="_blank"><em>Populus ilicifolia</em></a> </td>
+   <td style="text-align:left;width: 150px; "> Tana River Poplar </td>
+   <td style="text-align:left;"> Salicaceae </td>
+   <td style="text-align:left;"> 3804010 </td>
+   <td style="text-align:left;"> Vulnerable </td>
+   <td style="text-align:left;"> Not listed </td>
+   <td style="text-align:left;"> Protected / Regulated </td>
+   <td style="text-align:left;"> <a href="https://www.iucnredlist.org/search?query=Populus%20ilicifolia" target="_blank">IUCN</a> </td>
+   <td style="text-align:left;">  </td>
+   <td style="text-align:left;width: 200px; "> Balsamiflua denhardtiorum, Balsamiflua ilicifolia, Celtis ilicifolia, Populus... </td>
+  </tr>
+  <tr>
+   <td style="text-align:right;"> 86 </td>
+   <td style="text-align:left;width: 180px; "> <a href="https://www.gbif.org/species/5547580" target="_blank"><em>Sterculia schliebenii</em></a> </td>
+   <td style="text-align:left;width: 150px; "> Sterculia schliebenii </td>
+   <td style="text-align:left;"> Malvaceae </td>
+   <td style="text-align:left;"> 5547580 </td>
+   <td style="text-align:left;"> Vulnerable </td>
+   <td style="text-align:left;"> Not listed </td>
+   <td style="text-align:left;"> Protected / Regulated </td>
+   <td style="text-align:left;"> <a href="https://www.iucnredlist.org/search?query=Sterculia%20schliebenii" target="_blank">IUCN</a> </td>
+   <td style="text-align:left;">  </td>
+   <td style="text-align:left;width: 200px; ">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:right;"> 87 </td>
+   <td style="text-align:left;width: 180px; "> <a href="https://www.gbif.org/species/3158636" target="_blank"><em>Mkilua fragrans</em></a> </td>
+   <td style="text-align:left;width: 150px; "> Mkilua fragrans </td>
+   <td style="text-align:left;"> Annonaceae </td>
+   <td style="text-align:left;"> 3158636 </td>
+   <td style="text-align:left;"> Vulnerable </td>
+   <td style="text-align:left;"> Not listed </td>
+   <td style="text-align:left;"> Protected / Regulated </td>
+   <td style="text-align:left;"> <a href="https://www.iucnredlist.org/search?query=Mkilua%20fragrans" target="_blank">IUCN</a> </td>
+   <td style="text-align:left;">  </td>
+   <td style="text-align:left;width: 200px; ">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:right;"> 88 </td>
+   <td style="text-align:left;width: 180px; "> <a href="https://www.gbif.org/species/2964786" target="_blank"><em>Guibourtia schliebenii</em></a> </td>
+   <td style="text-align:left;width: 150px; "> Guibourtia schliebenii </td>
+   <td style="text-align:left;"> Fabaceae </td>
+   <td style="text-align:left;"> 2964786 </td>
+   <td style="text-align:left;"> Vulnerable </td>
+   <td style="text-align:left;"> Not listed </td>
+   <td style="text-align:left;"> Protected / Regulated </td>
+   <td style="text-align:left;"> <a href="https://www.iucnredlist.org/search?query=Guibourtia%20schliebenii" target="_blank">IUCN</a> </td>
+   <td style="text-align:left;">  </td>
+   <td style="text-align:left;width: 200px; "> Copaifera schliebenii </td>
+  </tr>
+  <tr>
+   <td style="text-align:right;"> 89 </td>
+   <td style="text-align:left;width: 180px; "> <a href="https://www.gbif.org/species/3157990" target="_blank"><em>Uvariodendron anisatum</em></a> </td>
+   <td style="text-align:left;width: 150px; "> Uvariodendron anisatum </td>
+   <td style="text-align:left;"> Annonaceae </td>
+   <td style="text-align:left;"> 3157990 </td>
+   <td style="text-align:left;"> Vulnerable </td>
+   <td style="text-align:left;"> Not listed </td>
+   <td style="text-align:left;"> Protected / Regulated </td>
+   <td style="text-align:left;"> <a href="https://www.iucnredlist.org/search?query=Uvariodendron%20anisatum" target="_blank">IUCN</a> </td>
+   <td style="text-align:left;">  </td>
+   <td style="text-align:left;width: 200px; ">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:right;"> 90 </td>
+   <td style="text-align:left;width: 180px; "> <a href="https://www.gbif.org/species/3158017" target="_blank"><em>Uvariodendron kirkii</em></a> </td>
+   <td style="text-align:left;width: 150px; "> Uvariodendron kirkii </td>
+   <td style="text-align:left;"> Annonaceae </td>
+   <td style="text-align:left;"> 3158017 </td>
+   <td style="text-align:left;"> Vulnerable </td>
+   <td style="text-align:left;"> Not listed </td>
+   <td style="text-align:left;"> Protected / Regulated </td>
+   <td style="text-align:left;"> <a href="https://www.iucnredlist.org/search?query=Uvariodendron%20kirkii" target="_blank">IUCN</a> </td>
+   <td style="text-align:left;">  </td>
+   <td style="text-align:left;width: 200px; ">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:right;"> 91 </td>
+   <td style="text-align:left;width: 180px; "> <a href="https://www.gbif.org/species/8259730" target="_blank"><em>Dasylepis integra</em></a> </td>
+   <td style="text-align:left;width: 150px; "> Dasylepis integra </td>
+   <td style="text-align:left;"> Achariaceae </td>
+   <td style="text-align:left;"> 8259730 </td>
+   <td style="text-align:left;"> Vulnerable </td>
+   <td style="text-align:left;"> Not listed </td>
+   <td style="text-align:left;"> Protected / Regulated </td>
+   <td style="text-align:left;"> <a href="https://www.iucnredlist.org/search?query=Dasylepis%20integra" target="_blank">IUCN</a> </td>
+   <td style="text-align:left;">  </td>
+   <td style="text-align:left;width: 200px; "> Dasylepis leptophylla </td>
+  </tr>
+  <tr>
+   <td style="text-align:right;"> 92 </td>
+   <td style="text-align:left;width: 180px; "> <a href="https://www.gbif.org/species/3918792" target="_blank"><em>Mildbraedia carpinifolia</em></a> </td>
+   <td style="text-align:left;width: 150px; "> Mildbraedia carpinifolia </td>
+   <td style="text-align:left;"> Euphorbiaceae </td>
+   <td style="text-align:left;"> 3918792 </td>
+   <td style="text-align:left;"> Vulnerable </td>
+   <td style="text-align:left;"> Not listed </td>
+   <td style="text-align:left;"> Protected / Regulated </td>
+   <td style="text-align:left;"> <a href="https://www.iucnredlist.org/search?query=Mildbraedia%20carpinifolia" target="_blank">IUCN</a> </td>
+   <td style="text-align:left;">  </td>
+   <td style="text-align:left;width: 200px; "> Jatropha carpinifolia, Neojatropha carpinifolia, Plesiatropha carpinifolia, P... </td>
+  </tr>
+  <tr>
+   <td style="text-align:right;"> 93 </td>
+   <td style="text-align:left;width: 180px; "> <a href="https://www.gbif.org/species/2981765" target="_blank"><em>Julbernardia magnistipulata</em></a> </td>
+   <td style="text-align:left;width: 150px; "> Julbernardia magnistipulata </td>
+   <td style="text-align:left;"> Fabaceae </td>
+   <td style="text-align:left;"> 2981765 </td>
+   <td style="text-align:left;"> Vulnerable </td>
+   <td style="text-align:left;"> Not listed </td>
+   <td style="text-align:left;"> Protected / Regulated </td>
+   <td style="text-align:left;"> <a href="https://www.iucnredlist.org/search?query=Julbernardia%20magnistipulata" target="_blank">IUCN</a> </td>
+   <td style="text-align:left;">  </td>
+   <td style="text-align:left;width: 200px; "> Berlinia magnistipulata, Isoberlinia magnistipulata </td>
+  </tr>
+  <tr>
+   <td style="text-align:right;"> 94 </td>
+   <td style="text-align:left;width: 180px; "> <a href="https://www.gbif.org/species/2970950" target="_blank"><em>Dialium holtzii</em></a> </td>
+   <td style="text-align:left;width: 150px; "> Dialium holtzii </td>
+   <td style="text-align:left;"> Fabaceae </td>
+   <td style="text-align:left;"> 2970950 </td>
+   <td style="text-align:left;"> Vulnerable </td>
+   <td style="text-align:left;"> Not listed </td>
+   <td style="text-align:left;"> Protected / Regulated </td>
+   <td style="text-align:left;"> <a href="https://www.iucnredlist.org/search?query=Dialium%20holtzii" target="_blank">IUCN</a> </td>
+   <td style="text-align:left;">  </td>
+   <td style="text-align:left;width: 200px; "> Dialium mossambicense </td>
+  </tr>
+  <tr>
+   <td style="text-align:right;"> 95 </td>
+   <td style="text-align:left;width: 180px; "> <a href="https://www.gbif.org/species/5351066" target="_blank"><em>Stuhlmannia moavi</em></a> </td>
+   <td style="text-align:left;width: 150px; "> Stuhlmannia moavi </td>
+   <td style="text-align:left;"> Fabaceae </td>
+   <td style="text-align:left;"> 5351066 </td>
+   <td style="text-align:left;"> Vulnerable </td>
+   <td style="text-align:left;"> Not listed </td>
+   <td style="text-align:left;"> Protected / Regulated </td>
+   <td style="text-align:left;"> <a href="https://www.iucnredlist.org/search?query=Stuhlmannia%20moavi" target="_blank">IUCN</a> </td>
+   <td style="text-align:left;">  </td>
+   <td style="text-align:left;width: 200px; "> Caesalpinia dalei, Caesalpinia insolita, Caesalpinia moavii, Hoffmannseggia i... </td>
+  </tr>
+  <tr>
+   <td style="text-align:right;"> 96 </td>
+   <td style="text-align:left;width: 180px; "> <a href="https://www.gbif.org/species/3074187" target="_blank"><em>Macaranga conglomerata</em></a> </td>
+   <td style="text-align:left;width: 150px; "> Macaranga conglomerata </td>
+   <td style="text-align:left;"> Euphorbiaceae </td>
+   <td style="text-align:left;"> 3074187 </td>
+   <td style="text-align:left;"> Vulnerable </td>
+   <td style="text-align:left;"> Not listed </td>
+   <td style="text-align:left;"> Protected / Regulated </td>
+   <td style="text-align:left;"> <a href="https://www.iucnredlist.org/search?query=Macaranga%20conglomerata" target="_blank">IUCN</a> </td>
+   <td style="text-align:left;">  </td>
+   <td style="text-align:left;width: 200px; ">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:right;"> 97 </td>
+   <td style="text-align:left;width: 180px; "> <a href="https://www.gbif.org/species/3157120" target="_blank"><em>Xylopia arenaria</em></a> </td>
+   <td style="text-align:left;width: 150px; "> Xylopia arenaria </td>
+   <td style="text-align:left;"> Annonaceae </td>
+   <td style="text-align:left;"> 3157120 </td>
+   <td style="text-align:left;"> Vulnerable </td>
+   <td style="text-align:left;"> Not listed </td>
+   <td style="text-align:left;"> Protected / Regulated </td>
+   <td style="text-align:left;"> <a href="https://www.iucnredlist.org/search?query=Xylopia%20arenaria" target="_blank">IUCN</a> </td>
+   <td style="text-align:left;">  </td>
+   <td style="text-align:left;width: 200px; ">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:right;"> 98 </td>
+   <td style="text-align:left;width: 180px; "> <a href="https://www.gbif.org/species/3154868" target="_blank"><em>Ophrypetalum odoratum</em></a> </td>
+   <td style="text-align:left;width: 150px; "> Ophrypetalum odoratum </td>
+   <td style="text-align:left;"> Annonaceae </td>
+   <td style="text-align:left;"> 3154868 </td>
+   <td style="text-align:left;"> Vulnerable </td>
+   <td style="text-align:left;"> Not listed </td>
+   <td style="text-align:left;"> Protected / Regulated </td>
+   <td style="text-align:left;"> <a href="https://www.iucnredlist.org/search?query=Ophrypetalum%20odoratum" target="_blank">IUCN</a> </td>
+   <td style="text-align:left;">  </td>
+   <td style="text-align:left;width: 200px; ">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:right;"> 99 </td>
+   <td style="text-align:left;width: 180px; "> <a href="https://www.gbif.org/species/4070544" target="_blank"><em>Diospyros greenwayi</em></a> </td>
+   <td style="text-align:left;width: 150px; "> Diospyros greenwayi </td>
+   <td style="text-align:left;"> Ebenaceae </td>
+   <td style="text-align:left;"> 4070544 </td>
+   <td style="text-align:left;"> Vulnerable </td>
+   <td style="text-align:left;"> Not listed </td>
+   <td style="text-align:left;"> Protected / Regulated </td>
+   <td style="text-align:left;"> <a href="https://www.iucnredlist.org/search?query=Diospyros%20greenwayi" target="_blank">IUCN</a> </td>
+   <td style="text-align:left;">  </td>
+   <td style="text-align:left;width: 200px; ">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:right;"> 100 </td>
+   <td style="text-align:left;width: 180px; "> <a href="https://www.gbif.org/species/4070211" target="_blank"><em>Diospyros amaniensis</em></a> </td>
+   <td style="text-align:left;width: 150px; "> Diospyros amaniensis </td>
+   <td style="text-align:left;"> Ebenaceae </td>
+   <td style="text-align:left;"> 4070211 </td>
+   <td style="text-align:left;"> Vulnerable </td>
+   <td style="text-align:left;"> Not listed </td>
+   <td style="text-align:left;"> Protected / Regulated </td>
+   <td style="text-align:left;"> <a href="https://www.iucnredlist.org/search?query=Diospyros%20amaniensis" target="_blank">IUCN</a> </td>
+   <td style="text-align:left;">  </td>
+   <td style="text-align:left;width: 200px; ">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:right;"> 101 </td>
+   <td style="text-align:left;width: 180px; "> <a href="https://www.gbif.org/species/3987991" target="_blank"><em>Buxus obtusifolia</em></a> </td>
+   <td style="text-align:left;width: 150px; "> Buxus obtusifolia </td>
+   <td style="text-align:left;"> Buxaceae </td>
+   <td style="text-align:left;"> 3987991 </td>
+   <td style="text-align:left;"> Vulnerable </td>
+   <td style="text-align:left;"> Not listed </td>
+   <td style="text-align:left;"> Protected / Regulated </td>
+   <td style="text-align:left;"> <a href="https://www.iucnredlist.org/search?query=Buxus%20obtusifolia" target="_blank">IUCN</a> </td>
+   <td style="text-align:left;">  </td>
+   <td style="text-align:left;width: 200px; "> Notobuxus obtusifolia </td>
+  </tr>
+  <tr>
+   <td style="text-align:right;"> 102 </td>
+   <td style="text-align:left;width: 180px; "> <a href="https://www.gbif.org/species/3752358" target="_blank"><em>Moringa arborea</em></a> </td>
+   <td style="text-align:left;width: 150px; "> Moringa arborea </td>
+   <td style="text-align:left;"> Moringaceae </td>
+   <td style="text-align:left;"> 3752358 </td>
+   <td style="text-align:left;"> Vulnerable </td>
+   <td style="text-align:left;"> Not listed </td>
+   <td style="text-align:left;"> Protected / Regulated </td>
+   <td style="text-align:left;"> <a href="https://www.iucnredlist.org/search?query=Moringa%20arborea" target="_blank">IUCN</a> </td>
+   <td style="text-align:left;">  </td>
+   <td style="text-align:left;width: 200px; ">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:right;"> 103 </td>
+   <td style="text-align:left;width: 180px; "> <a href="https://www.gbif.org/species/2952347" target="_blank"><em>Angylocalyx braunii</em></a> </td>
+   <td style="text-align:left;width: 150px; "> Angylocalyx braunii </td>
+   <td style="text-align:left;"> Fabaceae </td>
+   <td style="text-align:left;"> 2952347 </td>
+   <td style="text-align:left;"> Vulnerable </td>
+   <td style="text-align:left;"> Not listed </td>
+   <td style="text-align:left;"> Protected / Regulated </td>
+   <td style="text-align:left;"> <a href="https://www.iucnredlist.org/search?query=Angylocalyx%20braunii" target="_blank">IUCN</a> </td>
+   <td style="text-align:left;">  </td>
+   <td style="text-align:left;width: 200px; ">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:right;"> 104 </td>
+   <td style="text-align:left;width: 180px; "> <a href="https://www.gbif.org/species/3788017" target="_blank"><em>Camptolepis ramiflora</em></a> </td>
+   <td style="text-align:left;width: 150px; "> Camptolepis ramiflora </td>
+   <td style="text-align:left;"> Sapindaceae </td>
+   <td style="text-align:left;"> 3788017 </td>
+   <td style="text-align:left;"> Vulnerable </td>
+   <td style="text-align:left;"> Not listed </td>
+   <td style="text-align:left;"> Protected / Regulated </td>
+   <td style="text-align:left;"> <a href="https://www.iucnredlist.org/search?query=Camptolepis%20ramiflora" target="_blank">IUCN</a> </td>
+   <td style="text-align:left;">  </td>
+   <td style="text-align:left;width: 200px; "> Deinbollia ramiflora, Haplocoelum jubense, Hypseloderma jubense </td>
+  </tr>
+  <tr>
+   <td style="text-align:right;"> 105 </td>
+   <td style="text-align:left;width: 180px; "> <a href="https://www.gbif.org/species/5352558" target="_blank"><em>Baphia longipedicellata</em></a> </td>
+   <td style="text-align:left;width: 150px; "> Baphia keniensis </td>
+   <td style="text-align:left;"> Fabaceae </td>
+   <td style="text-align:left;"> 5352558 </td>
+   <td style="text-align:left;"> Vulnerable </td>
+   <td style="text-align:left;"> Not listed </td>
+   <td style="text-align:left;"> Protected / Regulated </td>
+   <td style="text-align:left;"> <a href="https://www.iucnredlist.org/search?query=Baphia%20keniensis" target="_blank">IUCN</a> </td>
+   <td style="text-align:left;">  </td>
+   <td style="text-align:left;width: 200px; ">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:right;"> 106 </td>
+   <td style="text-align:left;width: 180px; "> <a href="https://www.gbif.org/species/5335113" target="_blank"><em>Gardenia transvenulosa</em></a> </td>
+   <td style="text-align:left;width: 150px; "> Gardenia transvenulosa </td>
+   <td style="text-align:left;"> Rubiaceae </td>
+   <td style="text-align:left;"> 5335113 </td>
+   <td style="text-align:left;"> Vulnerable </td>
+   <td style="text-align:left;"> Not listed </td>
+   <td style="text-align:left;"> Protected / Regulated </td>
+   <td style="text-align:left;"> <a href="https://www.iucnredlist.org/search?query=Gardenia%20transvenulosa" target="_blank">IUCN</a> </td>
+   <td style="text-align:left;">  </td>
+   <td style="text-align:left;width: 200px; ">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:right;"> 107 </td>
+   <td style="text-align:left;width: 180px; "> <a href="https://www.gbif.org/species/3834100" target="_blank"><em>Vepris samburuensis</em></a> </td>
+   <td style="text-align:left;width: 150px; "> Samburu vepris </td>
+   <td style="text-align:left;"> Rutaceae </td>
+   <td style="text-align:left;"> 3834100 </td>
+   <td style="text-align:left;"> Vulnerable </td>
+   <td style="text-align:left;"> Not listed </td>
+   <td style="text-align:left;"> Protected / Regulated </td>
+   <td style="text-align:left;"> <a href="https://www.iucnredlist.org/search?query=Vepris%20samburuensis" target="_blank">IUCN</a> </td>
+   <td style="text-align:left;">  </td>
+   <td style="text-align:left;width: 200px; ">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:right;"> 108 </td>
+   <td style="text-align:left;width: 180px; "> <a href="https://www.gbif.org/species/3834095" target="_blank"><em>Vepris sansibarensis</em></a> </td>
+   <td style="text-align:left;width: 150px; "> Vepris sansibarensis </td>
+   <td style="text-align:left;"> Rutaceae </td>
+   <td style="text-align:left;"> 3834095 </td>
+   <td style="text-align:left;"> Vulnerable </td>
+   <td style="text-align:left;"> Not listed </td>
+   <td style="text-align:left;"> Protected / Regulated </td>
+   <td style="text-align:left;"> <a href="https://www.iucnredlist.org/search?query=Vepris%20sansibarensis" target="_blank">IUCN</a> </td>
+   <td style="text-align:left;">  </td>
+   <td style="text-align:left;width: 200px; "> Toddalia sansibarensis, Toddaliopsis sansibarensis </td>
+  </tr>
+  <tr>
+   <td style="text-align:right;"> 109 </td>
+   <td style="text-align:left;width: 180px; "> <a href="https://www.gbif.org/species/5327816" target="_blank"><em>Pandanus kajui</em></a> </td>
+   <td style="text-align:left;width: 150px; "> Kaju's pandanus </td>
+   <td style="text-align:left;"> Pandanaceae </td>
+   <td style="text-align:left;"> 5327816 </td>
+   <td style="text-align:left;"> Vulnerable </td>
+   <td style="text-align:left;"> Not listed </td>
+   <td style="text-align:left;"> Protected / Regulated </td>
+   <td style="text-align:left;"> <a href="https://www.iucnredlist.org/search?query=Pandanus%20kajui" target="_blank">IUCN</a> </td>
+   <td style="text-align:left;">  </td>
+   <td style="text-align:left;width: 200px; "> Pandanus embuensis </td>
+  </tr>
+  <tr>
+   <td style="text-align:right;"> 110 </td>
+   <td style="text-align:left;width: 180px; "> <a href="https://www.gbif.org/species/4177549" target="_blank"><em>Ocotea argylei</em></a> </td>
+   <td style="text-align:left;width: 150px; "> Argyle's ocotea </td>
+   <td style="text-align:left;"> Lauraceae </td>
+   <td style="text-align:left;"> 4177549 </td>
+   <td style="text-align:left;"> Vulnerable </td>
+   <td style="text-align:left;"> Not listed </td>
+   <td style="text-align:left;"> Protected / Regulated </td>
+   <td style="text-align:left;"> <a href="https://www.iucnredlist.org/search?query=Ocotea%20argylei" target="_blank">IUCN</a> </td>
+   <td style="text-align:left;">  </td>
+   <td style="text-align:left;width: 200px; ">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:right;"> 111 </td>
+   <td style="text-align:left;width: 180px; "> <a href="https://www.gbif.org/species/2900909" target="_blank"><em>Afrocanthium keniense</em></a> </td>
+   <td style="text-align:left;width: 150px; "> Afrocanthium keniense </td>
+   <td style="text-align:left;"> Rubiaceae </td>
+   <td style="text-align:left;"> 2900909 </td>
+   <td style="text-align:left;"> Vulnerable </td>
+   <td style="text-align:left;"> Not listed </td>
+   <td style="text-align:left;"> Protected / Regulated </td>
+   <td style="text-align:left;"> <a href="https://www.iucnredlist.org/search?query=Afrocanthium%20keniense" target="_blank">IUCN</a> </td>
+   <td style="text-align:left;">  </td>
+   <td style="text-align:left;width: 200px; "> Canthium keniense </td>
+  </tr>
+  <tr>
+   <td style="text-align:right;"> 112 </td>
+   <td style="text-align:left;width: 180px; "> <a href="https://www.gbif.org/species/3075123" target="_blank"><em>Aristogeitonia monophylla</em></a> </td>
+   <td style="text-align:left;width: 150px; "> Aristogeitona monophylla </td>
+   <td style="text-align:left;"> Picrodendraceae </td>
+   <td style="text-align:left;"> 3075123 </td>
+   <td style="text-align:left;"> Vulnerable </td>
+   <td style="text-align:left;"> Not listed </td>
+   <td style="text-align:left;"> Protected / Regulated </td>
+   <td style="text-align:left;"> <a href="https://www.iucnredlist.org/search?query=Aristogeitonia%20monophylla" target="_blank">IUCN</a> </td>
+   <td style="text-align:left;">  </td>
+   <td style="text-align:left;width: 200px; ">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:right;"> 113 </td>
+   <td style="text-align:left;width: 180px; "> <a href="https://www.gbif.org/species/2886401" target="_blank"><em>Vitellariopsis kirkii</em></a> </td>
+   <td style="text-align:left;width: 150px; "> Vitellariopsis kirkii </td>
+   <td style="text-align:left;"> Sapotaceae </td>
+   <td style="text-align:left;"> 2886401 </td>
+   <td style="text-align:left;"> Vulnerable </td>
+   <td style="text-align:left;"> Not listed </td>
+   <td style="text-align:left;"> Protected / Regulated </td>
+   <td style="text-align:left;"> <a href="https://www.iucnredlist.org/search?query=Vitellariopsis%20kirkii" target="_blank">IUCN</a> </td>
+   <td style="text-align:left;">  </td>
+   <td style="text-align:left;width: 200px; "> Butyrospermum kirkii, Mimusops bakeri, Mimusops kirkii </td>
+  </tr>
+  <tr>
+   <td style="text-align:right;"> 114 </td>
+   <td style="text-align:left;width: 180px; "> <a href="https://www.gbif.org/species/5576774" target="_blank"><em>Allophylus chirindensis</em></a> </td>
+   <td style="text-align:left;width: 150px; "> Allophylus zimmermannianus </td>
+   <td style="text-align:left;"> Sapindaceae </td>
+   <td style="text-align:left;"> 5576774 </td>
+   <td style="text-align:left;"> Vulnerable </td>
+   <td style="text-align:left;"> Not listed </td>
+   <td style="text-align:left;"> Protected / Regulated </td>
+   <td style="text-align:left;"> <a href="https://www.iucnredlist.org/search?query=Allophylus%20zimmermannianus" target="_blank">IUCN</a> </td>
+   <td style="text-align:left;">  </td>
+   <td style="text-align:left;width: 200px; ">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:right;"> 115 </td>
+   <td style="text-align:left;width: 180px; "> <a href="https://www.gbif.org/species/5602736" target="_blank"><em>Lasiodiscus pervillei</em></a> </td>
+   <td style="text-align:left;width: 150px; "> Lasiodiscus mildbraedii subsp. ferrugineus </td>
+   <td style="text-align:left;"> Rhamnaceae </td>
+   <td style="text-align:left;"> 5602736 </td>
+   <td style="text-align:left;"> Vulnerable </td>
+   <td style="text-align:left;"> Not listed </td>
+   <td style="text-align:left;"> Protected / Regulated </td>
+   <td style="text-align:left;"> <a href="https://www.iucnredlist.org/search?query=Lasiodiscus%20mildbraedii%20subsp.%20ferrugineus" target="_blank">IUCN</a> </td>
+   <td style="text-align:left;">  </td>
+   <td style="text-align:left;width: 200px; ">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:right;"> 116 </td>
+   <td style="text-align:left;width: 180px; "> <a href="https://www.gbif.org/species/5335100" target="_blank"><em>Gardenia posoquerioides</em></a> </td>
+   <td style="text-align:left;width: 150px; "> Gardenia posoquerioides </td>
+   <td style="text-align:left;"> Rubiaceae </td>
+   <td style="text-align:left;"> 5335100 </td>
+   <td style="text-align:left;"> Vulnerable </td>
+   <td style="text-align:left;"> Not listed </td>
+   <td style="text-align:left;"> Protected / Regulated </td>
+   <td style="text-align:left;"> <a href="https://www.iucnredlist.org/search?query=Gardenia%20posoquerioides" target="_blank">IUCN</a> </td>
+   <td style="text-align:left;">  </td>
+   <td style="text-align:left;width: 200px; ">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:right;"> 117 </td>
+   <td style="text-align:left;width: 180px; "> <a href="https://www.gbif.org/species/7226061" target="_blank"><em>Drypetes usambarica</em></a> </td>
+   <td style="text-align:left;width: 150px; "> Drypetes usambarica </td>
+   <td style="text-align:left;"> Putranjivaceae </td>
+   <td style="text-align:left;"> 7226061 </td>
+   <td style="text-align:left;"> Vulnerable </td>
+   <td style="text-align:left;"> Not listed </td>
+   <td style="text-align:left;"> Protected / Regulated </td>
+   <td style="text-align:left;"> <a href="https://www.iucnredlist.org/search?query=Drypetes%20usambarica%20var.%20usambarica" target="_blank">IUCN</a> </td>
+   <td style="text-align:left;">  </td>
+   <td style="text-align:left;width: 200px; ">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:right;"> 118 </td>
+   <td style="text-align:left;width: 180px; "> <a href="https://www.gbif.org/species/3075883" target="_blank"><em>Drypetes natalensis</em></a> </td>
+   <td style="text-align:left;width: 150px; "> Drypetes natalensis var. leiogyna </td>
+   <td style="text-align:left;"> Putranjivaceae </td>
+   <td style="text-align:left;"> 3075883 </td>
+   <td style="text-align:left;"> Vulnerable </td>
+   <td style="text-align:left;"> Not listed </td>
+   <td style="text-align:left;"> Protected / Regulated </td>
+   <td style="text-align:left;"> <a href="https://www.iucnredlist.org/search?query=Drypetes%20natalensis%20var.%20leiogyna" target="_blank">IUCN</a> </td>
+   <td style="text-align:left;">  </td>
+   <td style="text-align:left;width: 200px; ">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:right;"> 119 </td>
+   <td style="text-align:left;width: 180px; "> <a href="https://www.gbif.org/species/3071633" target="_blank"><em>Ricinodendron heudelotii</em></a> </td>
+   <td style="text-align:left;width: 150px; "> Ricinodendron heudelotii var. tomentellum </td>
+   <td style="text-align:left;"> Euphorbiaceae </td>
+   <td style="text-align:left;"> 3071633 </td>
+   <td style="text-align:left;"> Vulnerable </td>
+   <td style="text-align:left;"> Not listed </td>
+   <td style="text-align:left;"> Protected / Regulated </td>
+   <td style="text-align:left;"> <a href="https://www.iucnredlist.org/search?query=Ricinodendron%20heudelotii%20var.%20tomentellum" target="_blank">IUCN</a> </td>
+   <td style="text-align:left;">  </td>
+   <td style="text-align:left;width: 200px; "> Ricinodendron schliebenii, Ricinodendron tomentellum </td>
+  </tr>
+  <tr>
+   <td style="text-align:right;"> 120 </td>
+   <td style="text-align:left;width: 180px; "> <a href="https://www.gbif.org/species/5378240" target="_blank"><em>Shirakiopsis trilocularis</em></a> </td>
+   <td style="text-align:left;width: 150px; "> Sapium triloculare </td>
+   <td style="text-align:left;"> Euphorbiaceae </td>
+   <td style="text-align:left;"> 5378240 </td>
+   <td style="text-align:left;"> Vulnerable </td>
+   <td style="text-align:left;"> Not listed </td>
+   <td style="text-align:left;"> Protected / Regulated </td>
+   <td style="text-align:left;"> <a href="https://www.iucnredlist.org/search?query=Sapium%20triloculare" target="_blank">IUCN</a> </td>
+   <td style="text-align:left;">  </td>
+   <td style="text-align:left;width: 200px; ">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:right;"> 121 </td>
+   <td style="text-align:left;width: 180px; "> <a href="https://www.gbif.org/species/7769134" target="_blank"><em>Boscia mazzocchii</em></a> </td>
+   <td style="text-align:left;width: 150px; "> Boscia mazzocchii </td>
+   <td style="text-align:left;"> Capparaceae </td>
+   <td style="text-align:left;"> 7769134 </td>
+   <td style="text-align:left;"> Vulnerable </td>
+   <td style="text-align:left;"> Not listed </td>
+   <td style="text-align:left;"> Protected / Regulated </td>
+   <td style="text-align:left;"> <a href="https://www.iucnredlist.org/search?query=Boscia%20mazzocchii" target="_blank">IUCN</a> </td>
+   <td style="text-align:left;">  </td>
+   <td style="text-align:left;width: 200px; "> Boscia tomentella, Capparis mazzocchii, Maerua mazzocchii </td>
+  </tr>
+  <tr>
+   <td style="text-align:right;"> 122 </td>
+   <td style="text-align:left;width: 180px; "> <a href="https://www.gbif.org/species/2886116" target="_blank"><em>Synsepalum kassneri</em></a> </td>
+   <td style="text-align:left;width: 150px; "> Synsepalum kassneri </td>
+   <td style="text-align:left;"> Sapotaceae </td>
+   <td style="text-align:left;"> 2886116 </td>
+   <td style="text-align:left;"> Vulnerable </td>
+   <td style="text-align:left;"> Not listed </td>
+   <td style="text-align:left;"> Protected / Regulated </td>
+   <td style="text-align:left;"> <a href="https://www.iucnredlist.org/search?query=Synsepalum%20kassneri" target="_blank">IUCN</a> </td>
+   <td style="text-align:left;">  </td>
+   <td style="text-align:left;width: 200px; "> Afrosersalisia kassneri, Pouteria kassneri, Sersalisia kassneri, Tulestea kas... </td>
+  </tr>
+  <tr>
+   <td style="text-align:right;"> 123 </td>
+   <td style="text-align:left;width: 180px; "> <a href="https://www.gbif.org/species/2925201" target="_blank"><em>Pavetta teitana</em></a> </td>
+   <td style="text-align:left;width: 150px; "> Taita pavetta </td>
+   <td style="text-align:left;"> Rubiaceae </td>
+   <td style="text-align:left;"> 2925201 </td>
+   <td style="text-align:left;"> Vulnerable </td>
+   <td style="text-align:left;"> Not listed </td>
+   <td style="text-align:left;"> Protected / Regulated </td>
+   <td style="text-align:left;"> <a href="https://www.iucnredlist.org/search?query=Pavetta%20teitana" target="_blank">IUCN</a> </td>
+   <td style="text-align:left;">  </td>
+   <td style="text-align:left;width: 200px; "> Pavetta kaessneri </td>
+  </tr>
+  <tr>
+   <td style="text-align:right;"> 124 </td>
+   <td style="text-align:left;width: 180px; "> <a href="https://www.gbif.org/species/2893227" target="_blank"><em>Psydrax faulknerae</em></a> </td>
+   <td style="text-align:left;width: 150px; "> Psydrax faulknerae </td>
+   <td style="text-align:left;"> Rubiaceae </td>
+   <td style="text-align:left;"> 2893227 </td>
+   <td style="text-align:left;"> Vulnerable </td>
+   <td style="text-align:left;"> Not listed </td>
+   <td style="text-align:left;"> Protected / Regulated </td>
+   <td style="text-align:left;"> <a href="https://www.iucnredlist.org/search?query=Psydrax%20faulknerae" target="_blank">IUCN</a> </td>
+   <td style="text-align:left;">  </td>
+   <td style="text-align:left;width: 200px; ">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:right;"> 125 </td>
+   <td style="text-align:left;width: 180px; "> <a href="https://www.gbif.org/species/2968897" target="_blank"><em>Dalbergia melanoxylon</em></a> </td>
+   <td style="text-align:left;width: 150px; "> African Ebony, African blackwood, African-ebony, Chinese blackwood, Mozambique Ebony, Mozambique-ebony, Senaar-ebony, Senegal-ebony, Sudan-ebony, african-blackwood, poyi, African Blackwood </td>
+   <td style="text-align:left;"> Fabaceae </td>
+   <td style="text-align:left;"> 2968897 </td>
+   <td style="text-align:left;"> Near Threatened </td>
+   <td style="text-align:left;"> Appendix II </td>
+   <td style="text-align:left;"> Protected / Regulated </td>
+   <td style="text-align:left;"> <a href="https://www.iucnredlist.org/search?query=Dalbergia%20melanoxylon" target="_blank">IUCN</a> </td>
+   <td style="text-align:left;"> <a href="https://checklist.cites.org/#/en/search/output_layout=alphabetical&amp;scientific_name=Dalbergia%20melanoxylon" target="_blank">CITES</a> </td>
+   <td style="text-align:left;width: 200px; "> Amerimnon melanoxylon, Amerimnon stocksii, Dalbergia stocksii </td>
+  </tr>
+</tbody>
+</table></div>
+
+  <div class="kqb-report-footer">
+    <p><strong>Kwiz Computing</strong> <U+2014> Biodiversity Data Services</p>
+    <p>Data sources: GBIF Backbone Taxonomy, IUCN Red List, CITES Checklist, Kenya Law</p>
+    <p>Generated 2026-04-05 | For official regulatory use, verify with KWS / KEPHIS / NEMA</p>
+  </div>
+
+  <script>
+  const csvData = [{"GBIFusageKey":"2765940","country":"Kenya","region":"","jurisdiction":"NATIONAL","jurisdiction_group":"","prefName":"Pontederia crassipes","classification":"Prohibited","taxonLevel":"species","family":"Pontederiaceae","englishName":"Common water hyacinth, Kachuripana, Water hyacinth, common water hyacinth, common water-hyacinth, floating water hyacinth, floating waterhyacinth, lilac-devil, water hyacinth, water-hyacinth, Water-hyacinth","synonyms":"","Note":"Introduced 1989. Covers large areas of Lake Victoria. Biocontrol (weevils) deployed.","genus_I":"Pontederia","is_aquatic":"yes","aquatic_type_I":"freshwater","legal_status_ke":"Introduction prohibited; eradication programmes active","restriction_type":"Prohibited introduction; active control","governing_law":"EMCA 1999 s.55; FMDA 2016"},{"GBIFusageKey":"5274863","country":"Kenya","region":"","jurisdiction":"NATIONAL","jurisdiction_group":"","prefName":"Salvinia molesta","classification":"Prohibited","taxonLevel":"species","family":"Salviniaceae","englishName":"African payal, Giant salvinia, Kariba weed, Water fern, African payal, African pyle, Aquarium watermoss, Giant water fern, Velvet weed, Kariba weed, Salvinia moss, aquarium watermoss, giant salvinia, kariba weed, kariba-weed, water fern, Giant Salvinia","synonyms":"Salvinia adnata","Note":"Covers water surfaces; disrupts fisheries and water supply.","genus_I":"Salvinia","is_aquatic":"yes","aquatic_type_I":"freshwater","legal_status_ke":"Introduction prohibited","restriction_type":"Prohibited introduction","governing_law":"EMCA 1999 s.55"},{"GBIFusageKey":"5358460","country":"Kenya","region":"","jurisdiction":"NATIONAL","jurisdiction_group":"","prefName":"Prosopis juliflora","classification":"Restricted","taxonLevel":"species","family":"Fabaceae","englishName":"Mesquite, Prosopis, Mesquite, Algaroba bean, Mexican thorn, Ironwood, algarroba-bean, ironwood, mesquite","synonyms":"Acacia juliflora, Algarobia juliflora, Entada juliflora, Mimosa furcata, Mimosa juliflora, Neltuma juliflora, Neltuma occidenatlis, Prosopis vidaliana","Note":"Introduced 1983 for arid/semi-arid revegetation. Now invasive in ASALs. Declared invasive by Kenya government.","genus_I":"Prosopis","is_aquatic":"no","aquatic_type_I":"","legal_status_ke":"Introduction restricted; eradication in sensitive areas","restriction_type":"Restricted","governing_law":"EMCA 1999; Plant Protection Act Cap.324"},{"GBIFusageKey":"2925303","country":"Kenya","region":"","jurisdiction":"NATIONAL","jurisdiction_group":"","prefName":"Lantana camara","classification":"Restricted","taxonLevel":"species","family":"Verbenaceae","englishName":"Black Sage, Lantana, Largeleaf Lantana, Sage, Scrubby Cup, Scrubby Tree, Statia Sage, Wild Lantana, Yellow Sage, common lantana, kamara lantana, largeleaf lantana, wild sage, Common Lantana, Wild Sage, shrub verbena, wild sage bush","synonyms":"Camara vulgaris, Lantana camara camara, Lantana camara parvifolia, Lantana coccinea, Lantana glandulodissima, Lantana mexicana, Lantana spinosa, Lantana urticifolia urticifolia","Note":"Widespread invasive in mid-altitude zones. Displaces native vegetation; creates tsetse habitat.","genus_I":"Lantana","is_aquatic":"no","aquatic_type_I":"","legal_status_ke":"Introduction restricted; declared invasive","restriction_type":"Restricted","governing_law":"EMCA 1999; Plant Protection Act Cap.324"},{"GBIFusageKey":"5384075","country":"Kenya","region":"","jurisdiction":"NATIONAL","jurisdiction_group":"","prefName":"Opuntia stricta","classification":"Restricted","taxonLevel":"species","family":"Cactaceae","englishName":"Araluen pear, Common pest pear, Prickly pear, Erect Pricklypear, Erect Pricklypear, Erect prickly pear, Prickle, Sour Prickle, erect prickly-pear","synonyms":"Cactus opuntia inermis, Cactus strictus, Consolea bahamana, Opuntia airampo, Opuntia bahamana, Opuntia balearica, Opuntia bartramii, Opuntia bentonii, Opuntia dillenii reitzii, Opuntia inermis, Opuntia keyensis, Opuntia longiclada, Opuntia macracantha, Opuntia macrantha, Opuntia magnifica, Opuntia parva, Opuntia stricta esparzae, Opuntia stricta reitzii, Opuntia stricta stricta, Opuntia tenuiflora, Opuntia vulgaris balaerica, Opuntia vulgaris balearica, Pilocereus flavispinus, Pilocereus nobilis, Opulea bahamana","Note":"Major invasive in dry savannas. Threatens Grevy's zebra habitat.","genus_I":"Opuntia","is_aquatic":"no","aquatic_type_I":"","legal_status_ke":"Introduction restricted; eradication at Laikipia and Samburu","restriction_type":"Restricted","governing_law":"EMCA 1999; Plant Protection Act Cap.324"},{"GBIFusageKey":"2929892","country":"Kenya","region":"","jurisdiction":"NATIONAL","jurisdiction_group":"","prefName":"Solanum elaeagnifolium","classification":"Prohibited","taxonLevel":"species","family":"Solanaceae","englishName":"Bull-nettle, Silverleaf nightshade, White Nightshade, bull-nettle, prairie-berry, silverleaf bitter-apple, silverleaf nightshade, silverleaf-nettle, tomato weed, tomato-weed, white horse-nettle, white horsenettle, white nightshade","synonyms":"Solanum dealbatum, Solanum elaeagnifolium albiflorum, Solanum elaeagnifolium benkei, Solanum elaeagnifolium angustifolium, Solanum elaeagnifolium argyrocroton, Solanum elaeagnifolium grandiflorum, Solanum elaeagnifolium leprosum, Solanum elaeagnifolium obtusifolium, Solanum flavidum, Solanum incanum, Solanum leprosum, Solanum lunatum, Solanum obtusifolium, Solanum pyriforme uniflorum, Solanum roemerianum, Solanum saponaceum, Solanum texense, Solanum uniflorum","Note":"Crop pest and invasive plant. On Kenya phytosanitary prohibited import list.","genus_I":"Solanum","is_aquatic":"no","aquatic_type_I":"","legal_status_ke":"Introduction prohibited","restriction_type":"Prohibited introduction","governing_law":"Plant Protection Act Cap.324"},{"GBIFusageKey":"7473922","country":"Kenya","region":"","jurisdiction":"NATIONAL","jurisdiction_group":"","prefName":"Osyris lanceolata","classification":"Prohibited","taxonLevel":"species","family":"Santalaceae","englishName":"East African sandalwood","synonyms":"Osyris arborea, Osyris arborea puberula, Osyris arborea rotundifolia, Osyris arborea stipitata, Osyris nepalensis, Osyris wightiana, Osyris wightiana puberula, Osyris wightiana rotundifolia, Osyris wightiana stipitata","Note":"Heavily trafficked for illegal sandalwood trade. Kenya has imposed export bans. Also listed in Kenya Forest Service protected trees gazette.","genus_I":"Osyris","is_aquatic":"no","aquatic_type_I":"","legal_status_ke":"Protected; export banned; KFS permit required for possession","restriction_type":"Prohibited export; possession regulated","governing_law":"FCMA 2016; EMCA 1999"},{"GBIFusageKey":"3022853","country":"Kenya","region":"","jurisdiction":"NATIONAL","jurisdiction_group":"","prefName":"Prunus africana","classification":"Protected / Regulated","taxonLevel":"species","family":"Rosaceae","englishName":"African Almond, African cherry, Red Stinkwood, pygeum, African Cherry","synonyms":"Laurocerasus africana, Laurocerasus crassifolia, Prunus crassifolia, Pygeum africanum, Pygeum crassifolium","Note":"Bark used in pharmaceutical products (prostate medicine). Major export commodity. Over-exploitation led to CITES listing.","genus_I":"Prunus","is_aquatic":"no","aquatic_type_I":"","legal_status_ke":"Trade regulated; bark extraction requires permit","restriction_type":"Regulated harvest; trade regulated by CITES","governing_law":"FCMA 2016; CITES"},{"GBIFusageKey":"2770879","country":"Kenya","region":"","jurisdiction":"NATIONAL","jurisdiction_group":"","prefName":"Aloe","classification":"Protected / Regulated","taxonLevel":"genus","family":"Asphodelaceae","englishName":"Aloes, aloe, aloes","synonyms":"Agriodendron, Aloe qaharensis, Aloinella, Aloe, Atevala, Busipho, Chamaealoe, Chortolirion, Guillauminia, Lemeea, Leptaloe, Lomatophyllum, Pachidendron, Phylloma, Rhipidodendrum, Aamaealoe, Alamaealoe, Alchamaloe, Aleptoe, Allauminia, Allemeea, Alleptauminia, Aloella, Aloptaloe, Bleckara, Chamaeleptaloe, Leminia, Leptaloinella, Leptauminia, Lomataloe","Note":"Many Kenyan endemic Aloe spp. Face over-collection for ornamental and medicinal trade.","genus_I":"Aloe","is_aquatic":"no","aquatic_type_I":"","legal_status_ke":"Trade regulated; some species fully protected","restriction_type":"Trade regulated by CITES permit","governing_law":"WCMA 2013; CITES"},{"GBIFusageKey":"6365236","country":"Kenya","region":"","jurisdiction":"NATIONAL","jurisdiction_group":"","prefName":"Streptocarpus ionanthus","classification":"Prohibited","taxonLevel":"species","family":"Gesneriaceae","englishName":"African-violet, Usambara-violet","synonyms":"","Note":"Wild African violet species endemic to East Usambara and Taita Hills forests. Severely threatened by habitat loss and collection.","genus_I":"Streptocarpus","is_aquatic":"no","aquatic_type_I":"","legal_status_ke":"Collection from wild prohibited; trade in wild-collected specimens banned","restriction_type":"Prohibited wild collection; trade regulated","governing_law":"WCMA 2013; CITES"},{"GBIFusageKey":"3819564","country":"Kenya","region":"","jurisdiction":"NATIONAL","jurisdiction_group":"","prefName":"Streptocarpus teitensis","classification":"Protected / Regulated","taxonLevel":"species","family":"Gesneriaceae","englishName":"Taita Hills violet","synonyms":"","Note":"Endemic to Taita Hills. One of several critically threatened Saintpaulia species.","genus_I":"Streptocarpus","is_aquatic":"no","aquatic_type_I":"","legal_status_ke":"Fully protected","restriction_type":"Fully protected","governing_law":"WCMA 2013; CITES"},{"GBIFusageKey":"2683713","country":"Kenya","region":"","jurisdiction":"NATIONAL","jurisdiction_group":"","prefName":"Encephalartos hildebrandtii","classification":"Protected / Regulated","taxonLevel":"species","family":"Zamiaceae","englishName":"Mombasa Cycad","synonyms":"Encephalartos hildebrandtii dentatus, Encephalartos hildebrandtii hildebrandtii, Encephalartos villosus hildebrandtii, Encephalartos villosus nobilis","Note":"Kenyan coastal cycad. All Encephalartos species on Appendix I.","genus_I":"Encephalartos","is_aquatic":"no","aquatic_type_I":"","legal_status_ke":"Collection and trade prohibited","restriction_type":"Fully protected","governing_law":"WCMA 2013; CITES"},{"GBIFusageKey":"9606396","country":"Kenya","region":"","jurisdiction":"NATIONAL","jurisdiction_group":"","prefName":"Ornithogalum","classification":"Protected / Regulated","taxonLevel":"genus","family":"Asparagaceae","englishName":"Star Of Bethlehem, Star-of-bethlehems, star of Bethlehem, star-of-Bethlehem, star-of-Bethlehems","synonyms":"Albucea, Aspasia, Avonsera, Beryllis, Brizophile, Caruelia, Cathissa, Celsia, Eliokarmos, Eliokarnos, Elsiea, Eustachys, Fenelonia, Galtonia, Honorius, Ifuon, Lomaresis, Loncomelos, Loncoxis, Melomphis, Myanthe, Myogalum, Neopatersonia, Nicipe, Parthenostachys, Phaeocles, Raphelingia, Raxamaris, Tomoxis, Tritriela, Uropetalon, Virdika, Zahariadia, Honogalum","Note":"Bulb trade from Kenya regulated under CITES Appendix II.","genus_I":"Ornithogalum","is_aquatic":"no","aquatic_type_I":"","legal_status_ke":"Trade regulated","restriction_type":"Trade regulated by CITES permit","governing_law":"CITES; SPVA Cap.326"},{"GBIFusageKey":"7792960","country":"Kenya","region":"","jurisdiction":"NATIONAL","jurisdiction_group":"","prefName":"Allium vineale","classification":"Prohibited","taxonLevel":"species","family":"Amaryllidaceae","englishName":"Crow Garlic, Crow garlic, False Garlic, Field Garlic, Stag Garlic, Wild Garlic, Wild Onion, crow garlic, false garlic, field garlic, stag garlic, wild garlic, wild onion","synonyms":"Allium affine, Allium arenarium, Allium arvense, Allium assimile, Allium campestre, Allium canadense, Allium compactum, Allium descendens, Allium guttatum compactum, Allium kochii, Allium laxiflorum, Allium littoreum, Allium margaritaceum bulbiferum, Allium margaritaceum compactum, Allium monspessulanum, Allium nitens, Allium purshii, Allium rilaense, Allium rotundum, Allium sphaerocephalon compactum, Allium sphaerocephalum, Allium subvineale, Allium vineale compactum, Allium vineale affine, Allium vineale asperiflorum, Allium vineale capsuliferum, Allium vineale kochii, Allium vineale purpureum, Allium vineale vineale, Allium vineale biceps, Allium vineale bulbiferum, Allium vineale descendens, Allium vineale laxiflorum, Allium vineale monspessulanum, Allium vineale multiflorum, Allium vineale multiplicatum, Allium vineale nitens, Allium vineale pratense, Allium vineale purshii, Allium vineale sylvaticum, Allium vineale typicum, Allium vineale virens, Getuonis vinealis, Porrum capitatum, Porrum vineale","Note":"Invasive weed that contaminates wheat and taints dairy products.","genus_I":"Allium","is_aquatic":"no","aquatic_type_I":"","legal_status_ke":"Prohibited introduction; invasive weed","restriction_type":"Prohibited introduction; invasive alien species","governing_law":"Plant Protection Act Cap.324"},{"GBIFusageKey":"3088481","country":"Kenya","region":"","jurisdiction":"NATIONAL","jurisdiction_group":"","prefName":"Tagetes minuta","classification":"Prohibited","taxonLevel":"species","family":"Asteraceae","englishName":"Aztec marigold, Mexican marigold, Muster John Henry, Muster john henry, Southern Marigold, Southern marigold, Muster-John-Henry, Marigold, dwarf marigold, khakibush, little marigold, minute marigold, muster John Henry, southern marigold, stinking-Roger, wild marigold, Stinking Roger","synonyms":"Tagetes bonariensis, Tagetes glandulifera, Tagetes glandulosa, Tagetes montana, Tagetes porophyllum, Tagetes tinctoria","Note":"Invasive annual weed widespread in highland Kenya; allelopathic effects suppress native plants.","genus_I":"Tagetes","is_aquatic":"no","aquatic_type_I":"","legal_status_ke":"Prohibited introduction; invasive weed","restriction_type":"Prohibited introduction; invasive alien species","governing_law":"EMCA 1999; Plant Protection Act Cap.324"},{"GBIFusageKey":"2928509","country":"Kenya","region":"","jurisdiction":"NATIONAL","jurisdiction_group":"","prefName":"Ipomoea","classification":"Prohibited","taxonLevel":"genus","family":"Convolvulaceae","englishName":"Morning-glory, Morningglory, morning glory, morning-glories, morning-glory, morningglory, Morning-glories","synonyms":"Acmostemon, Adamboe, Amphione, Apopleumon, Batatas, Bombycospermum, Bonanox, Calboa, Calonyction, Calycanthemum, Calycantherum, Cleiemera, Cleiostoma, Clitocyamos, Coiladena, Convolvuloides, Decaloba, Diatrema, Diatremis, Dimerodiscus, Dimerodisus, Doxema, Elythrostamna, Euryloma, Exallosis, Exocroa, Exogonium, Fraxima, Gynoisa, Isypus, Kolofonia, Lariospermum, Latrienda, Legendrea, Leptocallis, Macrostemma, Marcellia, Melascus, Milhania, Mina, Modesta, Morenoa, Navipomoea, Neorthosis, Nil, Ornithosperma, Parasitipomaea, Parasitipomoea, Pentacrostigma, Pharbitis, Plesiagopus, Quamoclit, Quamoclita, Quamoclitia, Saccia, Stomadena, Tereietra, Tirtalia, Tremasperma, Turbina","Note":"Several Ipomoea species invasive in croplands and rangelands; smothers native vegetation.","genus_I":"Ipomoea","is_aquatic":"no","aquatic_type_I":"","legal_status_ke":"Prohibited introduction; invasive weed","restriction_type":"Prohibited introduction; invasive alien species","governing_law":"EMCA 1999; Plant Protection Act Cap.324"},{"GBIFusageKey":"7493935","country":"Kenya","region":"","jurisdiction":"NATIONAL","jurisdiction_group":"","prefName":"Eucalyptus","classification":"Protected / Regulated","taxonLevel":"genus","family":"Myrtaceae","englishName":"Gum, Gums, gum, gums","synonyms":"Aromadendron, Aromadendrum, Eucalypton, Eudesmia, Symphyomyrtus","Note":"Widely cultivated but ecologically invasive in riparian zones; high water consumption and allelopathy. NEMA restriction on planting near wetlands.","genus_I":"Eucalyptus","is_aquatic":"no","aquatic_type_I":"","legal_status_ke":"Regulated; invasive in riparian zones","restriction_type":"Regulated introduction; invasive alien species","governing_law":"EMCA 1999"},{"GBIFusageKey":"6288592","country":"Kenya","region":"","jurisdiction":"NATIONAL","jurisdiction_group":"","prefName":"Vangueriopsis shimbaensis","classification":"Protected / Regulated","taxonLevel":"species","family":"Rubiaceae","englishName":"Shimba Hills vangueria","synonyms":"","Note":"Kenya endemic; only 7 mature individuals known at one locality in Shimba Hills.","genus_I":"Vangueriopsis","is_aquatic":"no","aquatic_type_I":"","legal_status_ke":"Protected under FCMA 2016; Critically Endangered","restriction_type":"Fully protected; regulated harvest","governing_law":"FCMA 2016; EMCA 1999"},{"GBIFusageKey":"3066425","country":"Kenya","region":"","jurisdiction":"NATIONAL","jurisdiction_group":"","prefName":"Euphorbia tanaensis","classification":"Protected / Regulated","taxonLevel":"species","family":"Euphorbiaceae","englishName":"Tana River euphorbia","synonyms":"","Note":"Kenya endemic; restricted to Tana River area.","genus_I":"Euphorbia","is_aquatic":"no","aquatic_type_I":"","legal_status_ke":"Protected under FCMA 2016; Critically Endangered","restriction_type":"Fully protected; regulated harvest","governing_law":"FCMA 2016; EMCA 1999"},{"GBIFusageKey":"3063946","country":"Kenya","region":"","jurisdiction":"NATIONAL","jurisdiction_group":"","prefName":"Euphorbia cussonioides","classification":"Protected / Regulated","taxonLevel":"species","family":"Euphorbiaceae","englishName":"Euphorbia cussonioides","synonyms":"","Note":"Among East Africa's rarest trees.","genus_I":"Euphorbia","is_aquatic":"no","aquatic_type_I":"","legal_status_ke":"Protected under FCMA 2016; Critically Endangered","restriction_type":"Fully protected; regulated harvest","governing_law":"FCMA 2016; EMCA 1999"},{"GBIFusageKey":"3699610","country":"Kenya","region":"","jurisdiction":"NATIONAL","jurisdiction_group":"","prefName":"Combretum tenuipetiolatum","classification":"Protected / Regulated","taxonLevel":"species","family":"Combretaceae","englishName":"Combretum tenuipetiolatum","synonyms":"","Note":"Coastal forest species; extremely restricted range.","genus_I":"Combretum","is_aquatic":"no","aquatic_type_I":"","legal_status_ke":"Protected under FCMA 2016; Critically Endangered","restriction_type":"Fully protected; regulated harvest","governing_law":"FCMA 2016; EMCA 1999"},{"GBIFusageKey":"5547585","country":"Kenya","region":"","jurisdiction":"NATIONAL","jurisdiction_group":"","prefName":"Cola porphyrantha","classification":"Protected / Regulated","taxonLevel":"species","family":"Malvaceae","englishName":"Cola porphyrantha","synonyms":"","Note":"Coastal forest species; severely threatened by habitat loss.","genus_I":"Cola","is_aquatic":"no","aquatic_type_I":"","legal_status_ke":"Protected under FCMA 2016; Critically Endangered","restriction_type":"Fully protected; regulated harvest","governing_law":"FCMA 2016; EMCA 1999"},{"GBIFusageKey":"3896540","country":"Kenya","region":"","jurisdiction":"NATIONAL","jurisdiction_group":"","prefName":"Karomia gigas","classification":"Protected / Regulated","taxonLevel":"species","family":"Lamiaceae","englishName":"Karomia gigas","synonyms":"Holmskioldia gigas","Note":"Also found in Tanzania; fewer than 50 mature individuals remain.","genus_I":"Karomia","is_aquatic":"no","aquatic_type_I":"","legal_status_ke":"Protected under FCMA 2016; Critically Endangered","restriction_type":"Fully protected; regulated harvest","governing_law":"FCMA 2016; EMCA 1999"},{"GBIFusageKey":"3662348","country":"Kenya","region":"","jurisdiction":"NATIONAL","jurisdiction_group":"","prefName":"Sorindeia calantha","classification":"Protected / Regulated","taxonLevel":"species","family":"Anacardiaceae","englishName":"Sorindeia calantha","synonyms":"","Note":"Extremely rare coastal forest tree.","genus_I":"Sorindeia","is_aquatic":"no","aquatic_type_I":"","legal_status_ke":"Protected under FCMA 2016; Critically Endangered","restriction_type":"Fully protected; regulated harvest","governing_law":"FCMA 2016; EMCA 1999"},{"GBIFusageKey":"3849915","country":"Kenya","region":"","jurisdiction":"NATIONAL","jurisdiction_group":"","prefName":"Turraea elephantina","classification":"Protected / Regulated","taxonLevel":"species","family":"Meliaceae","englishName":"Turraea elephantina","synonyms":"","Note":"Kenya endemic; Meliaceae family.","genus_I":"Turraea","is_aquatic":"no","aquatic_type_I":"","legal_status_ke":"Protected under FCMA 2016; Critically Endangered","restriction_type":"Fully protected; regulated harvest","governing_law":"FCMA 2016; EMCA 1999"},{"GBIFusageKey":"3867919","country":"Kenya","region":"","jurisdiction":"NATIONAL","jurisdiction_group":"","prefName":"Memecylon buxoides","classification":"Protected / Regulated","taxonLevel":"species","family":"Melastomataceae","englishName":"Memecylon buxoides","synonyms":"","Note":"Coastal forest tree with very restricted range.","genus_I":"Memecylon","is_aquatic":"no","aquatic_type_I":"","legal_status_ke":"Protected under FCMA 2016; Critically Endangered","restriction_type":"Fully protected; regulated harvest","governing_law":"FCMA 2016; EMCA 1999"},{"GBIFusageKey":"2905392","country":"Kenya","region":"","jurisdiction":"NATIONAL","jurisdiction_group":"","prefName":"Ixora scheffleri","classification":"Protected / Regulated","taxonLevel":"subspecies","family":"Rubiaceae","englishName":"Ixora scheffleri subsp. keniensis","synonyms":"","Note":"Kenya endemic subspecies.","genus_I":"Ixora","is_aquatic":"no","aquatic_type_I":"","legal_status_ke":"Protected under FCMA 2016; Critically Endangered","restriction_type":"Fully protected; regulated harvest","governing_law":"FCMA 2016; EMCA 1999"},{"GBIFusageKey":"2925262","country":"Kenya","region":"","jurisdiction":"NATIONAL","jurisdiction_group":"","prefName":"Pavetta tarennoides","classification":"Protected / Regulated","taxonLevel":"species","family":"Rubiaceae","englishName":"Pavetta tarennoides","synonyms":"","Note":"Among East Africa's rarest tree species.","genus_I":"Pavetta","is_aquatic":"no","aquatic_type_I":"","legal_status_ke":"Protected under FCMA 2016; Critically Endangered","restriction_type":"Fully protected; regulated harvest","governing_law":"FCMA 2016; EMCA 1999"},{"GBIFusageKey":"3081127","country":"Kenya","region":"","jurisdiction":"NATIONAL","jurisdiction_group":"","prefName":"Meineckia ovata","classification":"Protected / Regulated","taxonLevel":"species","family":"Phyllanthaceae","englishName":"Meineckia ovata","synonyms":"Meineckia ovata, Zimmermannia ovata","Note":"Among East Africa's rarest trees; Phyllanthaceae.","genus_I":"Meineckia","is_aquatic":"no","aquatic_type_I":"","legal_status_ke":"Protected under FCMA 2016; Critically Endangered","restriction_type":"Fully protected; regulated harvest","governing_law":"FCMA 2016; EMCA 1999"},{"GBIFusageKey":"3904972","country":"Kenya","region":"","jurisdiction":"NATIONAL","jurisdiction_group":"","prefName":"Vitex fischeri","classification":"Protected / Regulated","taxonLevel":"species","family":"Lamiaceae","englishName":"Meru Oak","synonyms":"","Note":"Kenya endemic; over-exploited for premium timber. Protected under Forest Act.","genus_I":"Vitex","is_aquatic":"no","aquatic_type_I":"","legal_status_ke":"Protected under FCMA 2016; Endangered","restriction_type":"Fully protected; regulated harvest","governing_law":"FCMA 2016; EMCA 1999"},{"GBIFusageKey":"5547618","country":"Kenya","region":"","jurisdiction":"NATIONAL","jurisdiction_group":"","prefName":"Cola octoloboides","classification":"Protected / Regulated","taxonLevel":"species","family":"Malvaceae","englishName":"Cola octoloboides","synonyms":"","Note":"Kenya endemic; functionally extinct at one site with only 1 individual. Dioecious <U+2014> needs male and female for reproduction.","genus_I":"Cola","is_aquatic":"no","aquatic_type_I":"","legal_status_ke":"Protected under FCMA 2016; Endangered","restriction_type":"Fully protected; regulated harvest","governing_law":"FCMA 2016; EMCA 1999"},{"GBIFusageKey":"3066060","country":"Kenya","region":"","jurisdiction":"NATIONAL","jurisdiction_group":"","prefName":"Euphorbia wakefieldii","classification":"Protected / Regulated","taxonLevel":"species","family":"Euphorbiaceae","englishName":"Wakefield's euphorbia","synonyms":"","Note":"Kenya endemic (Kwale County); held in 14 ex situ collections globally.","genus_I":"Euphorbia","is_aquatic":"no","aquatic_type_I":"","legal_status_ke":"Protected under FCMA 2016; Endangered","restriction_type":"Fully protected; regulated harvest","governing_law":"FCMA 2016; EMCA 1999"},{"GBIFusageKey":"2966840","country":"Kenya","region":"","jurisdiction":"NATIONAL","jurisdiction_group":"","prefName":"Cynometra lukei","classification":"Protected / Regulated","taxonLevel":"species","family":"Fabaceae","englishName":"Luke's cynometra","synonyms":"","Note":"Kenya endemic; coastal forest legume.","genus_I":"Cynometra","is_aquatic":"no","aquatic_type_I":"","legal_status_ke":"Protected under FCMA 2016; Endangered","restriction_type":"Fully protected; regulated harvest","governing_law":"FCMA 2016; EMCA 1999"},{"GBIFusageKey":"3874948","country":"Kenya","region":"","jurisdiction":"NATIONAL","jurisdiction_group":"","prefName":"Ziziphus robertsoniana","classification":"Protected / Regulated","taxonLevel":"species","family":"Rhamnaceae","englishName":"Robertson's jujube","synonyms":"","Note":"Kenya endemic.","genus_I":"Ziziphus","is_aquatic":"no","aquatic_type_I":"","legal_status_ke":"Protected under FCMA 2016; Endangered","restriction_type":"Fully protected; regulated harvest","governing_law":"FCMA 2016; EMCA 1999"},{"GBIFusageKey":"3850068","country":"Kenya","region":"","jurisdiction":"NATIONAL","jurisdiction_group":"","prefName":"Turraea barbata","classification":"Protected / Regulated","taxonLevel":"species","family":"Meliaceae","englishName":"Turraea barbata","synonyms":"","Note":"Kenya endemic; Meliaceae.","genus_I":"Turraea","is_aquatic":"no","aquatic_type_I":"","legal_status_ke":"Protected under FCMA 2016; Endangered","restriction_type":"Fully protected; regulated harvest","governing_law":"FCMA 2016; EMCA 1999"},{"GBIFusageKey":"5576098","country":"Kenya","region":"","jurisdiction":"NATIONAL","jurisdiction_group":"","prefName":"Anisotes ukambensis","classification":"Protected / Regulated","taxonLevel":"species","family":"Acanthaceae","englishName":"Anisotes ukambensis","synonyms":"Anisotes ukambanensis","Note":"Kenya endemic; Acanthaceae.","genus_I":"Anisotes","is_aquatic":"no","aquatic_type_I":"","legal_status_ke":"Protected under FCMA 2016; Endangered","restriction_type":"Fully protected; regulated harvest","governing_law":"FCMA 2016; EMCA 1999"},{"GBIFusageKey":"2953238","country":"Kenya","region":"","jurisdiction":"NATIONAL","jurisdiction_group":"","prefName":"Bauhinia mombassae","classification":"Protected / Regulated","taxonLevel":"species","family":"Fabaceae","englishName":"Mombasa bauhinia","synonyms":"Bauhinia loeseneriana, Bauhinia loesneriana, Pauletia loeseneriana","Note":"Kenya endemic; found at Kaya Rabai sacred forest.","genus_I":"Bauhinia","is_aquatic":"no","aquatic_type_I":"","legal_status_ke":"Protected under FCMA 2016; Endangered","restriction_type":"Fully protected; regulated harvest","governing_law":"FCMA 2016; EMCA 1999"},{"GBIFusageKey":"11104253","country":"Kenya","region":"","jurisdiction":"NATIONAL","jurisdiction_group":"","prefName":"Warneckea sansibarica","classification":"Protected / Regulated","taxonLevel":"species","family":"Melastomataceae","englishName":"Warneckea maritima","synonyms":"","Note":"Kenya endemic; Melastomataceae.","genus_I":"Warneckea","is_aquatic":"no","aquatic_type_I":"","legal_status_ke":"Protected under FCMA 2016; Endangered","restriction_type":"Fully protected; regulated harvest","governing_law":"FCMA 2016; EMCA 1999"},{"GBIFusageKey":"8021703","country":"Kenya","region":"","jurisdiction":"NATIONAL","jurisdiction_group":"","prefName":"Warneckea melindensis","classification":"Protected / Regulated","taxonLevel":"species","family":"Melastomataceae","englishName":"Warneckea melindensis","synonyms":"Memecylon melindense","Note":"Coastal species; restricted to Malindi area.","genus_I":"Warneckea","is_aquatic":"no","aquatic_type_I":"","legal_status_ke":"Protected under FCMA 2016; Endangered","restriction_type":"Fully protected; regulated harvest","governing_law":"FCMA 2016; EMCA 1999"},{"GBIFusageKey":"2895576","country":"Kenya","region":"","jurisdiction":"NATIONAL","jurisdiction_group":"","prefName":"Coffea fadenii","classification":"Protected / Regulated","taxonLevel":"species","family":"Rubiaceae","englishName":"Faden's coffee","synonyms":"","Note":"Kenya endemic; wild coffee species from Taita Hills. Genetic resource for coffee breeding.","genus_I":"Coffea","is_aquatic":"no","aquatic_type_I":"","legal_status_ke":"Protected under FCMA 2016; Endangered","restriction_type":"Fully protected; regulated harvest","governing_law":"FCMA 2016; EMCA 1999"},{"GBIFusageKey":"2687617","country":"Kenya","region":"","jurisdiction":"NATIONAL","jurisdiction_group":"","prefName":"Afrocarpus usambarensis","classification":"Protected / Regulated","taxonLevel":"species","family":"Podocarpaceae","englishName":"East African yellowwood","synonyms":"Afrocarpus mannii usambarensis, Afrocarpus usambarensis, Nageia mannii usambarensis, Podocarpus usambarensis","Note":"Taita Hills priority species; in 12 ex situ collections.","genus_I":"Afrocarpus","is_aquatic":"no","aquatic_type_I":"","legal_status_ke":"Protected under FCMA 2016; Endangered","restriction_type":"Fully protected; regulated harvest","governing_law":"FCMA 2016; EMCA 1999"},{"GBIFusageKey":"5348472","country":"Kenya","region":"","jurisdiction":"NATIONAL","jurisdiction_group":"","prefName":"Newtonia erlangeri","classification":"Protected / Regulated","taxonLevel":"species","family":"Fabaceae","englishName":"Newtonia erlangeri","synonyms":"Piptadenia erlangeri","Note":"Rare leguminous tree of coastal forests.","genus_I":"Newtonia","is_aquatic":"no","aquatic_type_I":"","legal_status_ke":"Protected under FCMA 2016; Endangered","restriction_type":"Fully protected; regulated harvest","governing_law":"FCMA 2016; EMCA 1999"},{"GBIFusageKey":"2977460","country":"Kenya","region":"","jurisdiction":"NATIONAL","jurisdiction_group":"","prefName":"Gigasiphon macrosiphon","classification":"Protected / Regulated","taxonLevel":"species","family":"Fabaceae","englishName":"Gigasiphon macrosiphon","synonyms":"Bauhinia macrosiphon, Gigasiphon humblotianum","Note":"Very rare coastal forest tree with spectacular flowers.","genus_I":"Gigasiphon","is_aquatic":"no","aquatic_type_I":"","legal_status_ke":"Protected under FCMA 2016; Endangered","restriction_type":"Fully protected; regulated harvest","governing_law":"FCMA 2016; EMCA 1999"},{"GBIFusageKey":"3158252","country":"Kenya","region":"","jurisdiction":"NATIONAL","jurisdiction_group":"","prefName":"Isolona cauliflora","classification":"Protected / Regulated","taxonLevel":"species","family":"Annonaceae","englishName":"Isolona cauliflora","synonyms":"","Note":"Annonaceae; coastal forest species.","genus_I":"Isolona","is_aquatic":"no","aquatic_type_I":"","legal_status_ke":"Protected under FCMA 2016; Endangered","restriction_type":"Fully protected; regulated harvest","governing_law":"FCMA 2016; EMCA 1999"},{"GBIFusageKey":"4070825","country":"Kenya","region":"","jurisdiction":"NATIONAL","jurisdiction_group":"","prefName":"Diospyros shimbaensis","classification":"Protected / Regulated","taxonLevel":"species","family":"Ebenaceae","englishName":"Shimba Hills ebony","synonyms":"","Note":"Ebony species restricted to Shimba Hills.","genus_I":"Diospyros","is_aquatic":"no","aquatic_type_I":"","legal_status_ke":"Protected under FCMA 2016; Endangered","restriction_type":"Fully protected; regulated harvest","governing_law":"FCMA 2016; EMCA 1999"},{"GBIFusageKey":"3156633","country":"Kenya","region":"","jurisdiction":"NATIONAL","jurisdiction_group":"","prefName":"Toussaintia orientalis","classification":"Protected / Regulated","taxonLevel":"species","family":"Annonaceae","englishName":"Toussaintia orientalis","synonyms":"","Note":"Rare Annonaceae of East African coastal forests.","genus_I":"Toussaintia","is_aquatic":"no","aquatic_type_I":"","legal_status_ke":"Protected under FCMA 2016; Endangered","restriction_type":"Fully protected; regulated harvest","governing_law":"FCMA 2016; EMCA 1999"},{"GBIFusageKey":"5792509","country":"Kenya","region":"","jurisdiction":"NATIONAL","jurisdiction_group":"","prefName":"Uvariodendron gorgonis","classification":"Protected / Regulated","taxonLevel":"species","family":"Annonaceae","englishName":"Uvariodendron gorgonis","synonyms":"","Note":"Rare Annonaceae tree.","genus_I":"Uvariodendron","is_aquatic":"no","aquatic_type_I":"","legal_status_ke":"Protected under FCMA 2016; Endangered","restriction_type":"Fully protected; regulated harvest","governing_law":"FCMA 2016; EMCA 1999"},{"GBIFusageKey":"3661906","country":"Kenya","region":"","jurisdiction":"NATIONAL","jurisdiction_group":"","prefName":"Sclerocarya gillettii","classification":"Protected / Regulated","taxonLevel":"species","family":"Anacardiaceae","englishName":"Sclerocarya gillettii","synonyms":"","Note":"Anacardiaceae; related to marula.","genus_I":"Sclerocarya","is_aquatic":"no","aquatic_type_I":"","legal_status_ke":"Protected under FCMA 2016; Endangered","restriction_type":"Fully protected; regulated harvest","governing_law":"FCMA 2016; EMCA 1999"},{"GBIFusageKey":"3790694","country":"Kenya","region":"","jurisdiction":"NATIONAL","jurisdiction_group":"","prefName":"Gymnosporia keniensis","classification":"Protected / Regulated","taxonLevel":"species","family":"Celastraceae","englishName":"Gymnosporia keniensis","synonyms":"Gymnosporia serrata keniensis, Maytenus keniensis","Note":"Kenya endemic; Celastraceae.","genus_I":"Gymnosporia","is_aquatic":"no","aquatic_type_I":"","legal_status_ke":"Protected under FCMA 2016; Endangered","restriction_type":"Fully protected; regulated harvest","governing_law":"FCMA 2016; EMCA 1999"},{"GBIFusageKey":"5417563","country":"Kenya","region":"","jurisdiction":"NATIONAL","jurisdiction_group":"","prefName":"Eugenia tanaensis","classification":"Protected / Regulated","taxonLevel":"species","family":"Myrtaceae","englishName":"Tana River eugenia","synonyms":"","Note":"Restricted to Tana River forests.","genus_I":"Eugenia","is_aquatic":"no","aquatic_type_I":"","legal_status_ke":"Protected under FCMA 2016; Endangered","restriction_type":"Fully protected; regulated harvest","governing_law":"FCMA 2016; EMCA 1999"},{"GBIFusageKey":"3059788","country":"Kenya","region":"","jurisdiction":"NATIONAL","jurisdiction_group":"","prefName":"Croton alienus","classification":"Protected / Regulated","taxonLevel":"species","family":"Euphorbiaceae","englishName":"Croton alienus","synonyms":"Mildbraedia balboana","Note":"Euphorbiaceae.","genus_I":"Croton","is_aquatic":"no","aquatic_type_I":"","legal_status_ke":"Protected under FCMA 2016; Endangered","restriction_type":"Fully protected; regulated harvest","governing_law":"FCMA 2016; EMCA 1999"},{"GBIFusageKey":"5555202","country":"Kenya","region":"","jurisdiction":"NATIONAL","jurisdiction_group":"","prefName":"Brucea macrocarpa","classification":"Protected / Regulated","taxonLevel":"species","family":"Simaroubaceae","englishName":"Brucea macrocarpa","synonyms":"","Note":"Simaroubaceae; rare in East Africa.","genus_I":"Brucea","is_aquatic":"no","aquatic_type_I":"","legal_status_ke":"Protected under FCMA 2016; Endangered","restriction_type":"Fully protected; regulated harvest","governing_law":"FCMA 2016; EMCA 1999"},{"GBIFusageKey":"7797879","country":"Kenya","region":"","jurisdiction":"NATIONAL","jurisdiction_group":"","prefName":"Dalbergia gloveri","classification":"Protected / Regulated","taxonLevel":"species","family":"Fabaceae","englishName":"Glover's rosewood","synonyms":"","Note":"All Dalbergia spp. listed CITES Appendix II since CoP17 (2016).","genus_I":"Dalbergia","is_aquatic":"no","aquatic_type_I":"","legal_status_ke":"Protected under FCMA 2016; CITES Appendix II (all Dalbergia)","restriction_type":"Fully protected; CITES-regulated trade","governing_law":"FCMA 2016; CITES"},{"GBIFusageKey":"3834498","country":"Kenya","region":"","jurisdiction":"NATIONAL","jurisdiction_group":"","prefName":"Vepris glandulosa","classification":"Protected / Regulated","taxonLevel":"species","family":"Rutaceae","englishName":"Vepris glandulosa","synonyms":"Tecleopsis glandulosa","Note":"Rutaceae; coastal forest species.","genus_I":"Vepris","is_aquatic":"no","aquatic_type_I":"","legal_status_ke":"Protected under FCMA 2016; Endangered","restriction_type":"Fully protected; regulated harvest","governing_law":"FCMA 2016; EMCA 1999"},{"GBIFusageKey":"3035932","country":"Kenya","region":"","jurisdiction":"NATIONAL","jurisdiction_group":"","prefName":"Polyscias stuhlmannii","classification":"Protected / Regulated","taxonLevel":"species","family":"Araliaceae","englishName":"Polyscias stuhlmannii","synonyms":"Gastonia stuhlmannii, Polyscias stuhlmannii, Polyscias stuhlmannii inarticulata, Polyscias stuhlmannii stuhlmannii","Note":"Araliaceae.","genus_I":"Polyscias","is_aquatic":"no","aquatic_type_I":"","legal_status_ke":"Protected under FCMA 2016; Endangered","restriction_type":"Fully protected; regulated harvest","governing_law":"FCMA 2016; EMCA 1999"},{"GBIFusageKey":"2683779","country":"Kenya","region":"","jurisdiction":"NATIONAL","jurisdiction_group":"","prefName":"Encephalartos kisambo","classification":"Prohibited","taxonLevel":"species","family":"Zamiaceae","englishName":"Voi Cycad, Voi cycad","synonyms":"Encephalartos kanga, Encephalartos voiensis","Note":"Kenya endemic cycad; CITES Appendix I. Fewer than 100 mature individuals in the wild.","genus_I":"Encephalartos","is_aquatic":"no","aquatic_type_I":"","legal_status_ke":"Fully protected; CITES Appendix I (all Encephalartos)","restriction_type":"Prohibited commercial trade; fully protected","governing_law":"WCMA 2013; CITES; FCMA 2016"},{"GBIFusageKey":"2901546","country":"Kenya","region":"","jurisdiction":"NATIONAL","jurisdiction_group":"","prefName":"Oxyanthus pyriformis","classification":"Protected / Regulated","taxonLevel":"subspecies","family":"Rubiaceae","englishName":"Oxyanthus pyriformis subsp. longitubus","synonyms":"","Note":"Rubiaceae.","genus_I":"Oxyanthus","is_aquatic":"no","aquatic_type_I":"","legal_status_ke":"Protected under FCMA 2016; Endangered","restriction_type":"Fully protected; regulated harvest","governing_law":"FCMA 2016; EMCA 1999"},{"GBIFusageKey":"3768874","country":"Kenya","region":"","jurisdiction":"NATIONAL","jurisdiction_group":"","prefName":"Grevea eggelingii","classification":"Protected / Regulated","taxonLevel":"variety","family":"Montiniaceae","englishName":"Grevea eggelingii var. keniensis","synonyms":"Grevea madagascariensis keniensis","Note":"Kenya endemic variety.","genus_I":"Grevea","is_aquatic":"no","aquatic_type_I":"","legal_status_ke":"Protected under FCMA 2016; Endangered","restriction_type":"Fully protected; regulated harvest","governing_law":"FCMA 2016; EMCA 1999"},{"GBIFusageKey":"2944936","country":"Kenya","region":"","jurisdiction":"NATIONAL","jurisdiction_group":"","prefName":"Craibia brevicaudata","classification":"Protected / Regulated","taxonLevel":"species","family":"Fabaceae","englishName":"Craibia brevicaudata subsp. burttii","synonyms":"Craibia burttii, Dalbergia brevicaudata, Lonchocarpus brevicaudatus","Note":"Coastal forest legume.","genus_I":"Craibia","is_aquatic":"no","aquatic_type_I":"","legal_status_ke":"Protected under FCMA 2016; Endangered","restriction_type":"Fully protected; regulated harvest","governing_law":"FCMA 2016; EMCA 1999"},{"GBIFusageKey":"3897062","country":"Kenya","region":"","jurisdiction":"NATIONAL","jurisdiction_group":"","prefName":"Premna maxima","classification":"Protected / Regulated","taxonLevel":"species","family":"Lamiaceae","englishName":"Premna maxima","synonyms":"","Note":"Lamiaceae.","genus_I":"Premna","is_aquatic":"no","aquatic_type_I":"","legal_status_ke":"Protected under FCMA 2016; Endangered","restriction_type":"Fully protected; regulated harvest","governing_law":"FCMA 2016; EMCA 1999"},{"GBIFusageKey":"3155988","country":"Kenya","region":"","jurisdiction":"NATIONAL","jurisdiction_group":"","prefName":"Monanthotaxis faulknerae","classification":"Protected / Regulated","taxonLevel":"species","family":"Annonaceae","englishName":"Monanthotaxis faulknerae","synonyms":"","Note":"Annonaceae.","genus_I":"Monanthotaxis","is_aquatic":"no","aquatic_type_I":"","legal_status_ke":"Protected under FCMA 2016; Endangered","restriction_type":"Fully protected; regulated harvest","governing_law":"FCMA 2016; EMCA 1999"},{"GBIFusageKey":"3852095","country":"Kenya","region":"","jurisdiction":"NATIONAL","jurisdiction_group":"","prefName":"Khaya anthotheca","classification":"Protected / Regulated","taxonLevel":"species","family":"Meliaceae","englishName":"East African Mahogany, Nyasaland mahogany, White Mahogany, white-mahogany","synonyms":"Azedarach elegans, Garretia anthoteca, Khaya wildemanii, Melia elegans","Note":"All Khaya spp. listed CITES Appendix II since CoP19 (2022). Over 20% population decline.","genus_I":"Khaya","is_aquatic":"no","aquatic_type_I":"","legal_status_ke":"Protected under FCMA 2016; CITES Appendix II (all Khaya)","restriction_type":"Regulated harvest; CITES-regulated trade","governing_law":"FCMA 2016; CITES"},{"GBIFusageKey":"2966842","country":"Kenya","region":"","jurisdiction":"NATIONAL","jurisdiction_group":"","prefName":"Cynometra webberi","classification":"Protected / Regulated","taxonLevel":"species","family":"Fabaceae","englishName":"Webb's cynometra","synonyms":"","Note":"Dominant coastal forest species.","genus_I":"Cynometra","is_aquatic":"no","aquatic_type_I":"","legal_status_ke":"Protected under FCMA 2016; Vulnerable","restriction_type":"Regulated harvest","governing_law":"FCMA 2016; EMCA 1999"},{"GBIFusageKey":"5603222","country":"Kenya","region":"","jurisdiction":"NATIONAL","jurisdiction_group":"","prefName":"Warburgia stuhlmannii","classification":"Protected / Regulated","taxonLevel":"species","family":"Canellaceae","englishName":"Warburgia stuhlmannii","synonyms":"","Note":"Coastal forest species; medicinal use.","genus_I":"Warburgia","is_aquatic":"no","aquatic_type_I":"","legal_status_ke":"Protected under FCMA 2016; Vulnerable","restriction_type":"Regulated harvest","governing_law":"FCMA 2016; EMCA 1999"},{"GBIFusageKey":"5348471","country":"Kenya","region":"","jurisdiction":"NATIONAL","jurisdiction_group":"","prefName":"Newtonia paucijuga","classification":"Protected / Regulated","taxonLevel":"species","family":"Fabaceae","englishName":"Newtonia paucijuga","synonyms":"Cylicodiscus battiscombei, Cylicodiscus paucijugus, Piptadenia paucijuga","Note":"Coastal forest legume.","genus_I":"Newtonia","is_aquatic":"no","aquatic_type_I":"","legal_status_ke":"Protected under FCMA 2016; Vulnerable","restriction_type":"Regulated harvest","governing_law":"FCMA 2016; EMCA 1999"},{"GBIFusageKey":"5355656","country":"Kenya","region":"","jurisdiction":"NATIONAL","jurisdiction_group":"","prefName":"Prioria msoo","classification":"Protected / Regulated","taxonLevel":"species","family":"Fabaceae","englishName":"Msoo","synonyms":"","Note":"Important coastal forest timber tree.","genus_I":"Prioria","is_aquatic":"no","aquatic_type_I":"","legal_status_ke":"Protected under FCMA 2016; Vulnerable","restriction_type":"Regulated harvest","governing_law":"FCMA 2016; EMCA 1999"},{"GBIFusageKey":"5564620","country":"Kenya","region":"","jurisdiction":"NATIONAL","jurisdiction_group":"","prefName":"Brochoneura usambarensis","classification":"Protected / Regulated","taxonLevel":"species","family":"Myristicaceae","englishName":"Cephalosphaera usambarensis","synonyms":"","Note":"Myristicaceae.","genus_I":"Brochoneura","is_aquatic":"no","aquatic_type_I":"","legal_status_ke":"Protected under FCMA 2016; Vulnerable","restriction_type":"Regulated harvest","governing_law":"FCMA 2016; EMCA 1999"},{"GBIFusageKey":"2883730","country":"Kenya","region":"","jurisdiction":"NATIONAL","jurisdiction_group":"","prefName":"Mimusops riparia","classification":"Protected / Regulated","taxonLevel":"species","family":"Sapotaceae","englishName":"Mimusops riparia","synonyms":"Mimusops dependens, Mimusops useguhensis","Note":"Sapotaceae; coastal forest.","genus_I":"Mimusops","is_aquatic":"no","aquatic_type_I":"","legal_status_ke":"Protected under FCMA 2016; Vulnerable","restriction_type":"Regulated harvest","governing_law":"FCMA 2016; EMCA 1999"},{"GBIFusageKey":"2884716","country":"Kenya","region":"","jurisdiction":"NATIONAL","jurisdiction_group":"","prefName":"Aningeria pseudoracemosa","classification":"Protected / Regulated","taxonLevel":"species","family":"Sapotaceae","englishName":"Pouteria pseudoracemosa","synonyms":"","Note":"Sapotaceae.","genus_I":"Aningeria","is_aquatic":"no","aquatic_type_I":"","legal_status_ke":"Protected under FCMA 2016; Vulnerable","restriction_type":"Regulated harvest","governing_law":"FCMA 2016; EMCA 1999"},{"GBIFusageKey":"5571654","country":"Kenya","region":"","jurisdiction":"NATIONAL","jurisdiction_group":"","prefName":"Ficus faulkneriana","classification":"Protected / Regulated","taxonLevel":"species","family":"Moraceae","englishName":"Faulkner's fig","synonyms":"","Note":"Moraceae.","genus_I":"Ficus","is_aquatic":"no","aquatic_type_I":"","legal_status_ke":"Protected under FCMA 2016; Vulnerable","restriction_type":"Regulated harvest","governing_law":"FCMA 2016; EMCA 1999"},{"GBIFusageKey":"3786858","country":"Kenya","region":"","jurisdiction":"NATIONAL","jurisdiction_group":"","prefName":"Chytranthus obliquinervis","classification":"Protected / Regulated","taxonLevel":"species","family":"Sapindaceae","englishName":"Chytranthus obliquinervis","synonyms":"Chytranthus obliquinervis","Note":"Sapindaceae.","genus_I":"Chytranthus","is_aquatic":"no","aquatic_type_I":"","legal_status_ke":"Protected under FCMA 2016; Vulnerable","restriction_type":"Regulated harvest","governing_law":"FCMA 2016; EMCA 1999"},{"GBIFusageKey":"2906217","country":"Kenya","region":"","jurisdiction":"NATIONAL","jurisdiction_group":"","prefName":"Rothmannia macrosiphon","classification":"Protected / Regulated","taxonLevel":"species","family":"Rubiaceae","englishName":"Rothmannia macrosiphon","synonyms":"Randia macrosiphon","Note":"Rubiaceae.","genus_I":"Rothmannia","is_aquatic":"no","aquatic_type_I":"","legal_status_ke":"Protected under FCMA 2016; Vulnerable","restriction_type":"Regulated harvest","governing_law":"FCMA 2016; EMCA 1999"},{"GBIFusageKey":"3616440","country":"Kenya","region":"","jurisdiction":"NATIONAL","jurisdiction_group":"","prefName":"Pleioceras orientale","classification":"Protected / Regulated","taxonLevel":"species","family":"Apocynaceae","englishName":"Pleioceras orientale","synonyms":"","Note":"Apocynaceae.","genus_I":"Pleioceras","is_aquatic":"no","aquatic_type_I":"","legal_status_ke":"Protected under FCMA 2016; Vulnerable","restriction_type":"Regulated harvest","governing_law":"FCMA 2016; EMCA 1999"},{"GBIFusageKey":"2895921","country":"Kenya","region":"","jurisdiction":"NATIONAL","jurisdiction_group":"","prefName":"Tarenna drummondii","classification":"Protected / Regulated","taxonLevel":"species","family":"Rubiaceae","englishName":"Tarenna drummondii","synonyms":"","Note":"Rubiaceae.","genus_I":"Tarenna","is_aquatic":"no","aquatic_type_I":"","legal_status_ke":"Protected under FCMA 2016; Vulnerable","restriction_type":"Regulated harvest","governing_law":"FCMA 2016; EMCA 1999"},{"GBIFusageKey":"10810950","country":"Kenya","region":"","jurisdiction":"NATIONAL","jurisdiction_group":"","prefName":"Dovyalis keniensis","classification":"Protected / Regulated","taxonLevel":"species","family":"Salicaceae","englishName":"Kenya dovyalis","synonyms":"","Note":"Kenya endemic; Salicaceae.","genus_I":"Dovyalis","is_aquatic":"no","aquatic_type_I":"","legal_status_ke":"Protected under FCMA 2016; Vulnerable","restriction_type":"Regulated harvest","governing_law":"FCMA 2016; EMCA 1999"},{"GBIFusageKey":"2886053","country":"Kenya","region":"","jurisdiction":"NATIONAL","jurisdiction_group":"","prefName":"Synsepalum subverticillatum","classification":"Protected / Regulated","taxonLevel":"species","family":"Sapotaceae","englishName":"Synsepalum subverticillatum","synonyms":"Pachystela subverticillata, Pseudoboivinella subverticillata","Note":"Kenya endemic; Sapotaceae.","genus_I":"Synsepalum","is_aquatic":"no","aquatic_type_I":"","legal_status_ke":"Protected under FCMA 2016; Vulnerable","restriction_type":"Regulated harvest","governing_law":"FCMA 2016; EMCA 1999"},{"GBIFusageKey":"8177267","country":"Kenya","region":"","jurisdiction":"NATIONAL","jurisdiction_group":"","prefName":"Vepris robertsoniae","classification":"Protected / Regulated","taxonLevel":"species","family":"Rutaceae","englishName":"Robertson's vepris","synonyms":"","Note":"Kenya endemic; known from 9 locations, AOO 88 km2.","genus_I":"Vepris","is_aquatic":"no","aquatic_type_I":"","legal_status_ke":"Protected under FCMA 2016; Vulnerable","restriction_type":"Regulated harvest","governing_law":"FCMA 2016; EMCA 1999"},{"GBIFusageKey":"3834564","country":"Kenya","region":"","jurisdiction":"NATIONAL","jurisdiction_group":"","prefName":"Vepris fadenii","classification":"Protected / Regulated","taxonLevel":"species","family":"Rutaceae","englishName":"Faden's vepris","synonyms":"Diphasiopsis fadenii","Note":"Rutaceae.","genus_I":"Vepris","is_aquatic":"no","aquatic_type_I":"","legal_status_ke":"Protected under FCMA 2016; Vulnerable","restriction_type":"Regulated harvest","governing_law":"FCMA 2016; EMCA 1999"},{"GBIFusageKey":"2893042","country":"Kenya","region":"","jurisdiction":"NATIONAL","jurisdiction_group":"","prefName":"Psydrax polhillii","classification":"Protected / Regulated","taxonLevel":"species","family":"Rubiaceae","englishName":"Psydrax polhillii","synonyms":"","Note":"Kenya endemic; Rubiaceae.","genus_I":"Psydrax","is_aquatic":"no","aquatic_type_I":"","legal_status_ke":"Protected under FCMA 2016; Vulnerable","restriction_type":"Regulated harvest","governing_law":"FCMA 2016; EMCA 1999"},{"GBIFusageKey":"5357232","country":"Kenya","region":"","jurisdiction":"NATIONAL","jurisdiction_group":"","prefName":"Parkinsonia anacantha","classification":"Protected / Regulated","taxonLevel":"species","family":"Fabaceae","englishName":"Parkinsonia anacantha","synonyms":"","Note":"Kenya endemic; dry-country legume.","genus_I":"Parkinsonia","is_aquatic":"no","aquatic_type_I":"","legal_status_ke":"Protected under FCMA 2016; Vulnerable","restriction_type":"Regulated harvest","governing_law":"FCMA 2016; EMCA 1999"},{"GBIFusageKey":"3863755","country":"Kenya","region":"","jurisdiction":"NATIONAL","jurisdiction_group":"","prefName":"Memecylon teitense","classification":"Protected / Regulated","taxonLevel":"species","family":"Melastomataceae","englishName":"Taita Hills memecylon","synonyms":"","Note":"Restricted to Taita Hills.","genus_I":"Memecylon","is_aquatic":"no","aquatic_type_I":"","legal_status_ke":"Protected under FCMA 2016; Vulnerable","restriction_type":"Regulated harvest","governing_law":"FCMA 2016; EMCA 1999"},{"GBIFusageKey":"3863444","country":"Kenya","region":"","jurisdiction":"NATIONAL","jurisdiction_group":"","prefName":"Memecylon verruculosum","classification":"Protected / Regulated","taxonLevel":"species","family":"Melastomataceae","englishName":"Memecylon verruculosum","synonyms":"","Note":"Melastomataceae.","genus_I":"Memecylon","is_aquatic":"no","aquatic_type_I":"","legal_status_ke":"Protected under FCMA 2016; Vulnerable","restriction_type":"Regulated harvest","governing_law":"FCMA 2016; EMCA 1999"},{"GBIFusageKey":"5355691","country":"Kenya","region":"","jurisdiction":"NATIONAL","jurisdiction_group":"","prefName":"Millettia oblata","classification":"Protected / Regulated","taxonLevel":"subspecies","family":"Fabaceae","englishName":"Taita Hills millettia","synonyms":"","Note":"Restricted to Taita Hills.","genus_I":"Millettia","is_aquatic":"no","aquatic_type_I":"","legal_status_ke":"Protected under FCMA 2016; Vulnerable","restriction_type":"Regulated harvest","governing_law":"FCMA 2016; EMCA 1999"},{"GBIFusageKey":"7223938","country":"Kenya","region":"","jurisdiction":"NATIONAL","jurisdiction_group":"","prefName":"Syzygium micklethwaitii","classification":"Protected / Regulated","taxonLevel":"variety","family":"Myrtaceae","englishName":"Syzygium micklethwaitii","synonyms":"","Note":"Myrtaceae.","genus_I":"Syzygium","is_aquatic":"no","aquatic_type_I":"","legal_status_ke":"Protected under FCMA 2016; Vulnerable","restriction_type":"Regulated harvest","governing_law":"FCMA 2016; EMCA 1999"},{"GBIFusageKey":"3804010","country":"Kenya","region":"","jurisdiction":"NATIONAL","jurisdiction_group":"","prefName":"Populus ilicifolia","classification":"Protected / Regulated","taxonLevel":"species","family":"Salicaceae","englishName":"Tana River Poplar","synonyms":"Balsamiflua denhardtiorum, Balsamiflua ilicifolia, Celtis ilicifolia, Populus denhardtiorum, Populus euphratica denhardtiorum, Tsavo ilicifolia, Turanga ilicifolia","Note":"Kenya endemic; Kenya's only native poplar. Riparian species.","genus_I":"Populus","is_aquatic":"no","aquatic_type_I":"","legal_status_ke":"Protected under FCMA 2016; Vulnerable","restriction_type":"Regulated harvest","governing_law":"FCMA 2016; EMCA 1999"},{"GBIFusageKey":"5547580","country":"Kenya","region":"","jurisdiction":"NATIONAL","jurisdiction_group":"","prefName":"Sterculia schliebenii","classification":"Protected / Regulated","taxonLevel":"species","family":"Malvaceae","englishName":"Sterculia schliebenii","synonyms":"","Note":"Malvaceae.","genus_I":"Sterculia","is_aquatic":"no","aquatic_type_I":"","legal_status_ke":"Protected under FCMA 2016; Vulnerable","restriction_type":"Regulated harvest","governing_law":"FCMA 2016; EMCA 1999"},{"GBIFusageKey":"3158636","country":"Kenya","region":"","jurisdiction":"NATIONAL","jurisdiction_group":"","prefName":"Mkilua fragrans","classification":"Protected / Regulated","taxonLevel":"species","family":"Annonaceae","englishName":"Mkilua fragrans","synonyms":"","Note":"Annonaceae; fragrant flowers.","genus_I":"Mkilua","is_aquatic":"no","aquatic_type_I":"","legal_status_ke":"Protected under FCMA 2016; Vulnerable","restriction_type":"Regulated harvest","governing_law":"FCMA 2016; EMCA 1999"},{"GBIFusageKey":"2964786","country":"Kenya","region":"","jurisdiction":"NATIONAL","jurisdiction_group":"","prefName":"Guibourtia schliebenii","classification":"Protected / Regulated","taxonLevel":"species","family":"Fabaceae","englishName":"Guibourtia schliebenii","synonyms":"Copaifera schliebenii","Note":"Fabaceae.","genus_I":"Guibourtia","is_aquatic":"no","aquatic_type_I":"","legal_status_ke":"Protected under FCMA 2016; Vulnerable","restriction_type":"Regulated harvest","governing_law":"FCMA 2016; EMCA 1999"},{"GBIFusageKey":"3157990","country":"Kenya","region":"","jurisdiction":"NATIONAL","jurisdiction_group":"","prefName":"Uvariodendron anisatum","classification":"Protected / Regulated","taxonLevel":"species","family":"Annonaceae","englishName":"Uvariodendron anisatum","synonyms":"","Note":"Annonaceae.","genus_I":"Uvariodendron","is_aquatic":"no","aquatic_type_I":"","legal_status_ke":"Protected under FCMA 2016; Vulnerable","restriction_type":"Regulated harvest","governing_law":"FCMA 2016; EMCA 1999"},{"GBIFusageKey":"3158017","country":"Kenya","region":"","jurisdiction":"NATIONAL","jurisdiction_group":"","prefName":"Uvariodendron kirkii","classification":"Protected / Regulated","taxonLevel":"species","family":"Annonaceae","englishName":"Uvariodendron kirkii","synonyms":"","Note":"Annonaceae.","genus_I":"Uvariodendron","is_aquatic":"no","aquatic_type_I":"","legal_status_ke":"Protected under FCMA 2016; Vulnerable","restriction_type":"Regulated harvest","governing_law":"FCMA 2016; EMCA 1999"},{"GBIFusageKey":"8259730","country":"Kenya","region":"","jurisdiction":"NATIONAL","jurisdiction_group":"","prefName":"Dasylepis integra","classification":"Protected / Regulated","taxonLevel":"species","family":"Achariaceae","englishName":"Dasylepis integra","synonyms":"Dasylepis leptophylla","Note":"Achariaceae.","genus_I":"Dasylepis","is_aquatic":"no","aquatic_type_I":"","legal_status_ke":"Protected under FCMA 2016; Vulnerable","restriction_type":"Regulated harvest","governing_law":"FCMA 2016; EMCA 1999"},{"GBIFusageKey":"3918792","country":"Kenya","region":"","jurisdiction":"NATIONAL","jurisdiction_group":"","prefName":"Mildbraedia carpinifolia","classification":"Protected / Regulated","taxonLevel":"species","family":"Euphorbiaceae","englishName":"Mildbraedia carpinifolia","synonyms":"Jatropha carpinifolia, Neojatropha carpinifolia, Plesiatropha carpinifolia, Plesiatropha carpinifolia carpinifolia","Note":"Euphorbiaceae.","genus_I":"Mildbraedia","is_aquatic":"no","aquatic_type_I":"","legal_status_ke":"Protected under FCMA 2016; Vulnerable","restriction_type":"Regulated harvest","governing_law":"FCMA 2016; EMCA 1999"},{"GBIFusageKey":"2981765","country":"Kenya","region":"","jurisdiction":"NATIONAL","jurisdiction_group":"","prefName":"Julbernardia magnistipulata","classification":"Protected / Regulated","taxonLevel":"species","family":"Fabaceae","englishName":"Julbernardia magnistipulata","synonyms":"Berlinia magnistipulata, Isoberlinia magnistipulata","Note":"Coastal forest legume; miombo woodland species.","genus_I":"Julbernardia","is_aquatic":"no","aquatic_type_I":"","legal_status_ke":"Protected under FCMA 2016; Vulnerable","restriction_type":"Regulated harvest","governing_law":"FCMA 2016; EMCA 1999"},{"GBIFusageKey":"2970950","country":"Kenya","region":"","jurisdiction":"NATIONAL","jurisdiction_group":"","prefName":"Dialium holtzii","classification":"Protected / Regulated","taxonLevel":"species","family":"Fabaceae","englishName":"Dialium holtzii","synonyms":"Dialium mossambicense","Note":"Fabaceae.","genus_I":"Dialium","is_aquatic":"no","aquatic_type_I":"","legal_status_ke":"Protected under FCMA 2016; Vulnerable","restriction_type":"Regulated harvest","governing_law":"FCMA 2016; EMCA 1999"},{"GBIFusageKey":"5351066","country":"Kenya","region":"","jurisdiction":"NATIONAL","jurisdiction_group":"","prefName":"Stuhlmannia moavi","classification":"Protected / Regulated","taxonLevel":"species","family":"Fabaceae","englishName":"Stuhlmannia moavi","synonyms":"Caesalpinia dalei, Caesalpinia insolita, Caesalpinia moavii, Hoffmannseggia insolita","Note":"Fabaceae.","genus_I":"Stuhlmannia","is_aquatic":"no","aquatic_type_I":"","legal_status_ke":"Protected under FCMA 2016; Vulnerable","restriction_type":"Regulated harvest","governing_law":"FCMA 2016; EMCA 1999"},{"GBIFusageKey":"3074187","country":"Kenya","region":"","jurisdiction":"NATIONAL","jurisdiction_group":"","prefName":"Macaranga conglomerata","classification":"Protected / Regulated","taxonLevel":"species","family":"Euphorbiaceae","englishName":"Macaranga conglomerata","synonyms":"","Note":"Euphorbiaceae.","genus_I":"Macaranga","is_aquatic":"no","aquatic_type_I":"","legal_status_ke":"Protected under FCMA 2016; Vulnerable","restriction_type":"Regulated harvest","governing_law":"FCMA 2016; EMCA 1999"},{"GBIFusageKey":"3157120","country":"Kenya","region":"","jurisdiction":"NATIONAL","jurisdiction_group":"","prefName":"Xylopia arenaria","classification":"Protected / Regulated","taxonLevel":"species","family":"Annonaceae","englishName":"Xylopia arenaria","synonyms":"","Note":"Annonaceae; coastal forest.","genus_I":"Xylopia","is_aquatic":"no","aquatic_type_I":"","legal_status_ke":"Protected under FCMA 2016; Vulnerable","restriction_type":"Regulated harvest","governing_law":"FCMA 2016; EMCA 1999"},{"GBIFusageKey":"3154868","country":"Kenya","region":"","jurisdiction":"NATIONAL","jurisdiction_group":"","prefName":"Ophrypetalum odoratum","classification":"Protected / Regulated","taxonLevel":"species","family":"Annonaceae","englishName":"Ophrypetalum odoratum","synonyms":"","Note":"Annonaceae.","genus_I":"Ophrypetalum","is_aquatic":"no","aquatic_type_I":"","legal_status_ke":"Protected under FCMA 2016; Vulnerable","restriction_type":"Regulated harvest","governing_law":"FCMA 2016; EMCA 1999"},{"GBIFusageKey":"4070544","country":"Kenya","region":"","jurisdiction":"NATIONAL","jurisdiction_group":"","prefName":"Diospyros greenwayi","classification":"Protected / Regulated","taxonLevel":"species","family":"Ebenaceae","englishName":"Diospyros greenwayi","synonyms":"","Note":"Ebenaceae.","genus_I":"Diospyros","is_aquatic":"no","aquatic_type_I":"","legal_status_ke":"Protected under FCMA 2016; Vulnerable","restriction_type":"Regulated harvest","governing_law":"FCMA 2016; EMCA 1999"},{"GBIFusageKey":"4070211","country":"Kenya","region":"","jurisdiction":"NATIONAL","jurisdiction_group":"","prefName":"Diospyros amaniensis","classification":"Protected / Regulated","taxonLevel":"species","family":"Ebenaceae","englishName":"Diospyros amaniensis","synonyms":"","Note":"Ebenaceae.","genus_I":"Diospyros","is_aquatic":"no","aquatic_type_I":"","legal_status_ke":"Protected under FCMA 2016; Vulnerable","restriction_type":"Regulated harvest","governing_law":"FCMA 2016; EMCA 1999"},{"GBIFusageKey":"3987991","country":"Kenya","region":"","jurisdiction":"NATIONAL","jurisdiction_group":"","prefName":"Buxus obtusifolia","classification":"Protected / Regulated","taxonLevel":"species","family":"Buxaceae","englishName":"Buxus obtusifolia","synonyms":"Notobuxus obtusifolia","Note":"Buxaceae.","genus_I":"Buxus","is_aquatic":"no","aquatic_type_I":"","legal_status_ke":"Protected under FCMA 2016; Vulnerable","restriction_type":"Regulated harvest","governing_law":"FCMA 2016; EMCA 1999"},{"GBIFusageKey":"3752358","country":"Kenya","region":"","jurisdiction":"NATIONAL","jurisdiction_group":"","prefName":"Moringa arborea","classification":"Protected / Regulated","taxonLevel":"species","family":"Moringaceae","englishName":"Moringa arborea","synonyms":"","Note":"Moringaceae; dryland species.","genus_I":"Moringa","is_aquatic":"no","aquatic_type_I":"","legal_status_ke":"Protected under FCMA 2016; Vulnerable","restriction_type":"Regulated harvest","governing_law":"FCMA 2016; EMCA 1999"},{"GBIFusageKey":"2952347","country":"Kenya","region":"","jurisdiction":"NATIONAL","jurisdiction_group":"","prefName":"Angylocalyx braunii","classification":"Protected / Regulated","taxonLevel":"species","family":"Fabaceae","englishName":"Angylocalyx braunii","synonyms":"","Note":"Fabaceae.","genus_I":"Angylocalyx","is_aquatic":"no","aquatic_type_I":"","legal_status_ke":"Protected under FCMA 2016; Vulnerable","restriction_type":"Regulated harvest","governing_law":"FCMA 2016; EMCA 1999"},{"GBIFusageKey":"3788017","country":"Kenya","region":"","jurisdiction":"NATIONAL","jurisdiction_group":"","prefName":"Camptolepis ramiflora","classification":"Protected / Regulated","taxonLevel":"species","family":"Sapindaceae","englishName":"Camptolepis ramiflora","synonyms":"Deinbollia ramiflora, Haplocoelum jubense, Hypseloderma jubense","Note":"Sapindaceae.","genus_I":"Camptolepis","is_aquatic":"no","aquatic_type_I":"","legal_status_ke":"Protected under FCMA 2016; Vulnerable","restriction_type":"Regulated harvest","governing_law":"FCMA 2016; EMCA 1999"},{"GBIFusageKey":"5352558","country":"Kenya","region":"","jurisdiction":"NATIONAL","jurisdiction_group":"","prefName":"Baphia longipedicellata","classification":"Protected / Regulated","taxonLevel":"species","family":"Fabaceae","englishName":"Baphia keniensis","synonyms":"","Note":"Kenya endemic; Fabaceae.","genus_I":"Baphia","is_aquatic":"no","aquatic_type_I":"","legal_status_ke":"Protected under FCMA 2016; Vulnerable","restriction_type":"Regulated harvest","governing_law":"FCMA 2016; EMCA 1999"},{"GBIFusageKey":"5335113","country":"Kenya","region":"","jurisdiction":"NATIONAL","jurisdiction_group":"","prefName":"Gardenia transvenulosa","classification":"Protected / Regulated","taxonLevel":"species","family":"Rubiaceae","englishName":"Gardenia transvenulosa","synonyms":"","Note":"Rubiaceae.","genus_I":"Gardenia","is_aquatic":"no","aquatic_type_I":"","legal_status_ke":"Protected under FCMA 2016; Vulnerable","restriction_type":"Regulated harvest","governing_law":"FCMA 2016; EMCA 1999"},{"GBIFusageKey":"3834100","country":"Kenya","region":"","jurisdiction":"NATIONAL","jurisdiction_group":"","prefName":"Vepris samburuensis","classification":"Protected / Regulated","taxonLevel":"species","family":"Rutaceae","englishName":"Samburu vepris","synonyms":"","Note":"Kenya endemic; Rutaceae.","genus_I":"Vepris","is_aquatic":"no","aquatic_type_I":"","legal_status_ke":"Protected under FCMA 2016; Vulnerable","restriction_type":"Regulated harvest","governing_law":"FCMA 2016; EMCA 1999"},{"GBIFusageKey":"3834095","country":"Kenya","region":"","jurisdiction":"NATIONAL","jurisdiction_group":"","prefName":"Vepris sansibarensis","classification":"Protected / Regulated","taxonLevel":"species","family":"Rutaceae","englishName":"Vepris sansibarensis","synonyms":"Toddalia sansibarensis, Toddaliopsis sansibarensis","Note":"Rutaceae.","genus_I":"Vepris","is_aquatic":"no","aquatic_type_I":"","legal_status_ke":"Protected under FCMA 2016; Vulnerable","restriction_type":"Regulated harvest","governing_law":"FCMA 2016; EMCA 1999"},{"GBIFusageKey":"5327816","country":"Kenya","region":"","jurisdiction":"NATIONAL","jurisdiction_group":"","prefName":"Pandanus kajui","classification":"Protected / Regulated","taxonLevel":"species","family":"Pandanaceae","englishName":"Kaju's pandanus","synonyms":"Pandanus embuensis","Note":"Pandanaceae.","genus_I":"Pandanus","is_aquatic":"no","aquatic_type_I":"","legal_status_ke":"Protected under FCMA 2016; Vulnerable","restriction_type":"Regulated harvest","governing_law":"FCMA 2016; EMCA 1999"},{"GBIFusageKey":"4177549","country":"Kenya","region":"","jurisdiction":"NATIONAL","jurisdiction_group":"","prefName":"Ocotea argylei","classification":"Protected / Regulated","taxonLevel":"species","family":"Lauraceae","englishName":"Argyle's ocotea","synonyms":"","Note":"Lauraceae.","genus_I":"Ocotea","is_aquatic":"no","aquatic_type_I":"","legal_status_ke":"Protected under FCMA 2016; Vulnerable","restriction_type":"Regulated harvest","governing_law":"FCMA 2016; EMCA 1999"},{"GBIFusageKey":"2900909","country":"Kenya","region":"","jurisdiction":"NATIONAL","jurisdiction_group":"","prefName":"Afrocanthium keniense","classification":"Protected / Regulated","taxonLevel":"species","family":"Rubiaceae","englishName":"Afrocanthium keniense","synonyms":"Canthium keniense","Note":"Kenya endemic; Rubiaceae.","genus_I":"Afrocanthium","is_aquatic":"no","aquatic_type_I":"","legal_status_ke":"Protected under FCMA 2016; Vulnerable","restriction_type":"Regulated harvest","governing_law":"FCMA 2016; EMCA 1999"},{"GBIFusageKey":"3075123","country":"Kenya","region":"","jurisdiction":"NATIONAL","jurisdiction_group":"","prefName":"Aristogeitonia monophylla","classification":"Protected / Regulated","taxonLevel":"species","family":"Picrodendraceae","englishName":"Aristogeitona monophylla","synonyms":"","Note":"Peraceae.","genus_I":"Aristogeitonia","is_aquatic":"no","aquatic_type_I":"","legal_status_ke":"Protected under FCMA 2016; Vulnerable","restriction_type":"Regulated harvest","governing_law":"FCMA 2016; EMCA 1999"},{"GBIFusageKey":"2886401","country":"Kenya","region":"","jurisdiction":"NATIONAL","jurisdiction_group":"","prefName":"Vitellariopsis kirkii","classification":"Protected / Regulated","taxonLevel":"species","family":"Sapotaceae","englishName":"Vitellariopsis kirkii","synonyms":"Butyrospermum kirkii, Mimusops bakeri, Mimusops kirkii","Note":"Sapotaceae.","genus_I":"Vitellariopsis","is_aquatic":"no","aquatic_type_I":"","legal_status_ke":"Protected under FCMA 2016; Vulnerable","restriction_type":"Regulated harvest","governing_law":"FCMA 2016; EMCA 1999"},{"GBIFusageKey":"5576774","country":"Kenya","region":"","jurisdiction":"NATIONAL","jurisdiction_group":"","prefName":"Allophylus chirindensis","classification":"Protected / Regulated","taxonLevel":"species","family":"Sapindaceae","englishName":"Allophylus zimmermannianus","synonyms":"","Note":"Sapindaceae.","genus_I":"Allophylus","is_aquatic":"no","aquatic_type_I":"","legal_status_ke":"Protected under FCMA 2016; Vulnerable","restriction_type":"Regulated harvest","governing_law":"FCMA 2016; EMCA 1999"},{"GBIFusageKey":"5602736","country":"Kenya","region":"","jurisdiction":"NATIONAL","jurisdiction_group":"","prefName":"Lasiodiscus pervillei","classification":"Protected / Regulated","taxonLevel":"subspecies","family":"Rhamnaceae","englishName":"Lasiodiscus mildbraedii subsp. ferrugineus","synonyms":"","Note":"Rhamnaceae.","genus_I":"Lasiodiscus","is_aquatic":"no","aquatic_type_I":"","legal_status_ke":"Protected under FCMA 2016; Vulnerable","restriction_type":"Regulated harvest","governing_law":"FCMA 2016; EMCA 1999"},{"GBIFusageKey":"5335100","country":"Kenya","region":"","jurisdiction":"NATIONAL","jurisdiction_group":"","prefName":"Gardenia posoquerioides","classification":"Protected / Regulated","taxonLevel":"species","family":"Rubiaceae","englishName":"Gardenia posoquerioides","synonyms":"","Note":"Rubiaceae; in 13 ex situ collections.","genus_I":"Gardenia","is_aquatic":"no","aquatic_type_I":"","legal_status_ke":"Protected under FCMA 2016; Vulnerable","restriction_type":"Regulated harvest","governing_law":"FCMA 2016; EMCA 1999"},{"GBIFusageKey":"7226061","country":"Kenya","region":"","jurisdiction":"NATIONAL","jurisdiction_group":"","prefName":"Drypetes usambarica","classification":"Protected / Regulated","taxonLevel":"variety","family":"Putranjivaceae","englishName":"Drypetes usambarica","synonyms":"","Note":"Putranjivaceae.","genus_I":"Drypetes","is_aquatic":"no","aquatic_type_I":"","legal_status_ke":"Protected under FCMA 2016; Vulnerable","restriction_type":"Regulated harvest","governing_law":"FCMA 2016; EMCA 1999"},{"GBIFusageKey":"3075883","country":"Kenya","region":"","jurisdiction":"NATIONAL","jurisdiction_group":"","prefName":"Drypetes natalensis","classification":"Protected / Regulated","taxonLevel":"variety","family":"Putranjivaceae","englishName":"Drypetes natalensis var. leiogyna","synonyms":"","Note":"Putranjivaceae.","genus_I":"Drypetes","is_aquatic":"no","aquatic_type_I":"","legal_status_ke":"Protected under FCMA 2016; Vulnerable","restriction_type":"Regulated harvest","governing_law":"FCMA 2016; EMCA 1999"},{"GBIFusageKey":"3071633","country":"Kenya","region":"","jurisdiction":"NATIONAL","jurisdiction_group":"","prefName":"Ricinodendron heudelotii","classification":"Protected / Regulated","taxonLevel":"variety","family":"Euphorbiaceae","englishName":"Ricinodendron heudelotii var. tomentellum","synonyms":"Ricinodendron schliebenii, Ricinodendron tomentellum","Note":"Euphorbiaceae.","genus_I":"Ricinodendron","is_aquatic":"no","aquatic_type_I":"","legal_status_ke":"Protected under FCMA 2016; Vulnerable","restriction_type":"Regulated harvest","governing_law":"FCMA 2016; EMCA 1999"},{"GBIFusageKey":"5378240","country":"Kenya","region":"","jurisdiction":"NATIONAL","jurisdiction_group":"","prefName":"Shirakiopsis trilocularis","classification":"Protected / Regulated","taxonLevel":"species","family":"Euphorbiaceae","englishName":"Sapium triloculare","synonyms":"","Note":"Euphorbiaceae.","genus_I":"Shirakiopsis","is_aquatic":"no","aquatic_type_I":"","legal_status_ke":"Protected under FCMA 2016; Vulnerable","restriction_type":"Regulated harvest","governing_law":"FCMA 2016; EMCA 1999"},{"GBIFusageKey":"7769134","country":"Kenya","region":"","jurisdiction":"NATIONAL","jurisdiction_group":"","prefName":"Boscia mazzocchii","classification":"Protected / Regulated","taxonLevel":"species","family":"Capparaceae","englishName":"Boscia mazzocchii","synonyms":"Boscia tomentella, Capparis mazzocchii, Maerua mazzocchii","Note":"Capparaceae; dryland species.","genus_I":"Boscia","is_aquatic":"no","aquatic_type_I":"","legal_status_ke":"Protected under FCMA 2016; Vulnerable","restriction_type":"Regulated harvest","governing_law":"FCMA 2016; EMCA 1999"},{"GBIFusageKey":"2886116","country":"Kenya","region":"","jurisdiction":"NATIONAL","jurisdiction_group":"","prefName":"Synsepalum kassneri","classification":"Protected / Regulated","taxonLevel":"species","family":"Sapotaceae","englishName":"Synsepalum kassneri","synonyms":"Afrosersalisia kassneri, Pouteria kassneri, Sersalisia kassneri, Tulestea kassneri","Note":"Sapotaceae.","genus_I":"Synsepalum","is_aquatic":"no","aquatic_type_I":"","legal_status_ke":"Protected under FCMA 2016; Vulnerable","restriction_type":"Regulated harvest","governing_law":"FCMA 2016; EMCA 1999"},{"GBIFusageKey":"2925201","country":"Kenya","region":"","jurisdiction":"NATIONAL","jurisdiction_group":"","prefName":"Pavetta teitana","classification":"Protected / Regulated","taxonLevel":"species","family":"Rubiaceae","englishName":"Taita pavetta","synonyms":"Pavetta kaessneri","Note":"Rubiaceae; restricted to Taita Hills.","genus_I":"Pavetta","is_aquatic":"no","aquatic_type_I":"","legal_status_ke":"Protected under FCMA 2016; Vulnerable","restriction_type":"Regulated harvest","governing_law":"FCMA 2016; EMCA 1999"},{"GBIFusageKey":"2893227","country":"Kenya","region":"","jurisdiction":"NATIONAL","jurisdiction_group":"","prefName":"Psydrax faulknerae","classification":"Protected / Regulated","taxonLevel":"species","family":"Rubiaceae","englishName":"Psydrax faulknerae","synonyms":"","Note":"Rubiaceae.","genus_I":"Psydrax","is_aquatic":"no","aquatic_type_I":"","legal_status_ke":"Protected under FCMA 2016; Vulnerable","restriction_type":"Regulated harvest","governing_law":"FCMA 2016; EMCA 1999"},{"GBIFusageKey":"2968897","country":"Kenya","region":"","jurisdiction":"NATIONAL","jurisdiction_group":"","prefName":"Dalbergia melanoxylon","classification":"Protected / Regulated","taxonLevel":"species","family":"Fabaceae","englishName":"African Ebony, African blackwood, African-ebony, Chinese blackwood, Mozambique Ebony, Mozambique-ebony, Senaar-ebony, Senegal-ebony, Sudan-ebony, african-blackwood, poyi, African Blackwood","synonyms":"Amerimnon melanoxylon, Amerimnon stocksii, Dalbergia stocksii","Note":"All Dalbergia spp. CITES Appendix II. Premium timber for musical instruments (clarinets, oboes). Severe overexploitation.","genus_I":"Dalbergia","is_aquatic":"no","aquatic_type_I":"","legal_status_ke":"CITES Appendix II (all Dalbergia); regulated harvest","restriction_type":"Regulated harvest; CITES-regulated trade","governing_law":"FCMA 2016; CITES"}];
+
+  function downloadCSV() {
+    if (!csvData || csvData.length === 0) return;
+    const headers = Object.keys(csvData[0]);
+    let csv = headers.join(",") + "\n";
+    csvData.forEach(function(row) {
+      csv += headers.map(function(h) {
+        var val = String(row[h] || "");
+        if (val.indexOf(",") >= 0 || val.indexOf('"') >= 0 || val.indexOf("\n") >= 0) {
+          val = '"' + val.replace(/"/g, '""'  ) + '"';
+        }
+        return val;
+      }).join(",") + "\n";
+    });
+    var blob = new Blob([csv], {type: "text/csv;charset=utf-8;"});
+    var link = document.createElement("a");
+    link.href = URL.createObjectURL(blob);
+    link.download = "kenya_regulated_plants_gbif.csv";
+    link.click();
+  }
+
+  function downloadTableCSV() {
+    var table = document.querySelector("table");
+    if (!table) return;
+    var csv = [];
+    var rows = table.querySelectorAll("tr");
+    rows.forEach(function(row) {
+      var cols = row.querySelectorAll("td, th");
+      var rowData = [];
+      cols.forEach(function(col) {
+        var text = col.innerText.replace(/"/g, '""'  );
+        if (text.indexOf(",") >= 0 || text.indexOf('"') >= 0 || text.indexOf("\n") >= 0) {
+          text = '"' + text + '"';
+        }
+        rowData.push(text);
+      });
+      csv.push(rowData.join(","));
+    });
+    var blob = new Blob([csv.join("\n")], {type: "text/csv;charset=utf-8;"});
+    var link = document.createElement("a");
+    link.href = URL.createObjectURL(blob);
+    link.download = "kenya_regulated_plants_display.csv";
+    link.click();
+  }
+  </script>
+</body>
+</html>

@@ -144,7 +144,9 @@ if (!file.exists(gbif_cache)) {
   enriched <- sm |> left_join(vd,by="GBIFusageKey") |>
     mutate(englishName=coalesce(gbif_english,common_name),synonyms=gbif_synonyms,family=gbif_family)
   dir.create(file.path(proj_root,"output","tables"),recursive=TRUE,showWarnings=FALSE)
-  enriched |> select(GBIFusageKey,prefName,family,englishName,synonyms,legal_status_ug,restriction_type,governing_law) |>
+  enriched |> mutate(country="Uganda",region="",jurisdiction="NATIONAL",jurisdiction_group="",
+    classification=taxonomic_group,taxonLevel="species",Note=notes,genus_I=word(prefName,1),is_aquatic="no",aquatic_type_I="") |>
+    select(GBIFusageKey,country,region,jurisdiction,jurisdiction_group,prefName,classification,taxonLevel,family,englishName,synonyms,Note,genus_I,is_aquatic,aquatic_type_I,legal_status_ug,restriction_type,governing_law) |>
     write_csv(gbif_cache)
 }
 if (file.exists(gbif_cache)) {

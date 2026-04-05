@@ -95,7 +95,9 @@ if (!file.exists(gbif_cache)) {
   vd<-tibble(GBIFusageKey=names(vl),gbif_english=unlist(vl),gbif_synonyms=unlist(sl[names(vl)]))
   en<-sm|>left_join(vd,by="GBIFusageKey")|>mutate(englishName=coalesce(gbif_english,common_name),synonyms=gbif_synonyms,family=gbif_family)
   dir.create(file.path(proj_root,"output","tables"),recursive=TRUE,showWarnings=FALSE)
-  en|>select(GBIFusageKey,prefName,family,englishName,synonyms,legal_status_sg,restriction_type,governing_law)|>write_csv(gbif_cache)
+  en|>mutate(country="Singapore",region="",jurisdiction="NATIONAL",jurisdiction_group="",
+    classification=taxonomic_group,taxonLevel="species",Note=notes,genus_I=word(prefName,1),is_aquatic="no",aquatic_type_I="")|>
+    select(GBIFusageKey,country,region,jurisdiction,jurisdiction_group,prefName,classification,taxonLevel,family,englishName,synonyms,Note,genus_I,is_aquatic,aquatic_type_I,legal_status_sg,restriction_type,governing_law)|>write_csv(gbif_cache)
 }
 if(file.exists(gbif_cache)){plants_gbif<-read_csv(gbif_cache,col_types=cols(.default=col_character()),show_col_types=FALSE);n_gbif_resolved<-sum(!is.na(plants_gbif$GBIFusageKey)&plants_gbif$GBIFusageKey!="");n_gbif_families<-n_distinct(plants_gbif$family,na.rm=TRUE)}else{plants_gbif<-NULL;n_gbif_resolved<-0L;n_gbif_families<-0L}
 ```
