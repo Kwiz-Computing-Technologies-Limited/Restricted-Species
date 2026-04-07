@@ -1,0 +1,406 @@
+---
+title: "Restricted and Protected Plant Species in the Philippines"
+subtitle: "Republic Act 9147, DENR DAOs, and CITES — A Comprehensive Reference"
+author: "Kwiz Research"
+date: "`r format(Sys.Date(), '%d %B %Y')`"
+output:
+  html_document:
+    toc: true
+    toc_float:
+      collapsed: false
+      smooth_scroll: true
+    toc_depth: 3
+    number_sections: true
+    theme: flatly
+    highlight: tango
+    df_print: paged
+    code_folding: hide
+    css: style.css
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo=FALSE, warning=FALSE, message=FALSE,
+                      fig.align="center", fig.width=9, fig.height=5, out.width="100%")
+suppressPackageStartupMessages({
+  library(tidyverse); library(kableExtra); library(glue); library(janitor); library(rgbif)
+})
+
+if (!requireNamespace("kwizbranding", quietly = TRUE)) {
+  remotes::install_github("Kwiz-Computing-Technologies-Limited/kwiz-R-packages",
+                          subdir = "kwizbranding", upgrade = "never")
+}
+library(kwizbranding)
+kqb_co <- kqb_company("research"); kqb_col <- kqb_colours()
+.kqb_logo_candidates <- c(file.path(here::here(),"src","www"), file.path(getwd(),"www"),
+                            file.path(getwd()), file.path(here::here()))
+.kqb_load_logo <- function(fn, ck) {
+  for (d in .kqb_logo_candidates) { p <- file.path(d,fn)
+    if (file.exists(p)) { assign(ck, paste0("data:image/svg+xml;base64,",
+      base64enc::base64encode(readBin(p,"raw",file.size(p)))), envir=.GlobalEnv); return(invisible(TRUE)) } }
+}
+.kqb_load_logo("Kwiz Black Logo Transparent bg.svg",".kqb_wm_cache")
+.kqb_load_logo("Kwiz Inverted Color Transparent bg.svg",".kqb_display_cache")
+
+styled_kable <- function(df, caption=NULL, scroll=TRUE, height="450px") {
+  k <- df |> kbl(caption=caption, escape=FALSE, align="l") |>
+    kable_styling(bootstrap_options=c("striped","hover","condensed","responsive"), full_width=TRUE, font_size=12)
+  if (scroll) k <- scroll_box(k, height=height); k
+}
+
+# ── Embedded species data ─────────────────────────────────────────────────────
+# Sources: RA 9147 (2001); DENR DAO 2019-09 (updated threatened species list);
+#          DENR DAO 2004-15 (prior list for reference); CITES CoP19 2022.
+species <- tribble(
+  ~common_name,                     ~scientific_name,              ~taxonomic_group, ~iucn_status,            ~cites_appendix, ~legal_status_ph,                   ~restriction_type,             ~governing_law,                       ~managing_institution,   ~notes,
+  # ── RA 9147 / DAO 2019-09 Critically Endangered plants ────────────────────────
+  "Philippine teak",                "Tectona philippinensis",      "Magnoliopsida",  "Endangered",            "Not listed",    "Critically Endangered (DAO 2019-09)","Collection/trade prohibited", "RA 9147 / DAO 2019-09",              "DENR-BMB",              "Philippine endemic; Batangas and Mindoro; <500 mature trees",
+  "Waling-waling orchid",           "Vanda sanderiana",            "Magnoliopsida",  "Endangered",            "Appendix II",   "Critically Endangered (DAO 2019-09)","Collection/trade prohibited", "RA 9147 / DAO 2019-09",              "DENR-BMB",              "Queen of Philippine orchids; Mindanao; heavily collected",
+  "Philippine rafflesia",           "Rafflesia manillana",         "Magnoliopsida",  "Critically Endangered", "Not listed",    "Critically Endangered (DAO 2019-09)","Collection/trade prohibited", "RA 9147 / DAO 2019-09",              "DENR-BMB",              "Parasitic plant; Luzon; habitat loss primary threat",
+  "Rafflesia",                      "Rafflesia speciosa",          "Magnoliopsida",  "Critically Endangered", "Not listed",    "Critically Endangered (DAO 2019-09)","Collection/trade prohibited", "RA 9147 / DAO 2019-09",              "DENR-BMB",              "Panay endemic; world's largest flowers; critically threatened",
+  "Schadenberg's rafflesia",        "Rafflesia schadenbergiana",   "Magnoliopsida",  "Critically Endangered", "Not listed",    "Critically Endangered (DAO 2019-09)","Collection/trade prohibited", "RA 9147 / DAO 2019-09",              "DENR-BMB",              "Mindanao endemic; among the largest Rafflesia species; fewer than 50 known individuals",
+  "Philippine slipper orchid",      "Paphiopedilum adductum",      "Magnoliopsida",  "Critically Endangered", "Appendix I",    "Critically Endangered (DAO 2019-09)","Collection/trade prohibited", "RA 9147 / DAO 2019-09",              "DENR-BMB",              "Mindanao endemic slipper orchid; all Paphiopedilum Appendix I",
+  "Mindanao slipper orchid",        "Paphiopedilum urbanianum",    "Magnoliopsida",  "Endangered",            "Appendix I",    "Endangered (DAO 2019-09)",           "Collection/trade prohibited", "RA 9147 / DAO 2019-09",              "DENR-BMB",              "Philippine endemic; Mindanao slipper orchid",
+  "Rothschild's slipper orchid",    "Paphiopedilum rothschildianum","Magnoliopsida", "Endangered",            "Appendix I",    "Endangered (DAO 2019-09)",           "Collection/trade prohibited", "RA 9147 / DAO 2019-09",              "DENR-BMB",              "Mt Kinabalu origin but cultivated in PH collections; all Paphiopedilum CITES I",
+  "Attenborough's pitcher plant",   "Nepenthes attenboroughii",    "Magnoliopsida",  "Critically Endangered", "Appendix II",   "Critically Endangered (DAO 2019-09)","Collection/trade prohibited", "RA 9147 / DAO 2019-09",              "DENR-BMB",              "Palawan Mt Victoria; discovered 2007; immediate poaching post-discovery",
+  "Apo pitcher plant",              "Nepenthes mira",              "Magnoliopsida",  "Endangered",            "Appendix II",   "Endangered (DAO 2019-09)",           "Collection/trade prohibited", "RA 9147 / DAO 2019-09",              "DENR-BMB",              "Mt Apo endemic; montane forest above 1500 m; PAMB collection ban",
+  # ── DAO 2019-09 Endangered and Vulnerable plants ──────────────────────────────
+  "Pitogo palm",                    "Cycas edentata",              "Cycadopsida",    "Endangered",            "Appendix I",    "Endangered (DAO 2019-09)",           "Collection/trade prohibited", "RA 9147 / DAO 2019-09",              "DENR-BMB",              "Philippine cycad; all Cycas spp. CITES listed",
+  "Zamboanga cycad",                "Cycas zambalensis",           "Cycadopsida",    "Endangered",            "Appendix I",    "Endangered (DAO 2019-09)",           "Collection/trade prohibited", "RA 9147 / DAO 2019-09",              "DENR-BMB",              "Zambales province endemic cycad; limestone forests; very restricted range",
+  "Jade vine",                      "Strongylodon macrobotrys",    "Magnoliopsida",  "Vulnerable",            "Not listed",    "Vulnerable (DAO 2019-09)",           "Collection/trade regulated",  "RA 9147 / DAO 2019-09",              "DENR-BMB",              "Luzon endemic; spectacular turquoise flower; deforestation threat",
+  "Philippine mangrove",            "Camptostemon philippinense",  "Magnoliopsida",  "Vulnerable",            "Not listed",    "Vulnerable (DAO 2019-09)",           "Collection/trade regulated",  "RA 9147 / DAO 2019-09",              "DENR-BMB",              "Rare mangrove species; Palawan and Sulu Sea coasts; habitat conversion",
+  "Almaciga / Manila copal",        "Agathis philippinensis",      "Pinopsida",      "Endangered",            "Not listed",    "Endangered (DAO 2019-09)",           "Collection/trade prohibited", "RA 9147 / DAO 2019-09",              "DENR-FMB",              "Source of Manila copal resin; old-growth forests Luzon-Mindanao",
+  "Ifit / Toog",                    "Petersianthus quadrialatus",  "Magnoliopsida",  "Endangered",            "Not listed",    "Endangered (DAO 2019-09)",           "Regulated harvest",           "RA 9147 / Forestry Code",            "DENR-FMB",              "Major timber dipterocarp; over-exploited in lowland forests",
+  "Philippine cedar",               "Toona calantas",              "Magnoliopsida",  "Vulnerable",            "Not listed",    "Vulnerable (DAO 2019-09)",           "Felling prohibited",          "RA 9147 / DAO 2019-09",              "DENR-FMB",              "Kalantas; premier timber; severely depleted by logging; scattered remnants",
+  "Dao / Pacific walnut",           "Dracontomelon dao",           "Magnoliopsida",  "Vulnerable",            "Not listed",    "Vulnerable (DAO 2019-09)",           "Regulated harvest",           "RA 9147 / Forestry Code",            "DENR-FMB",              "Large emergent tree; edible fruit; heavily logged for timber",
+  "Balau / Yakal",                  "Shorea astylosa",             "Magnoliopsida",  "Critically Endangered", "Not listed",    "Critically Endangered (DAO 2019-09)","Collection/trade prohibited", "RA 9147 / DAO 2019-09",              "DENR-FMB",              "Premium hardwood dipterocarp; near-extinct in wild due to logging",
+  "Samar pitcher plant",            "Nepenthes samar",             "Magnoliopsida",  "Vulnerable",            "Appendix II",   "Vulnerable (DAO 2019-09)",           "Collection/trade regulated",  "RA 9147 / DAO 2019-09",              "DENR-BMB",              "Samar Island endemic carnivorous plant; ultramafic soils",
+  # ── CITES-listed Philippine orchids and Nepenthes ─────────────────────────────
+  "Giant pitcher plant",            "Nepenthes truncata",          "Magnoliopsida",  "Vulnerable",            "Appendix II",   "Vulnerable (DAO 2019-09)",           "Collection/trade prohibited", "RA 9147 / DAO 2019-09",              "DENR-BMB",              "Mindanao highland pitcher plant; horticultural trade threat",
+  "Palawan pitcher plant",          "Nepenthes palawanensis",      "Magnoliopsida",  "Vulnerable",            "Appendix II",   "Vulnerable (DAO 2019-09)",           "Collection/trade prohibited", "RA 9147 / DAO 2019-09",              "DENR-BMB",              "Palawan endemic; highland carnivorous plant",
+  "Philippine ground orchid",       "Paphiopedilum philippinense", "Magnoliopsida",  "Endangered",            "Appendix I",    "Endangered (DAO 2019-09)",           "Collection/trade prohibited", "RA 9147 / DAO 2019-09",              "DENR-BMB",              "Multi-flowered slipper orchid; Palawan and Sulu; heavy illegal collection",
+  "Philippine dendrobium",          "Dendrobium philippinense",    "Magnoliopsida",  "Vulnerable",            "Appendix II",   "Vulnerable (DAO 2019-09)",           "Collection/trade regulated",  "RA 9147 / DAO 2019-09",              "DENR-BMB",              "Endemic Dendrobium; all orchids CITES Appendix II; horticultural demand",
+  "Sanderiana dendrobium",          "Dendrobium sanderae",         "Magnoliopsida",  "Endangered",            "Appendix II",   "Endangered (DAO 2019-09)",           "Collection/trade prohibited", "RA 9147 / DAO 2019-09",              "DENR-BMB",              "Luzon endemic orchid; prized white flowers; heavily over-collected",
+  "Philippine Vanda",               "Vanda luzonica",              "Magnoliopsida",  "Vulnerable",            "Appendix II",   "Vulnerable (DAO 2019-09)",           "Collection/trade regulated",  "RA 9147 / DAO 2019-09",              "DENR-BMB",              "Luzon endemic orchid; closely related to V. sanderiana; habitat loss",
+  "Manila orchid",                  "Phalaenopsis amabilis",       "Magnoliopsida",  "Least Concern",         "Appendix II",   "Other Wildlife Species (DAO 2019-09)","Collection permit required","RA 9147 / DAO 2019-09",              "DENR-BMB",              "Moon orchid; all Phalaenopsis CITES II; widely cultivated but wild populations declining",
+  "Philippine moth orchid",         "Phalaenopsis philippinensis", "Magnoliopsida",  "Vulnerable",            "Appendix II",   "Vulnerable (DAO 2019-09)",           "Collection/trade regulated",  "RA 9147 / DAO 2019-09",              "DENR-BMB",              "Palawan endemic Phalaenopsis; lowland forest epiphyte; habitat conversion threat",
+  # ── Premium timber species ────────────────────────────────────────────────────
+  "Narra (Philippine national tree)","Pterocarpus indicus",        "Magnoliopsida",  "Vulnerable",            "Appendix II",   "Protected (National Tree)",          "Felling prohibited",          "RA 9147 / PD 652",                   "DENR-FMB",              "Philippine national tree; strictly protected from cutting; CITES II since 2019",
+  "Dipterocarp (apitong)",          "Dipterocarpus grandiflorus",  "Magnoliopsida",  "Vulnerable",            "Not listed",    "Vulnerable (DAO 2019-09)",           "Regulated harvest",           "RA 9147 / Forestry Code",            "DENR-FMB",              "Dominant lowland forest tree; heavy commercial logging history",
+  "Lauan / red meranti",            "Shorea polysperma",           "Magnoliopsida",  "Vulnerable",            "Not listed",    "Vulnerable (DAO 2019-09)",           "Regulated harvest",           "RA 9147 / Forestry Code",            "DENR-FMB",              "Major timber species; rapid decline due to selective logging",
+  "White lauan",                    "Shorea contorta",             "Magnoliopsida",  "Vulnerable",            "Not listed",    "Vulnerable (DAO 2019-09)",           "Regulated harvest",           "RA 9147 / Forestry Code",            "DENR-FMB",              "Light commercial timber; lowland dipterocarp forests; widespread logging",
+  "Tangile",                        "Shorea polita",               "Magnoliopsida",  "Vulnerable",            "Not listed",    "Vulnerable (DAO 2019-09)",           "Regulated harvest",           "RA 9147 / Forestry Code",            "DENR-FMB",              "Prized Philippine mahogany group timber; severely over-logged",
+  "Molave",                         "Vitex parviflora",            "Magnoliopsida",  "Vulnerable",            "Not listed",    "Vulnerable (DAO 2019-09)",           "Felling prohibited",          "RA 9147 / DAO 2019-09",              "DENR-FMB",              "Premium hardwood; extremely durable; near-extinct from over-harvest; LGU protections",
+  "Ipil",                           "Intsia bijuga",               "Magnoliopsida",  "Vulnerable",            "Not listed",    "Vulnerable (DAO 2019-09)",           "Regulated harvest",           "RA 9147 / Forestry Code",            "DENR-FMB",              "Merbau; heavy hardwood; mangrove-adjacent forests; over-exploited for furniture",
+  "Benguet pine",                   "Pinus kesiya",                "Pinopsida",      "Least Concern",         "Not listed",    "Protected (Cordillera Watershed)",    "Regulated harvest",           "RA 9147 / IPRA (RA 8371)",           "DENR-FMB / NCIP",      "Dominant Cordillera pine; indigenous Muyong system; FPIC required for harvest",
+  "Mangrove (bakawan)",             "Rhizophora mucronata",        "Magnoliopsida",  "Least Concern",         "Not listed",    "Protected (Mangrove areas)",         "Cutting prohibited in reserves","RA 7586 / Fisheries Code (RA 8550)","DENR-BMB / BFAR",      "Dominant mangrove species; cutting banned in mangrove reserves; coastal protection",
+  # ── RA 7586 NIPAS Act protected area species ──────────────────────────────────
+  "Philippine pine",                "Pinus merkusii",              "Pinopsida",      "Vulnerable",            "Not listed",    "Vulnerable (DAO 2019-09)",           "Collection/trade regulated",  "RA 9147 / RA 7586",                  "DENR-BMB",              "Zambales and Mindoro populations; protected within NIPAS areas; fire-adapted",
+  "Hamiguitan pitcher plant",       "Nepenthes peltata",           "Magnoliopsida",  "Endangered",            "Appendix II",   "Endangered (DAO 2019-09)",           "Collection/trade prohibited", "RA 9147 / RA 7586",                  "DENR-BMB",              "Mt Hamiguitan UNESCO World Heritage Site; strictly protected; ultramafic endemic",
+  "Kitanglad orchid",               "Dendrochilum glumaceum",      "Magnoliopsida",  "Least Concern",         "Appendix II",   "Protected (NIPAS site species)",     "Collection banned in PA",     "RA 7586 / PAMB resolution",          "DENR-BMB",              "Mt Kitanglad Range NP; PAMB absolute collection ban on all wild orchids",
+  "Palawan cherry blossom",         "Cassia nodosa",               "Magnoliopsida",  "Vulnerable",            "Not listed",    "Vulnerable (DAO 2019-09)",           "Collection/trade regulated",  "RA 9147 / RA 7586",                  "DENR-BMB / PCSD",       "PCSD clearance required for any collection in Palawan; ECAN-zoned protection",
+  # ── Invasive alien species ────────────────────────────────────────────────────
+  "Water hyacinth",                 "Eichhornia crassipes",        "Magnoliopsida",  "Least Concern",         "Not listed",    "Priority Invasive Species",          "Control/removal mandated",    "RA 9147 / IACSA programme",          "DENR / BFAR",           "Major freshwater invasive; Lake Lanao and Laguna de Bay",
+  "Cogon grass",                    "Imperata cylindrica",         "Liliopsida",     "Least Concern",         "Not listed",    "Noxious Invasive Grass",             "Control programmes in uplands","RA 9147 / Upland Dev. Programme",   "DENR / DA / BSWM",      "Covers over 1M ha in Philippines; fire-adapted; replaces native forest",
+  "Giant ipil-ipil",                "Leucaena leucocephala",       "Magnoliopsida",  "Least Concern",         "Not listed",    "Regulated Invasive Species",         "Restricted planting areas",   "RA 9147 / DA regulations",           "DENR / DA",             "Transformative invasive in secondary forest and agricultural areas",
+  "Siam weed",                      "Chromolaena odorata",         "Magnoliopsida",  "Least Concern",         "Not listed",    "Priority Invasive Species",          "Control/removal mandated",    "RA 9147 / IACSA programme",          "DENR / DA",             "Aggressive neotropical shrub; displaces native understorey; fire promoter",
+  "Mile-a-minute vine",             "Mikania micrantha",           "Magnoliopsida",  "Least Concern",         "Not listed",    "Priority Invasive Species",          "Control/removal mandated",    "RA 9147 / IACSA programme",          "DENR / DA",             "Fast-growing vine smothering native vegetation and plantation crops",
+  "Asian knotweed",                 "Fallopia japonica",           "Magnoliopsida",  "Least Concern",         "Not listed",    "Invasive Species",                   "Prohibited transport/release","EO 23 / IACSA programme",            "DENR-BMB",              "Listed on IUCN 100 Worst Invasives; expanding in Philippines"
+)
+
+n_species  <- nrow(species)
+n_dao      <- sum(str_detect(species$governing_law, "DAO"), na.rm=TRUE)
+n_invasive <- sum(str_detect(species$restriction_type, regex("invasive|control|prohibited|removal", ignore_case=TRUE)), na.rm=TRUE)
+n_cites_i  <- sum(species$cites_appendix == "Appendix I",  na.rm=TRUE)
+n_cites_ii <- sum(species$cites_appendix == "Appendix II", na.rm=TRUE)
+n_cr       <- sum(species$iucn_status == "Critically Endangered", na.rm=TRUE)
+n_en       <- sum(species$iucn_status == "Endangered", na.rm=TRUE)
+
+proj_root  <- here::here()
+gbif_cache <- file.path(proj_root, "output", "tables", "philippines_regulated_plants_gbif.csv")
+if (!file.exists(gbif_cache)) {
+  clean_name <- function(nm) nm |> str_remove_all("\\s+spp\\.?$") |> str_remove_all("\\(.*?\\)") |> str_squish()
+  names_df <- tibble(name=clean_name(species$scientific_name), kingdom="Plantae")
+  backbone_res <- tryCatch(name_backbone_checklist(names_df), error=function(e)
+    map_dfr(names_df$name, function(nm) tryCatch(as_tibble(name_backbone(name=nm,kingdom="Plantae")),
+      error=function(e2) tibble(usageKey=NA_integer_,canonicalName=nm,matchType="NONE"))))
+  get_vern <- function(key) { if(is.na(key)) return(NA_character_)
+    tryCatch({ vn <- name_usage(key=as.numeric(key),data="vernacularNames",limit=100)
+      if(is.null(vn$data)||nrow(vn$data)==0) return(NA_character_)
+      en <- vn$data |> filter(language %in% c("eng","en")) |> pull(vernacularName) |> unique()
+      if(length(en)==0) NA_character_ else paste(en,collapse=", ") }, error=function(e) NA_character_) }
+  get_syn <- function(key) { if(is.na(key)) return(NA_character_)
+    tryCatch({ syn <- name_usage(key=as.numeric(key),data="synonyms",limit=100)
+      if(is.null(syn$data)||nrow(syn$data)==0) return(NA_character_)
+      s <- syn$data |> pull(canonicalName) |> unique() |> na.omit()
+      if(length(s)==0) NA_character_ else paste(s,collapse=", ") }, error=function(e) NA_character_) }
+  bc <- backbone_res |> as_tibble() |>
+    mutate(GBIFusageKey=as.character(usageKey), prefName=coalesce(species,canonicalName,verbatim_name),
+           gbif_family=family, gbif_genus=genus)
+  sm <- species |> mutate(clean_sci=clean_name(scientific_name)) |>
+    bind_cols(bc |> select(GBIFusageKey,prefName,gbif_family,gbif_genus,gbif_matchType=matchType,gbif_confidence=confidence))
+  keys <- sm |> filter(!is.na(GBIFusageKey)) |> distinct(GBIFusageKey) |> pull(GBIFusageKey)
+  vl <- list(); sl <- list()
+  for (i in seq_along(keys)) { k <- keys[i]; vl[[k]] <- get_vern(k); sl[[k]] <- get_syn(k); if(i%%5==0) Sys.sleep(0.2) }
+  vd <- tibble(GBIFusageKey=names(vl), gbif_english=unlist(vl), gbif_synonyms=unlist(sl[names(vl)]))
+  enriched <- sm |> left_join(vd,by="GBIFusageKey") |>
+    mutate(englishName=coalesce(gbif_english,common_name), synonyms=gbif_synonyms, family=gbif_family)
+  dir.create(file.path(proj_root,"output","tables"),recursive=TRUE,showWarnings=FALSE)
+  enriched |> mutate(country="Philippines",region="",jurisdiction="NATIONAL",jurisdiction_group="",
+    classification=taxonomic_group,taxonLevel="species",Note=notes,genus_I=word(prefName,1),is_aquatic="no",aquatic_type_I="") |>
+    select(GBIFusageKey,country,region,jurisdiction,jurisdiction_group,prefName,classification,taxonLevel,family,englishName,synonyms,Note,genus_I,is_aquatic,aquatic_type_I,legal_status_ph,restriction_type,governing_law) |>
+    write_csv(gbif_cache)
+}
+if (file.exists(gbif_cache)) {
+  plants_gbif     <- read_csv(gbif_cache, col_types=cols(.default=col_character()), show_col_types=FALSE)
+  n_gbif_resolved <- sum(!is.na(plants_gbif$GBIFusageKey)&plants_gbif$GBIFusageKey!="")
+  n_gbif_families <- n_distinct(plants_gbif$family, na.rm=TRUE)
+} else { plants_gbif <- NULL; n_gbif_resolved <- 0L; n_gbif_families <- 0L }
+```
+
+```{r kqb-watermark, results='asis', echo=FALSE}
+cat(kqb_watermark_css(opacity=0.04, size="280px auto"))
+uri <- kqb_watermark_uri()
+if (nzchar(uri)) cat(paste0('<style>\nbody::after {\n  content: "";\n  position: fixed;\n',
+  '  top:0; left:0; width:100%; height:100%;\n  z-index:9000;\n  pointer-events:none;\n',
+  '  background-image: url("', uri, '");\n  background-repeat:repeat;\n  background-size:280px auto;\n',
+  '  opacity:0.04;\n}\n</style>\n'))
+```
+
+---
+
+# Executive Summary {.unnumbered}
+
+The Philippines is an **archipelagic megadiverse** country and a global biodiversity hotspot, encompassing approximately **9,250 vascular plant species** with an endemism rate exceeding **60%**. Its forests harbour some of the world's most ecologically unique plants — from the giant *Rafflesia* flowers to an extraordinary diversity of pitcher plants, orchids, and dipterocarps. Despite this biological richness, the Philippines has lost over **90% of its original forest cover** and faces ongoing threats from habitat conversion, commercial logging, and international plant trade.
+
+This report compiles **`r n_species` legally restricted plant species** under restriction in the Philippines. **`r n_dao`** are listed in the DENR Administrative Order 2019-09 Threatened Species List under Republic Act 9147. **`r n_invasive`** are designated invasive or noxious species. **`r n_cites_i`** carry CITES Appendix I status and **`r n_cites_ii`** are on CITES Appendix II. **`r n_cr`** are Critically Endangered and **`r n_en`** are Endangered on the IUCN Red List.
+
+---
+
+# Legal Framework {#legal-framework}
+
+## Republic Act No. 9147 — Wildlife Resources Conservation and Protection Act (2001) {#ra9147}
+
+**Republic Act No. 9147** (enacted 30 July 2001) is the primary legislation governing wildlife including plants in the Philippines. It replaced a patchwork of earlier laws and established:
+
+- **Section 5 — Collection of Wildlife:** No person may collect, hunt, or possess wildlife (including plants) designated as threatened, without a Wildlife Collector's Permit from DENR.
+- **Section 7 — Trade of Wildlife:** Trade in threatened species requires a Wildlife Farm Permit and compliance with CITES.
+- **Section 27 — Prohibited Acts:** Collecting, hunting, killing, or transporting threatened species without permits. Penalties: up to **6 years imprisonment and ₱1,000,000** fine.
+- **Threatened Species List:** Operationalised through DENR Administrative Orders (DAOs) that list species by category (Critically Endangered, Endangered, Vulnerable, Other Threatened Species, Other Wildlife Species).
+
+**Current Threatened Species List:** [DENR DAO 2019-09](https://biodiversity.gov.ph/images/Biodiversity/Legal/DAO2019-09.pdf) — updated list covering plants and animals.
+
+Full text: [Official Gazette — RA 9147](https://www.officialgazette.gov.ph/2001/07/30/republic-act-no-9417/)
+
+<div class="alert alert-warning" role="alert">
+**⚠ Implementation Gap** — DAO 2019-09 is the current operative list. However, the IUCN Red List of Philippine flora continues to document new Critically Endangered species faster than DAO amendments can respond. Over 400 Philippine plant species are IUCN-assessed as threatened, but DAO 2019-09 lists a fraction of these. DENR-BMB faces severe resource constraints in conducting new wildlife assessments to update the DAO list.
+</div>
+
+## Executive Order No. 23 (2011) — Moratorium on Logging {#eo23}
+
+**Executive Order No. 23** declared a moratorium on the cutting and harvesting of timber in natural and residual forests nationwide, complementing the existing forest cover protections.
+
+## DENR DAO 2019-09 — Threatened Species List {#dao}
+
+The current implementing rules list Philippine threatened species by category (CE, E, VU, OTS, OWS). For plants, approximately 400+ species are included across these categories. The DAO provides the operational basis for collecting and trade permits under RA 9147.
+
+## CITES in the Philippines {#cites}
+
+The Philippines ratified CITES in 1981. DENR-BMB is the Management Authority. All orchids (Appendix II; *Paphiopedilum* spp. Appendix I), all cycads (Appendix I/II), and all *Nepenthes* (Appendix I/II) are listed. *Narra* (*Pterocarpus indicus*) is on CITES Appendix II.
+
+<div class="alert alert-warning" role="alert">
+**⚠ Implementation Gap** — The Philippines is a major source country for illegal orchid and *Nepenthes* collection. Despite CITES and DAO protections, international social media platforms (particularly Facebook groups) are documented to facilitate illegal wild-collected pitcher plant sales, with collection occurring from protected areas including Mt Hamiguitan and Palawan.
+</div>
+
+## Invasive Alien Species Programme {#ias}
+
+The Philippine Invasive Alien Species programme is coordinated through the **Inter-Agency Committee on Invasive Alien Species** (IACSA). The programme operates under RA 9147 and multiple sectoral laws. A standalone IAS Law has been proposed in Congress but not yet enacted.
+
+---
+
+# Regional / Subnational Restrictions {#regional}
+
+The Philippines' **Local Government Code (RA 7160, 1991)** devolved significant environmental powers to municipalities and cities (Local Government Units — LGUs), and to provinces. LGUs may enact environmental ordinances, declare local sanctuaries, and impose local collection restrictions more restrictive than national law. The DENR also maintains 15 regional offices with region-specific administrative orders.
+
+## Cordillera Administrative Region (CAR) — Indigenous Customary Law
+
+The Cordillera mountains of northern Luzon are governed partly through the **Indigenous Peoples' Rights Act (IPRA, RA 8371, 1997)**. Indigenous communities (Igorot, Ifugao, Kalinga) hold rights over their **Ancestral Domains** including plant resources:
+
+- The **Muyong** system (privately owned pine-forest patches in Ifugao) imposes customary restrictions on pine (*Pinus kesiya*) and timber harvest without community consent.
+- **Almaciga** resin (*Agathis philippinensis*) collection in IP territories requires *free, prior, and informed consent (FPIC)* from the NCIP.
+- NCIP Regional Office – CAR issues Certificates of Ancestral Domain Title (CADTs) that define jurisdictional boundaries where customary law applies.
+
+## BARMM — Bangsamoro Autonomous Region
+
+Under **RA 11054 (Bangsamoro Organic Law, 2018)**, the Bangsamoro Autonomous Region in Muslim Mindanao (BARMM) exercises devolved authority over forestry, environment, and biodiversity in Maguindanao, Lanao del Sur, Basilan, Sulu, Tawi-Tawi, and Cotabato City:
+
+- The **Bangsamoro Environment and Natural Resources Authority (BENRA)** issues its own forestry and collection permits.
+- National species laws (RA 9147; RA 7586) continue to apply, but implementation is through BENRA rather than DENR.
+
+## Protected Area Management Boards (PAMBs)
+
+Each of the Philippines' **240+ protected areas** under the **National Integrated Protected Areas System Act (RA 7586, 1992)** is managed by a PAMB that includes LGU officials and DENR. PAMBs have authority to impose species-specific collection bans within their protected areas, creating a layer of restrictions above national law:
+
+- **Mt. Apo Natural Park PAMB** (Davao) — absolute collection ban on *Nepenthes* and all wild orchids.
+- **Mt. Kitanglad Range Natural Park PAMB** (Bukidnon) — *Vanda sanderiana* (*Waling-waling*) banned even for CITES-permitted entities.
+- **Puerto Princesa Subterranean River PAMB** (Palawan) — Palawan Council for Sustainable Development (PCSD) has separate authority from DENR for all environmental matters in Palawan.
+
+## Palawan — PCSD Special Regime
+
+**RA 7611 (Strategic Environmental Plan for Palawan, 1992)** establishes the **Palawan Council for Sustainable Development (PCSD)** as the paramount environmental body for Palawan. The **ECAN** zoning system designates Core Zones (no-take), Buffer Zones, and Multiple Use Zones. Any plant collection in Palawan requires PCSD clearance in addition to DENR permits. *Shorea* timber species, almaciga, and rattan have PCSD-specific quotas.
+
+## LGU Ordinances — Selected Examples
+
+| LGU | Key Plant Restriction |
+|-----|-----------------------|
+| Cebu City | Molave (*Vitex parviflora*) and narra (*Pterocarpus indicus*) protected; tree-cutting requires Mayor's permit |
+| Davao City | Trees >10 cm DBH — CENRO permit required for removal; heritage tree inventory maintained |
+| Puerto Princesa, Palawan | No plant collection in city forest reserves; orchid vendors must present PCSD clearance |
+
+<div class="alert alert-info" role="alert">
+**Source note** — NCIP: [ncip.gov.ph](https://www.ncip.gov.ph) | PCSD: [pcsd.palawan.gov.ph](https://pcsd.palawan.gov.ph) | BENRA: [benra.gov.ph](https://benra.gov.ph) | DENR: [denr.gov.ph](https://denr.gov.ph).
+</div>
+
+---
+
+# Regulatory Institutions {#institutions}
+
+```{r institutions-table}
+tribble(
+  ~`Abbrev.`, ~`Institution`,                               ~`Ministry/Parent`,         ~`Mandate`,
+  "DENR-BMB", "Biodiversity Management Bureau",             "DENR",                     "Primary biodiversity regulator; RA 9147 implementation; CITES Management Authority; threatened species listing",
+  "DENR-FMB", "Forest Management Bureau",                   "DENR",                     "Forest cover and timber species; Forestry Code; logging permits; forest rehabilitation",
+  "PAWB",     "Protected Areas and Wildlife Bureau (legacy)","DENR (now BMB)",           "Former wildlife bureau functions absorbed into BMB in 2016 reorganisation",
+  "DA-BFAR",  "Bureau of Fisheries and Aquatic Resources",   "Dept of Agriculture",      "Aquatic plant and seaweed regulation; fisheries; mangrove management",
+  "PCAARRD",  "Phil. Council for Agriculture and Fisheries R&D","DOST",                 "Research on invasive species; plant genetic resources conservation",
+  "IACSA",    "Inter-Agency Committee on Invasive Alien Species","DENR / DA / DOST",    "Coordinates IAS management across departments; priority IAS list",
+  "PNH",      "Philippine National Herbarium",               "DENR-BMB",                "National botanical reference collection; species identification; plant conservation research"
+) |>
+  styled_kable(caption="Table 1. Institutions with Plant Regulatory Mandates in the Philippines", height="350px")
+```
+
+---
+
+# Comprehensive Plant Species Listing {#species}
+
+## Master Species Table
+
+```{r master-table}
+species |>
+  arrange(iucn_status, common_name) |>
+  mutate(`Scientific Name` = paste0("*", scientific_name, "*")) |>
+  select(`Common Name`=common_name, `Scientific Name`, `Group`=taxonomic_group,
+         `IUCN`=iucn_status, `CITES`=cites_appendix,
+         `Philippines Status`=legal_status_ph,
+         `Managing Inst.`=managing_institution, `Notes`=notes) |>
+  styled_kable(caption="Table 2. Restricted/Protected Plant Species in the Philippines", height="600px")
+```
+
+## Critically Threatened Species {#critically-threatened}
+
+```{r cr-en-table}
+species |>
+  filter(iucn_status %in% c("Critically Endangered","Endangered")) |>
+  arrange(iucn_status, common_name) |>
+  mutate(`Scientific Name` = paste0("*", scientific_name, "*")) |>
+  select(`Common Name`=common_name, `Scientific Name`, `IUCN`=iucn_status,
+         `CITES`=cites_appendix, `Philippines Status`=legal_status_ph, `Notes`=notes) |>
+  styled_kable(caption=glue("Table 3. Critically Endangered and Endangered Plant Species ({n_cr+n_en} species)"), height="450px")
+```
+
+## GBIF Backbone Resolution {#gbif}
+
+```{r gbif-table}
+if (!is.null(plants_gbif) && nrow(plants_gbif) > 0) {
+  plants_gbif |>
+    mutate(
+      gbif_url = if_else(!is.na(GBIFusageKey)&GBIFusageKey!="",
+                         glue("https://www.gbif.org/species/{GBIFusageKey}"),NA_character_),
+      iucn_url = paste0("https://www.iucnredlist.org/search?query=",
+                        URLencode(str_squish(coalesce(prefName,"")),reserved=TRUE)),
+      `Scientific Name` = if_else(!is.na(gbif_url),
+        glue("<a href='{gbif_url}' target='_blank'><em>{prefName}</em></a>"),
+        glue("<em>{coalesce(prefName,'')}</em>")),
+      `IUCN` = glue("<a href='{iucn_url}' target='_blank'>IUCN &#x2197;</a>")
+    ) |>
+    transmute(`#`=row_number(), `Scientific Name`, `Common Name`=coalesce(englishName,""),
+              `Family`=coalesce(family,""), `GBIF Key`=coalesce(GBIFusageKey,""),
+              `Philippines Status`=coalesce(legal_status_ph,""),
+              `Synonyms`=str_trunc(coalesce(synonyms,""),80), `IUCN`) |>
+    styled_kable(caption=glue("Table 4. Philippines Regulated Plants — GBIF Backbone Resolved ({n_gbif_resolved} of {n_species} | {n_gbif_families} families)"), height="600px")
+} else { cat("*GBIF data will be generated on first render with internet access.*") }
+```
+
+---
+
+# Complete Species Table (Template Format) {#complete-template}
+
+The table below presents all species in the **18-column `regulated_plants_v9.7` template format** — the canonical client deliverable schema. This is the same data as the downloadable CSV.
+
+```{r complete-template-table}
+if (!is.null(plants_gbif) && nrow(plants_gbif) > 0) {
+  plants_gbif |>
+    styled_kable(
+      caption = "Complete Species Listing — 18-Column Template Format (GBIFusageKey, country, region, jurisdiction, jurisdiction_group, prefName, classification, taxonLevel, family, englishName, synonyms, Note, genus_I, is_aquatic, aquatic_type_I, legal_status, restriction_type, governing_law)",
+      height = "650px"
+    )
+}
+```
+
+---
+
+# Regulatory Gaps {#gaps}
+
+```{r gaps-table}
+tribble(
+  ~`#`, ~`Gap Area`,                                              ~`Severity`, ~`Status (2025)`,
+  "1",  "DAO 2019-09 lists fraction of IUCN-threatened plants",   "High",      "Unresolved",
+  "2",  "Online wildlife trade (social media) enforcement weak",  "High",      "Partial (DENR-NBI)",
+  "3",  "No standalone Invasive Alien Species Act",               "High",      "Bill pending Congress",
+  "4",  "DENR-BMB severely under-resourced for enforcement",      "High",      "Unresolved",
+  "5",  "RA 9147 permits: slow processing impedes legitimate trade","Medium",  "IT system upgrade ongoing",
+  "6",  "Timber species: monitoring outside protected areas weak", "High",     "Unresolved",
+  "7",  "Rafflesia/Nepenthes: habitat protection inadequate",     "High",     "Partial (KBAs)",
+  "8",  "Climate change adaptation for highland endemics absent",  "Medium",  "Unresolved"
+) |>
+  kbl(caption="Table 5. Regulatory Gaps for Plant Species in the Philippines", escape=FALSE, align="l") |>
+  kable_styling(bootstrap_options=c("striped","hover","condensed","responsive"), full_width=TRUE, font_size=12) |>
+  column_spec(3, bold=TRUE, color=ifelse(c(TRUE,TRUE,TRUE,TRUE,FALSE,TRUE,TRUE,FALSE),"white","black"),
+              background=ifelse(c(TRUE,TRUE,TRUE,TRUE,FALSE,TRUE,TRUE,FALSE),"#c0392b","#e67e22"))
+```
+
+## Online Wildlife Trade
+
+Social media platforms — particularly Facebook groups — have become primary markets for illegally wild-collected orchids, pitcher plants, and other Philippine endemic plants. Despite joint operations between DENR and the National Bureau of Investigation (NBI), the scale of online trading exceeds current enforcement capacity. The TRAFFIC Southeast Asia office has documented the Philippines as a significant source country for illegally traded carnivorous plants and orchids.
+
+## Rafflesia Conservation
+
+*Rafflesia* species — with the world's largest individual flowers — are obligate endoparasites on *Tetrastigma* vines and cannot survive outside their host. They are effectively impossible to cultivate, meaning all trade is wild-collected. The Philippines hosts 13 *Rafflesia* species, more than any other country, but none has been formally bred in captivity. Habitat loss and plant collection continue to shrink their populations.
+
+---
+
+# Key References {#references}
+
+| Resource | Link |
+|----------|------|
+| RA 9147 — Official Gazette | [officialgazette.gov.ph](https://www.officialgazette.gov.ph/2001/07/30/republic-act-no-9417/) |
+| DENR DAO 2019-09 | [biodiversity.gov.ph](https://biodiversity.gov.ph/images/Biodiversity/Legal/DAO2019-09.pdf) |
+| DENR-BMB Biodiversity Portal | [biodiversity.gov.ph](https://biodiversity.gov.ph) |
+| Philippine GBIF Data | [gbif.org/country/PH](https://www.gbif.org/country/PH/summary) |
+| IUCN Red List — Philippines Plants | [iucnredlist.org](https://www.iucnredlist.org) |
+
+---
+
+```{r session-info}
+sessionInfo()
+```
+
+```{r kqb-footer, results='asis', echo=FALSE}
+logo_sm <- kqb_logo_img(height="28px")
+cat(paste0('<div class="kqb-report-footer">',
+  if(nzchar(logo_sm)) paste0(logo_sm,'<br/>') else "",
+  '<p style="font-weight:600;color:#0d2240;">',kqb_co$name,' &mdash; ',kqb_co$tagline,'</p>',
+  '<p>',kqb_co$legal_name,' | ',kqb_co$country,'</p>',
+  '<p style="margin-top:6px;font-size:10px;color:#aaa;">Generated ',format(Sys.Date(),"%d %B %Y"),
+  ' &nbsp;&bull;&nbsp; For informational purposes only &nbsp;&bull;&nbsp; Verify at DENR-BMB / CITES</p>',
+  '</div>'))
+```
