@@ -344,7 +344,7 @@ species_table_html <- html_table_data |>
   scroll_box(height = "700px")
 
 # Read project CSS
-css_file <- file.path(proj_root, "docs", "style.css")
+css_file <- file.path(proj_root, "src", "style.css")
 project_css <- if (file.exists(css_file)) {
   paste(readLines(css_file), collapse = "\n")
 } else {
@@ -501,7 +501,7 @@ html_page <- paste0('<!DOCTYPE html>
 </body>
 </html>')
 
-html_path <- file.path(proj_root, "docs", "kenya_regulated_plants_gbif.html")
+html_path <- file.path(proj_root, "output", "reports", "kenya_regulated_plants_gbif.html")
 writeLines(html_page, html_path)
 message(glue("[05] HTML report saved: {html_path}"))
 

@@ -228,4 +228,4 @@ save_kable(
 )
 
 message(glue("[04] HTML tables saved to {output_dir}/"))
-message("\n[04] All done. Run docs/restricted_species_kenya.Rmd to generate the report.")
+message("\n[04] All done. Run src/restricted_species_kenya.Rmd to generate the report.")

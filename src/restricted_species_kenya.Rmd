@@ -53,7 +53,7 @@ kqb_col <- kqb_colours()
 # Try multiple candidate directories and ALWAYS overwrite the cache to avoid
 # stale empty values from earlier failed attempts.
 .kqb_logo_candidates <- c(
-  file.path(here::here(), "docs", "www"),
+  file.path(here::here(), "src", "www"),
   file.path(getwd(), "www"),
   file.path(getwd()),
   file.path(here::here())
