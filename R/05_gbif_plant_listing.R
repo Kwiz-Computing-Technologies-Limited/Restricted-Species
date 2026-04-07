@@ -501,7 +501,7 @@ html_page <- paste0('<!DOCTYPE html>
 </body>
 </html>')
 
-html_path <- file.path(output_rpt, "kenya_regulated_plants_gbif.html")
+html_path <- file.path(proj_root, "docs", "kenya_regulated_plants_gbif.html")
 writeLines(html_page, html_path)
 message(glue("[05] HTML report saved: {html_path}"))
 
