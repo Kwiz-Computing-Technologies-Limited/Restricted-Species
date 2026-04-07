@@ -208,6 +208,22 @@ if(!is.null(plants_gbif)&&nrow(plants_gbif)>0){plants_gbif|>
 
 ---
 
+# Complete Species Table (Template Format) {#complete-template}
+
+The table below presents all species in the **18-column `regulated_plants_v9.7` template format** — the canonical client deliverable schema. This is the same data as the downloadable CSV.
+
+```{r complete-template-table}
+if (!is.null(plants_gbif) && nrow(plants_gbif) > 0) {
+  plants_gbif |>
+    styled_kable(
+      caption = "Complete Species Listing — 18-Column Template Format (GBIFusageKey, country, region, jurisdiction, jurisdiction_group, prefName, classification, taxonLevel, family, englishName, synonyms, Note, genus_I, is_aquatic, aquatic_type_I, legal_status, restriction_type, governing_law)",
+      height = "650px"
+    )
+}
+```
+
+---
+
 # Regulatory Gaps (Summary) {#gaps}
 
 | # | Gap | Severity |

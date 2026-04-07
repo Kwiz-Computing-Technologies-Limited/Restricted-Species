@@ -661,6 +661,22 @@ if (!is.null(plants_gbif) && nrow(plants_gbif) > 0) {
 
 ---
 
+# Complete Species Table (Template Format) {#complete-template}
+
+The table below presents all species in the **18-column `regulated_plants_v9.7` template format** — the canonical client deliverable schema. This is the same data as the downloadable CSV.
+
+```{r complete-template-table}
+if (!is.null(plants_gbif) && nrow(plants_gbif) > 0) {
+  plants_gbif |>
+    styled_kable(
+      caption = "Complete Species Listing — 18-Column Template Format",
+      height = "650px"
+    )
+}
+```
+
+---
+
 # Conservation Gaps {#gaps}
 
 Plant species in Kenya face several structural gaps in the legal protection framework. These gaps are drawn from the broader regulatory gap analysis and focused on their botanical dimensions.
