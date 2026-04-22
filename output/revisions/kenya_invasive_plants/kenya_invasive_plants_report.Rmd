@@ -1,6 +1,6 @@
 ---
-title: "Kenya Invasive & Prohibited Plant Species"
-subtitle: "9 species with GBIF backbone keys and verified legal/database citations"
+title: "Kenya Invasive & Noxious Plant Species"
+subtitle: "FAO/KEPHIS Chapter 26 Table 1 + Suppression of Noxious Weeds Act, Cap 325 Schedule — with GBIF backbone keys and verified legal/database citations"
 date: "`r format(Sys.Date(), '%d %B %Y')`"
 output:
   html_document:
@@ -33,47 +33,181 @@ inv <- read_csv(
 )
 ```
 
+```{r references-setup, include=FALSE}
+# ── References registry ────────────────────────────────────────────────────
+#
+# The `refs` tibble is the single source of truth for every citation used in
+# this report. Entries combine:
+#   - Framework refs: laws, databases, organizations cited in the prose
+#   - Per-species refs: every URL harvested from the `Note` column of the CSV
+#
+# Each entry is numbered in the order it is first cited. The in-text `cite()`
+# helper emits `[<a href="#ref-N">N</a>]` and the References section at the
+# end emits a numbered list with matching anchors.
+
+framework_refs <- tibble::tribble(
+  ~url,                                                                                                            ~label,
+  "https://www.fao.org/4/y5968e/y5968e10.htm",                                                                      "Kedera, C. & Kuria, B. (KEPHIS). Invasive alien species in Kenya: status and management. FAO Chapter 26.",
+  "http://kenyalaw.org/kl/fileadmin/pdfdownloads/Acts/SuppressionofNoxiousWeedsAct_Cap325.pdf",                     "Suppression of Noxious Weeds Act, Cap 325 (Laws of Kenya, rev. 2012). Kenya Law.",
+  "https://new.kenyalaw.org/akn/ke/act/1999/8/eng@2022-12-31",                                                      "Environmental Management and Co-ordination Act, 1999 (No. 8 of 1999, as amended). Kenya Law.",
+  "https://new.kenyalaw.org/akn/ke/act/1937/24/eng@2022-12-31",                                                     "Plant Protection Act, Cap 324 (Laws of Kenya, as amended). Kenya Law.",
+  "https://www.iucngisd.org",                                                                                       "IUCN SSC Invasive Species Specialist Group. Global Invasive Species Database (GISD).",
+  "https://www.cabi.org/isc",                                                                                       "CABI Invasive Species Compendium.",
+  "https://gd.eppo.int",                                                                                            "EPPO Global Database, European and Mediterranean Plant Protection Organization.",
+  "https://new.kenyalaw.org",                                                                                       "Kenya Law online portal."
+)
+
+# Extract every URL appearing in the Note column
+note_urls <- inv$Note |>
+  stringr::str_extract_all("https?://[^\\s|]+") |>
+  unlist() |>
+  unique() |>
+  purrr::discard(~ is.na(.x) || nchar(.x) == 0)
+
+# Auto-label URLs we know about; fall back to bare URL otherwise.
+url_label <- function(u) {
+  case_when(
+    u == "https://www.iucngisd.org/gisd/species.php?sc=70"                                                              ~ "GISD species account: Pontederia crassipes (water hyacinth).",
+    u == "https://www.iucngisd.org/gisd/species.php?sc=569"                                                             ~ "GISD species account: Salvinia molesta.",
+    u == "https://www.iucngisd.org/gisd/species.php?sc=77"                                                              ~ "GISD species account: Prosopis juliflora.",
+    u == "https://www.iucngisd.org/gisd/species.php?sc=56"                                                              ~ "GISD species account: Lantana camara.",
+    u == "https://www.iucngisd.org/gisd/species.php?sc=1038"                                                            ~ "GISD species account: Datura stramonium.",
+    u == "https://gd.eppo.int/taxon/SAVMO/datasheet"                                                                    ~ "EPPO datasheet: Salvinia molesta (SAVMO).",
+    u == "https://gd.eppo.int/taxon/AVEST/datasheet"                                                                    ~ "EPPO datasheet: Avena sterilis (AVEST).",
+    u == "https://link.springer.com/article/10.1007/BF00177693"                                                         ~ "Harper, D. M. et al. (1995). The effects of introduced species on the ecology of Lake Naivasha, Kenya. Hydrobiologia.",
+    u == "https://www.cabi.org/isc/datasheet/43897"                                                                     ~ "CABI Compendium datasheet: Prosopis juliflora.",
+    u == "https://www.cabi.org/isc/datasheet/37714"                                                                     ~ "CABI Compendium datasheet: Opuntia stricta.",
+    u == "https://www.cabi.org/isc/datasheet/4255"                                                                      ~ "CABI Compendium datasheet: Allium vineale.",
+    u == "https://www.cabidigitallibrary.org/doi/abs/10.1079/cabicompendium.52642"                                      ~ "CABI Compendium datasheet: Tagetes minuta.",
+    u == "https://www.cabidigitallibrary.org/doi/10.1079/cabicompendium.31166"                                          ~ "CABI Compendium datasheet: Lolium temulentum.",
+    u == "https://www.cabidigitallibrary.org/doi/10.1079/cabicompendium.18006"                                          ~ "CABI Compendium datasheet: Datura stramonium.",
+    u == "https://www.cabidigitallibrary.org/doi/10.1079/cabicompendium.18005"                                          ~ "CABI Compendium datasheet: Datura metel.",
+    u == "https://www.cabidigitallibrary.org/doi/10.1079/cabicompendium.18004"                                          ~ "CABI Compendium datasheet: Datura ferox.",
+    u == "https://www.cabidigitallibrary.org/doi/10.1079/cabicompendium.8185"                                           ~ "CABI Compendium datasheet: Avena sterilis.",
+    u == "https://www.cabidigitallibrary.org/doi/10.1079/cabicompendium.48444"                                          ~ "CABI Compendium datasheet: Salvinia auriculata.",
+    u == "https://cropnuts.com/wp-content/uploads/2020/08/Arable-Weeds-Guide.pdf"                                       ~ "Cropnuts Kenya. Arable weeds of Kenya: field identification guide.",
+    u == "https://wwf-kenya.medium.com/combatting-the-invasive-ipomoea-scourge-in-kajiado-county-2b3c7605ea68"          ~ "WWF-Kenya. Combatting the invasive Ipomoea scourge in Kajiado County.",
+    u == "https://www.kenyanews.go.ke/invasive-weed-proves-a-menace-to-kajiado-livestock-farmers/"                      ~ "Kenya News Agency. Invasive weed proves a menace to Kajiado livestock farmers.",
+    u == "https://www.standardmedia.co.ke/smart-harvest/article/2000203235"                                             ~ "Standard Media Kenya. Lantana yet to be listed as a noxious weed in East Africa.",
+    u == "https://africacheck.org/fact-checks/blog/analysis-thirsty-species-science-behind-eucalyptus-tree-ban-kenyas-wetlands" ~ "Africa Check. Analysis: thirsty species — the science behind Kenya's eucalyptus ban in wetlands.",
+    u == "https://nation.africa/kenya/news/uproot-all-eucalyptus-trees-within-30m-of-water-sources-5262368"             ~ "Daily Nation. Uproot all eucalyptus trees within 30 m of water sources.",
+    u == "https://powo.science.kew.org/?q=Datura%20tatula"                                                              ~ "Royal Botanic Gardens, Kew. Plants of the World Online: Datura tatula.",
+    u == "https://www.gbif.org/species/2706242"                                                                         ~ "GBIF backbone taxonomy: Lolium temulentum (key 2706242).",
+    u == "https://www.gbif.org/species/2928751"                                                                         ~ "GBIF backbone taxonomy: Datura stramonium (key 2928751).",
+    u == "https://www.gbif.org/species/2928747"                                                                         ~ "GBIF backbone taxonomy: Datura metel (key 2928747).",
+    u == "https://www.gbif.org/species/7894250"                                                                         ~ "GBIF backbone taxonomy: Datura ferox (key 7894250).",
+    u == "https://www.gbif.org/species/2928753"                                                                         ~ "GBIF backbone taxonomy: Datura stramonium var. tatula (key 2928753).",
+    u == "https://www.gbif.org/species/2705286"                                                                         ~ "GBIF backbone taxonomy: Avena sterilis (key 2705286).",
+    u == "https://www.gbif.org/species/5274861"                                                                         ~ "GBIF backbone taxonomy: Salvinia auriculata (key 5274861).",
+    TRUE ~ u
+  )
+}
+
+per_species_refs <- tibble(url = note_urls) |>
+  filter(!url %in% framework_refs$url) |>
+  mutate(label = url_label(url))
+
+refs <- bind_rows(framework_refs, per_species_refs) |>
+  mutate(id = row_number())
+
+# In-text citation helper: one or more ref IDs -> "[1]" or "[1, 3, 7]"
+cite <- function(ids) {
+  if (length(ids) == 0 || all(is.na(ids))) return("")
+  inner <- paste(
+    vapply(ids, function(i) sprintf('<a href="#ref-%d">%d</a>', i, i), character(1)),
+    collapse = ", "
+  )
+  paste0("[", inner, "]")
+}
+
+# Look up ref id by URL
+ref_id <- function(u) {
+  out <- refs$id[match(u, refs$url)]
+  out[!is.na(out)]
+}
+
+# Shortcut: cite by URL(s)
+cite_url <- function(urls) cite(ref_id(urls))
+```
+
 # Overview
 
-This report presents **`r nrow(inv)` invasive and prohibited plant species** in Kenya with GBIF backbone keys and source-verified legal/database citations.
+This report presents **`r nrow(inv)` invasive and noxious plant species** in Kenya with GBIF backbone keys and source-verified legal/database citations. The list is the union of two authoritative catalogues:
 
-Every species below is backed by at least one publicly accessible government, database, or peer-reviewed source. The `Note` column in the accompanying CSV contains the full source URLs for each species.
+1. **FAO/KEPHIS Chapter 26, Table 1** `r cite_url("https://www.fao.org/4/y5968e/y5968e10.htm")` — Kenya's 9 ecologically invasive plant species.
+2. **Schedule to the Suppression of Noxious Weeds Act, Cap 325** `r cite_url("http://kenyalaw.org/kl/fileadmin/pdfdownloads/Acts/SuppressionofNoxiousWeedsAct_Cap325.pdf")` — the only Kenyan Act that names specific plants by scientific name as declared noxious weeds.
+
+Every species below is backed by at least one publicly accessible government, database, or peer-reviewed source. The `Sources` column in the table and the full References section at the end list every citation used.
 
 ## Key verified sources
 
-1. **FAO/KEPHIS Chapter 26** — "Invasive alien species in Kenya: status and management" (Kedera & Kuria, KEPHIS officials). <https://www.fao.org/4/y5968e/y5968e10.htm> — *Table 1 lists Kenya's invasive plant species with year of arrival and impact severity.*
-2. **IUCN Global Invasive Species Database (GISD)** — <https://www.iucngisd.org>
-3. **CABI Invasive Species Compendium** — <https://www.cabi.org/isc>
-4. **EPPO Global Database** — <https://gd.eppo.int>
-5. **Kenya Law** — <https://new.kenyalaw.org>
+The primary sources cited throughout this report are: FAO/KEPHIS Chapter 26 `r cite_url("https://www.fao.org/4/y5968e/y5968e10.htm")`, the IUCN Global Invasive Species Database `r cite_url("https://www.iucngisd.org")`, the CABI Invasive Species Compendium `r cite_url("https://www.cabi.org/isc")`, the EPPO Global Database `r cite_url("https://gd.eppo.int")`, and Kenya Law `r cite_url("https://new.kenyalaw.org")`.
 
 ## Legal framework
 
-| Law | What it does | URL |
-|:----|:-------------|:----|
-| **EMCA 1999, Section 42(d)** | Prohibits alien and indigenous plant introduction into Kenya's freshwater bodies (see exact wording below) | [Kenya Law](https://new.kenyalaw.org/akn/ke/act/1999/8/eng@2022-12-31) |
-| **Suppression of Noxious Weeds Act, Cap 325** | The only Kenyan Act that names specific weed species in its Schedule | [Kenya Law PDF](http://kenyalaw.org/kl/fileadmin/pdfdownloads/Acts/SuppressionofNoxiousWeedsAct_Cap325.pdf) |
-| **Plant Protection Act, Cap 324** | Framework law giving KEPHIS power to declare pests; names no species itself | [Kenya Law](https://new.kenyalaw.org/akn/ke/act/1937/24/eng@2022-12-31) |
-| **Agriculture Act** (farm forestry rules) | Bans Eucalyptus in wetlands and riparian areas | Cited by [Africa Check](https://africacheck.org/fact-checks/blog/analysis-thirsty-species-science-behind-eucalyptus-tree-ban-kenyas-wetlands) |
-| **Water Act** | Bans exotic species with adverse effects on water resources | Cited by [Africa Check](https://africacheck.org/fact-checks/blog/analysis-thirsty-species-science-behind-eucalyptus-tree-ban-kenyas-wetlands) |
+```{r legal-framework-table}
+legal_framework <- tibble::tribble(
+  ~Law,                                                      ~`What it does`,                                                                                                              ~Citation,
+  "EMCA 1999, Section 42(d)",                                "Prohibits introduction of alien or indigenous plant specimens into rivers, lakes or wetlands without Director-General approval.", cite_url("https://new.kenyalaw.org/akn/ke/act/1999/8/eng@2022-12-31"),
+  "Suppression of Noxious Weeds Act, Cap 325",               "The only Kenyan Act that names specific weed species in its Schedule; empowers inspectors to order clearance and eradication (ss.5–7).", cite_url("http://kenyalaw.org/kl/fileadmin/pdfdownloads/Acts/SuppressionofNoxiousWeedsAct_Cap325.pdf"),
+  "Plant Protection Act, Cap 324",                           "Framework law giving KEPHIS power to declare pests; names no species itself.",                                                 cite_url("https://new.kenyalaw.org/akn/ke/act/1937/24/eng@2022-12-31"),
+  "Agriculture Act (farm forestry rules)",                   "Bans Eucalyptus planting in wetlands and riparian areas.",                                                                      cite_url("https://africacheck.org/fact-checks/blog/analysis-thirsty-species-science-behind-eucalyptus-tree-ban-kenyas-wetlands"),
+  "Water Act",                                               "Prohibits exotic species with adverse effects on water resources.",                                                             cite_url("https://africacheck.org/fact-checks/blog/analysis-thirsty-species-science-behind-eucalyptus-tree-ban-kenyas-wetlands")
+)
+
+legal_framework |>
+  kbl(escape = FALSE, caption = "Kenyan statutes relevant to invasive and noxious plants") |>
+  kable_styling(
+    bootstrap_options = c("striped", "hover", "condensed", "responsive"),
+    full_width = TRUE, font_size = 12
+  ) |>
+  column_spec(1, width = "18em") |>
+  column_spec(3, width = "6em")
+```
 
 ## EMCA 1999 Section 42(d) — exact wording
 
-Under Kenya's Environmental Management and Co-ordination Act, 1999, **Section 42(d)** states that no person shall, without the prior written approval of the Director-General:
+Under Kenya's Environmental Management and Co-ordination Act, 1999, **Section 42(d)** `r cite_url("https://new.kenyalaw.org/akn/ke/act/1999/8/eng@2022-12-31")` states that no person shall, without the prior written approval of the Director-General:
 
 > *"introduce or plant any part of a plant specimen, whether alien or indigenous, dead or alive, in any river, lake or wetland"*
 
-Source: [EMCA 1999 on Kenya Law](https://new.kenyalaw.org/akn/ke/act/1999/8/eng@2022-12-31)
-
-This is the operative statutory provision for all freshwater aquatic plant invasives in Kenya — *not* Section 55, which covers the coastal zone. Section 42(d) does not name specific species; species-level declarations appear in the Schedule to the **Suppression of Noxious Weeds Act, Cap 325** (which names *Eichhornia crassipes* and *Salvinia auriculata* among other declared noxious weeds).
+This is the operative statutory provision for all freshwater aquatic plant invasives in Kenya — *not* Section 55, which covers the coastal zone. Section 42(d) does not name specific species; species-level declarations appear in the Schedule to the **Suppression of Noxious Weeds Act, Cap 325** `r cite_url("http://kenyalaw.org/kl/fileadmin/pdfdownloads/Acts/SuppressionofNoxiousWeedsAct_Cap325.pdf")`, which names *Eichhornia crassipes*, *Salvinia auriculata*, *Datura stramonium*, *D. metel*, *D. ferox*, *D. tatula*, *Lolium temulentum*, and *Avena sterilis* among declared noxious weeds. *Prosopis juliflora* was added by Legal Notice in 2008.
 
 
-# Verified Species Table (18-Column Format) {#species-table}
+# Verified Species Table {#species-table}
 
-The table below shows all `r nrow(inv)` species with their GBIF backbone keys and verified legal citations. Where EMCA s.42(d) applies, the exact statutory wording is cited.
+The table below shows all `r nrow(inv)` species with their GBIF backbone keys, full notes, and numbered source citations. All citation numbers resolve to entries in the [References](#references) section at the end of the report.
+
+<p style="margin: 1em 0;">
+<a href="kenya_invasive_plants_verified.csv" download
+   style="display:inline-block; padding:0.55em 1.1em; background:#2c7fb8; color:#fff;
+          text-decoration:none; border-radius:4px; font-weight:600;">
+  &#x2B07; Download 18-column CSV
+</a>
+</p>
 
 ```{r main-table}
-# Build clickable GBIF links
+# ── Derive display columns from the CSV ────────────────────────────────────
+#
+# `Notes (descriptive)` = the Note text with the final "Sources: ..." segment
+#   stripped. `Sources` = the URLs from that segment rendered as numbered
+#   citations pointing to the References section.
+
+split_note_and_urls <- function(note) {
+  if (is.na(note) || nchar(note) == 0) return(list(text = NA_character_, urls = character(0)))
+  parts <- stringr::str_split(note, "\\bSources:\\s*", n = 2)[[1]]
+  body  <- stringr::str_trim(parts[1])
+  urls  <- if (length(parts) == 2) {
+    stringr::str_extract_all(parts[2], "https?://[^\\s|]+")[[1]] |> unique()
+  } else character(0)
+  list(text = body, urls = urls)
+}
+
+notes_parsed <- lapply(inv$Note, split_note_and_urls)
+notes_body   <- vapply(notes_parsed, `[[`, character(1), "text")
+notes_urls   <- lapply(notes_parsed, `[[`, "urls")
+notes_cites  <- vapply(notes_urls, function(u) cite_url(u), character(1))
+
 display <- inv |>
   mutate(
     `GBIF Key` = if_else(
@@ -86,140 +220,66 @@ display <- inv |>
     `Common Name(s)` = str_trunc(englishName, 80),
     Classification = classification,
     Family = family,
+    Genus = genus_I,
     `Taxon Level` = taxonLevel,
-    Aquatic = if_else(is_aquatic == "yes", paste0("Yes (", aquatic_type_I, ")"), "No"),
+    Aquatic = if_else(is_aquatic == "yes",
+                     paste0("Yes (", aquatic_type_I, ")"), "No"),
     `Legal Status (Kenya)` = legal_status_ke,
     `Restriction Type` = restriction_type,
-    `Governing Law` = governing_law
+    `Governing Law` = governing_law,
+    Notes = notes_body,
+    Sources = notes_cites,
+    Synonyms = str_trunc(coalesce(synonyms, ""), 140)
   ) |>
   select(
     `GBIF Key`, `Scientific Name`, `Common Name(s)`, Classification,
-    Family, `Taxon Level`, Aquatic,
-    `Legal Status (Kenya)`, `Restriction Type`, `Governing Law`
+    Family, Genus, `Taxon Level`, Aquatic,
+    `Legal Status (Kenya)`, `Restriction Type`, `Governing Law`,
+    Notes, Sources, Synonyms
   )
 
 display |>
-  kbl(escape = FALSE, caption = "Table 1. Kenya Invasive & Prohibited Plant Species (9 species)") |>
+  kbl(escape = FALSE,
+      caption = glue::glue("Table 1. Kenya invasive and noxious plant species ({nrow(inv)} species)")) |>
   kable_styling(
     bootstrap_options = c("striped", "hover", "condensed", "responsive"),
     full_width = TRUE, font_size = 11
   ) |>
-  column_spec(1, width = "8em") |>
-  column_spec(2, width = "12em") |>
-  column_spec(8, width = "14em") |>
-  column_spec(10, width = "18em") |>
-  scroll_box(height = "600px")
+  column_spec(1, width = "7em") |>
+  column_spec(2, width = "11em") |>
+  column_spec(9, width = "14em") |>
+  column_spec(11, width = "16em") |>
+  column_spec(12, width = "22em") |>
+  column_spec(13, width = "8em") |>
+  column_spec(14, width = "14em") |>
+  scroll_box(height = "650px")
 ```
 
-**Note on Section 42(d):** For aquatic species (*Pontederia crassipes*, *Salvinia molesta*) and any other species that may be introduced to rivers, lakes, or wetlands, EMCA 1999 s.42(d) applies the exact prohibition quoted above: *"introduce or plant any part of a plant specimen, whether alien or indigenous, dead or alive, in any river, lake or wetland"*.
-
-
-# Per-Species Source Citations {#citations}
-
-```{r per-species-citations, results='asis'}
-for (i in seq_len(nrow(inv))) {
-  row <- inv[i, ]
-  cat(glue("\n\n## {i}. {row$prefName}\n\n"))
-  cat(glue("**Common name(s):** {str_trunc(row$englishName, 120)}\n\n"))
-  cat(glue("**GBIF usage key:** [{row$GBIFusageKey}](https://www.gbif.org/species/{row$GBIFusageKey})\n\n"))
-  cat(glue("**Family:** {row$family} | **Genus:** {row$genus_I} | **Taxon level:** {row$taxonLevel}\n\n"))
-  cat(glue("**Aquatic:** {row$is_aquatic}",
-           if_else(!is.na(row$aquatic_type_I), glue(" ({row$aquatic_type_I})"), ""),
-           "\n\n"))
-  cat(glue("**Classification:** {row$classification}\n\n"))
-  cat(glue("**Legal status (Kenya):** {row$legal_status_ke}\n\n"))
-  cat(glue("**Restriction type:** {row$restriction_type}\n\n"))
-  cat(glue("**Governing law:** {row$governing_law}\n\n"))
-
-  # For aquatic species, highlight the s.42(d) statutory quote
-  if (!is.na(row$is_aquatic) && row$is_aquatic == "yes") {
-    cat("\n**EMCA 1999 s.42(d) — applicable statutory prohibition:**\n\n")
-    cat("> *\"introduce or plant any part of a plant specimen, whether alien or indigenous, dead or alive, in any river, lake or wetland\"*\n\n")
-  }
-
-  # Parse Note field for source URLs
-  note <- row$Note
-  if (!is.na(note) && nchar(note) > 0) {
-    cat("**Notes & verified sources:**\n\n")
-    # Split on " | " to get individual source references
-    parts <- str_split(note, " \\| ")[[1]]
-    for (p in parts) {
-      # Check if this part contains a URL
-      urls <- str_extract_all(p, "https?://[^\\s]+")[[1]]
-      if (length(urls) > 0) {
-        label <- str_remove(p, "https?://[^\\s]+") |> str_squish()
-        for (u in urls) {
-          cat(glue("- [{label}]({u})\n\n"))
-        }
-      } else {
-        cat(glue("- {p}\n\n"))
-      }
-    }
-  }
-
-  if (!is.na(row$synonyms) && nchar(row$synonyms) > 0) {
-    syn_trunc <- str_trunc(row$synonyms, 200)
-    cat(glue("\n**Synonyms:** {syn_trunc}\n\n"))
-  }
-
-  cat("\n---\n")
-}
-```
-
-
-# Summary Statistics
-
-```{r summary-stats}
-inv |>
-  count(classification, sort = TRUE) |>
-  rename(Classification = classification, `Species Count` = n) |>
-  kbl(caption = "Table 2. Species by Legal Classification") |>
-  kable_styling(
-    bootstrap_options = c("striped", "hover", "condensed"),
-    full_width = FALSE
-  )
-```
-
-```{r aquatic-summary}
-inv |>
-  count(is_aquatic, sort = TRUE) |>
-  mutate(is_aquatic = if_else(is_aquatic == "yes", "Aquatic", "Terrestrial")) |>
-  rename(`Habitat` = is_aquatic, `Species Count` = n) |>
-  kbl(caption = "Table 3. Species by Aquatic Status") |>
-  kable_styling(
-    bootstrap_options = c("striped", "hover", "condensed"),
-    full_width = FALSE
-  )
-```
-
-```{r family-breakdown}
-inv |>
-  count(family, sort = TRUE) |>
-  rename(Family = family, `Species Count` = n) |>
-  kbl(caption = "Table 4. Species by Plant Family") |>
-  kable_styling(
-    bootstrap_options = c("striped", "hover", "condensed"),
-    full_width = FALSE
-  )
-```
-
-
-# CSV Download
-
-The 18-column CSV file is available at:
-
-`kenya_invasive_plants_verified.csv`
-
-**Schema:** `GBIFusageKey, country, region, jurisdiction, jurisdiction_group, prefName, classification, taxonLevel, family, englishName, synonyms, Note, genus_I, is_aquatic, aquatic_type_I, legal_status_ke, restriction_type, governing_law`
+**Note on EMCA 1999 s.42(d):** For aquatic species (*Pontederia crassipes*, *Salvinia molesta*, *Salvinia auriculata*) and any other species that may be introduced to rivers, lakes, or wetlands, EMCA 1999 s.42(d) applies the exact prohibition quoted above: *"introduce or plant any part of a plant specimen, whether alien or indigenous, dead or alive, in any river, lake or wetland"* `r cite_url("https://new.kenyalaw.org/akn/ke/act/1999/8/eng@2022-12-31")`.
 
 
 # Methodology
 
-1. **GBIF resolution:** 6 species carried over from `kenya_regulated_plants_gbif.csv` with confirmed usage keys. 3 species (*Tagetes minuta*, *Ipomoea* spp., *Eucalyptus* spp.) resolved via `rgbif::name_backbone()`. Vernacular names and synonyms fetched via `rgbif::name_usage()`.
+1. **Scope:** the species list is the union of FAO/KEPHIS Chapter 26 Table 1 `r cite_url("https://www.fao.org/4/y5968e/y5968e10.htm")` (ecological-invasives list) and the Schedule to the Suppression of Noxious Weeds Act, Cap 325 `r cite_url("http://kenyalaw.org/kl/fileadmin/pdfdownloads/Acts/SuppressionofNoxiousWeedsAct_Cap325.pdf")` (legally declared noxious weeds), with *Prosopis juliflora* added by the 2008 Legal Notice under the same Act.
 
-2. **Source verification (16 April 2026):** Each species checked against GISD, CABI Compendium, EPPO Global Database, FAO/KEPHIS Chapter 26, and Kenya Law. Legal citations reference actual species-naming instruments (Cap 325) or exact statutory provisions (EMCA s.42(d)) rather than framework Acts that name no species.
+2. **GBIF resolution:** species carried over from `kenya_regulated_plants_gbif.csv` retain their confirmed usage keys. Additional species — *Tagetes minuta*, *Ipomoea*, *Eucalyptus*, *Lolium temulentum*, *Datura stramonium*, *D. metel*, *D. ferox*, *D. tatula*, *Avena sterilis*, *Salvinia auriculata* — are resolved via `rgbif::name_backbone()`. Vernacular names and synonyms are fetched via `rgbif::name_usage()`.
 
-3. **Transparency:** The `Note` column contains full source URLs for every species. Where legal status could not be confirmed against a publicly available document, this is stated explicitly (e.g., "NOT formally declared noxious weed" for *Lantana camara*).
+3. **Source verification:** each species is checked against GISD `r cite_url("https://www.iucngisd.org")`, the CABI Compendium `r cite_url("https://www.cabi.org/isc")`, the EPPO Global Database `r cite_url("https://gd.eppo.int")`, FAO/KEPHIS Chapter 26 `r cite_url("https://www.fao.org/4/y5968e/y5968e10.htm")`, and Kenya Law `r cite_url("https://new.kenyalaw.org")`. Legal citations reference actual species-naming instruments (Cap 325 Schedule) or exact statutory provisions (EMCA s.42(d)) rather than framework Acts that name no species.
+
+4. **Transparency:** the `Note` column of the CSV contains the descriptive text plus the full source URL list for every species. In this report those URLs are rendered as numbered citations that link to matching entries in the [References](#references) section. Where legal status could not be confirmed against a publicly available document, it is stated explicitly (e.g., "NOT formally declared noxious weed" for *Lantana camara*).
+
+
+# References {#references}
+
+```{r references-list, results='asis'}
+for (i in seq_len(nrow(refs))) {
+  r <- refs[i, ]
+  cat(sprintf(
+    '<p id="ref-%d" style="margin:0.35em 0;"><strong>[%d]</strong> %s <a href="%s" target="_blank">%s</a></p>\n',
+    r$id, r$id, r$label, r$url, r$url
+  ))
+}
+```
 
 ---
 

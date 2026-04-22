@@ -1,17 +1,26 @@
 # =============================================================================
 # build_invasive_csv.R
-# Source-verified Kenya invasive / prohibited plant species — 18-column CSV
+# Source-verified Kenya invasive / noxious plant species — 18-column CSV
 #
 # Produces: kenya_invasive_plants_verified.csv
 #
+# Scope: union of FAO/KEPHIS Chapter 26 Table 1 (9 ecological invasives) and
+# the Schedule to the Suppression of Noxious Weeds Act, Cap 325 (legally
+# declared noxious weeds, plus Prosopis juliflora added by 2008 Legal Notice).
+#
 # This script:
 #   1. Extracts 6 already-resolved species from the existing GBIF CSV
-#   2. Resolves 3 unresolved species (Tagetes, Ipomoea, Eucalyptus) via rgbif
+#   2. Resolves 10 additional species via rgbif:
+#        - FAO/KEPHIS Table 1: Tagetes minuta, Ipomoea, Eucalyptus
+#        - Cap 325 Schedule: Lolium temulentum, Datura stramonium, Datura metel,
+#          Datura ferox, Datura tatula, Avena sterilis, Salvinia auriculata
 #   3. Corrects legal columns with verified source citations
 #   4. Outputs 18-column CSV matching regulated_plants_v9.7.csv schema
 #
 # Verified against:
 #   - FAO/KEPHIS Ch.26: https://www.fao.org/4/y5968e/y5968e10.htm
+#   - Suppression of Noxious Weeds Act Cap 325 Schedule:
+#     http://kenyalaw.org/kl/fileadmin/pdfdownloads/Acts/SuppressionofNoxiousWeedsAct_Cap325.pdf
 #   - GISD (iucngisd.org)
 #   - CABI Invasive Species Compendium
 #   - Kenya Law (kenyalaw.org): Cap 325, Cap 324, EMCA 1999, Agriculture Act
@@ -48,16 +57,29 @@ keep_keys <- c(
 existing_inv <- gbif_all |> filter(GBIFusageKey %in% keep_keys)
 message(glue("[build] Extracted {nrow(existing_inv)} already-resolved species."))
 
-# ── 3. Resolve 3 new species via rgbif ──────────────────────────────────────
+# ── 3. Resolve additional species via rgbif ─────────────────────────────────
+#
+# `display_name` overrides GBIF's canonical output so that each Cap 325
+# Schedule entry remains a distinct row even when GBIF synonymises them
+# (e.g. Datura tatula -> Datura stramonium).
 
 new_species <- tribble(
-  ~query_name,      ~common_name,
-  "Tagetes minuta",  "Mexican marigold",
-  "Ipomoea",         "Morning glory",
-  "Eucalyptus",      "Eucalyptus"
+  ~query_name,            ~display_name,          ~common_name,
+  # ── FAO/KEPHIS Table 1 (ecological invasives) ──
+  "Tagetes minuta",       "Tagetes minuta",       "Mexican marigold",
+  "Ipomoea",              "Ipomoea",              "Morning glory",
+  "Eucalyptus",           "Eucalyptus",           "Eucalyptus",
+  # ── Suppression of Noxious Weeds Act Cap 325 Schedule ──
+  "Lolium temulentum",    "Lolium temulentum",    "Darnel, poison darnel, cockle",
+  "Datura stramonium",    "Datura stramonium",    "Jimsonweed, thorn apple, common thornapple",
+  "Datura metel",         "Datura metel",         "Devil's trumpet, Hindu datura, horn-of-plenty",
+  "Datura ferox",         "Datura ferox",         "Long-spined thorn apple, fierce thornapple",
+  "Datura tatula",        "Datura tatula",        "Purple thorn apple",
+  "Avena sterilis",       "Avena sterilis",       "Wild oat, winter wild-oat, animated oat",
+  "Salvinia auriculata",  "Salvinia auriculata",  "African payal, eared watermoss, butterfly fern"
 )
 
-message("[build] Resolving 3 new species via GBIF backbone ...")
+message(glue("[build] Resolving {nrow(new_species)} new species via GBIF backbone ..."))
 
 resolve_one <- function(name) {
   tryCatch({
@@ -109,14 +131,15 @@ message(glue("[build] Fetching vernacular/synonyms for {length(new_keys)} new ke
 vern_new <- map_chr(new_keys, get_vernacular)
 syn_new  <- map_chr(new_keys, get_synonyms)
 
-# Build rows for new species
+# Build rows for new species — use `display_name` as prefName so each Cap 325
+# Schedule entry remains a distinct row even if GBIF collapses synonyms.
 new_rows <- tibble(
   GBIFusageKey      = as.character(backbone_new$usageKey),
   country           = "Kenya",
   region            = "",
   jurisdiction      = "NATIONAL",
   jurisdiction_group = "",
-  prefName          = coalesce(backbone_new$species, backbone_new$canonicalName),
+  prefName          = new_species$display_name,
   classification    = "Restricted",
   taxonLevel        = tolower(coalesce(backbone_new$rank, "species")),
   family            = backbone_new$family,
@@ -131,16 +154,21 @@ new_rows <- tibble(
   governing_law     = NA_character_
 )
 
-# Patch common names where GBIF vernacular may be sparse
+# Prepend curated common names (GBIF vernacular can be sparse for genus-level
+# queries and some Cap 325 species)
 new_rows <- new_rows |>
   mutate(
-    englishName = case_when(
-      str_detect(prefName, "Tagetes")    ~ paste0("Mexican marigold, ", coalesce(englishName, "")),
-      str_detect(prefName, "Ipomoea")    ~ paste0("Morning glory, ", coalesce(englishName, "")),
-      str_detect(prefName, "Eucalyptus") ~ paste0("Eucalyptus, ", coalesce(englishName, "")),
-      TRUE ~ englishName
-    ),
-    englishName = str_remove(englishName, ",\\s*$")  # trim trailing comma if GBIF was NA
+    englishName = paste0(new_species$common_name,
+                         if_else(!is.na(englishName) & nchar(englishName) > 0,
+                                 paste0(", ", englishName), "")),
+    englishName = str_remove(englishName, ",\\s*$")
+  )
+
+# Mark Salvinia auriculata as aquatic
+new_rows <- new_rows |>
+  mutate(
+    is_aquatic     = if_else(prefName == "Salvinia auriculata", "yes", is_aquatic),
+    aquatic_type_I = if_else(prefName == "Salvinia auriculata", "freshwater", aquatic_type_I)
   )
 
 # ── 5. Combine all 9 species ────────────────────────────────────────────────
@@ -315,6 +343,137 @@ all_inv <- all_inv |>
         "Sources: FAO/KEPHIS https://www.fao.org/4/y5968e/y5968e10.htm | ",
         "Africa Check https://africacheck.org/fact-checks/blog/analysis-thirsty-species-science-behind-eucalyptus-tree-ban-kenyas-wetlands | ",
         "Daily Nation https://nation.africa/kenya/news/uproot-all-eucalyptus-trees-within-30m-of-water-sources-5262368"
+      ), Note),
+
+    # ── Cap 325 Schedule species ─────────────────────────────────────────
+    # All 6 plants named in the Schedule to the Suppression of Noxious Weeds
+    # Act, Cap 325 that are not already covered by Pontederia / Salvinia /
+    # Prosopis. Plus Salvinia auriculata (the Schedule's explicit name for
+    # the giant-salvinia complex), added as a distinct row from S. molesta.
+
+    # Lolium temulentum (Darnel)
+    classification   = if_else(str_detect(prefName, "Lolium temulentum"), "Prohibited", classification),
+    legal_status_ke  = if_else(str_detect(prefName, "Lolium temulentum"),
+      "Declared noxious weed (Cap 325 Schedule); introduction prohibited", legal_status_ke),
+    restriction_type = if_else(str_detect(prefName, "Lolium temulentum"),
+      "Prohibited; active control required", restriction_type),
+    governing_law    = if_else(str_detect(prefName, "Lolium temulentum"),
+      "Suppression of Noxious Weeds Act Cap 325 (Schedule)", governing_law),
+    Note = if_else(str_detect(prefName, "Lolium temulentum"),
+      paste0(
+        "Named in the Schedule to the Suppression of Noxious Weeds Act, Cap 325 as a declared noxious weed throughout Kenya. ",
+        "Cap 325 ss.5-7 place a duty on occupiers to report, and empower inspectors to enter land, order clearance, and eradicate. ",
+        "Poisonous annual grass; contaminates cereal grain (especially wheat) with ergot-like alkaloids. ",
+        "Sources: Cap 325 Schedule http://kenyalaw.org/kl/fileadmin/pdfdownloads/Acts/SuppressionofNoxiousWeedsAct_Cap325.pdf | ",
+        "CABI https://www.cabidigitallibrary.org/doi/10.1079/cabicompendium.31166 | ",
+        "GBIF https://www.gbif.org/species/2706242"
+      ), Note),
+
+    # Datura stramonium (Jimsonweed / thorn apple)
+    classification   = if_else(prefName == "Datura stramonium", "Prohibited", classification),
+    legal_status_ke  = if_else(prefName == "Datura stramonium",
+      "Declared noxious weed (Cap 325 Schedule); introduction prohibited", legal_status_ke),
+    restriction_type = if_else(prefName == "Datura stramonium",
+      "Prohibited; active control required", restriction_type),
+    governing_law    = if_else(prefName == "Datura stramonium",
+      "Suppression of Noxious Weeds Act Cap 325 (Schedule)", governing_law),
+    Note = if_else(prefName == "Datura stramonium",
+      paste0(
+        "Named in the Schedule to the Suppression of Noxious Weeds Act, Cap 325. ",
+        "Highly toxic tropane-alkaloid weed (atropine, hyoscyamine, scopolamine); livestock poisoning and grain contamination. ",
+        "Widespread ruderal across Kenyan highlands; competitive weed of maize and vegetables. ",
+        "Sources: Cap 325 Schedule http://kenyalaw.org/kl/fileadmin/pdfdownloads/Acts/SuppressionofNoxiousWeedsAct_Cap325.pdf | ",
+        "CABI https://www.cabidigitallibrary.org/doi/10.1079/cabicompendium.18006 | ",
+        "GISD https://www.iucngisd.org/gisd/species.php?sc=1038 | ",
+        "GBIF https://www.gbif.org/species/2928751"
+      ), Note),
+
+    # Datura metel (Devil's trumpet)
+    classification   = if_else(prefName == "Datura metel", "Prohibited", classification),
+    legal_status_ke  = if_else(prefName == "Datura metel",
+      "Declared noxious weed (Cap 325 Schedule); introduction prohibited", legal_status_ke),
+    restriction_type = if_else(prefName == "Datura metel",
+      "Prohibited; active control required", restriction_type),
+    governing_law    = if_else(prefName == "Datura metel",
+      "Suppression of Noxious Weeds Act Cap 325 (Schedule)", governing_law),
+    Note = if_else(prefName == "Datura metel",
+      paste0(
+        "Named in the Schedule to the Suppression of Noxious Weeds Act, Cap 325. ",
+        "Tropane-alkaloid weed with the same toxicity and grain-contamination profile as D. stramonium. ",
+        "Sources: Cap 325 Schedule http://kenyalaw.org/kl/fileadmin/pdfdownloads/Acts/SuppressionofNoxiousWeedsAct_Cap325.pdf | ",
+        "CABI https://www.cabidigitallibrary.org/doi/10.1079/cabicompendium.18005 | ",
+        "GBIF https://www.gbif.org/species/2928747"
+      ), Note),
+
+    # Datura ferox (Long-spined thorn apple)
+    classification   = if_else(prefName == "Datura ferox", "Prohibited", classification),
+    legal_status_ke  = if_else(prefName == "Datura ferox",
+      "Declared noxious weed (Cap 325 Schedule); introduction prohibited", legal_status_ke),
+    restriction_type = if_else(prefName == "Datura ferox",
+      "Prohibited; active control required", restriction_type),
+    governing_law    = if_else(prefName == "Datura ferox",
+      "Suppression of Noxious Weeds Act Cap 325 (Schedule)", governing_law),
+    Note = if_else(prefName == "Datura ferox",
+      paste0(
+        "Named in the Schedule to the Suppression of Noxious Weeds Act, Cap 325. ",
+        "Tropane-alkaloid weed; competitive annual of soybean, maize and horticultural crops. ",
+        "Sources: Cap 325 Schedule http://kenyalaw.org/kl/fileadmin/pdfdownloads/Acts/SuppressionofNoxiousWeedsAct_Cap325.pdf | ",
+        "CABI https://www.cabidigitallibrary.org/doi/10.1079/cabicompendium.18004 | ",
+        "GBIF https://www.gbif.org/species/7894250"
+      ), Note),
+
+    # Datura tatula (Purple thorn apple — often treated as D. stramonium var. tatula)
+    classification   = if_else(prefName == "Datura tatula", "Prohibited", classification),
+    legal_status_ke  = if_else(prefName == "Datura tatula",
+      "Declared noxious weed (Cap 325 Schedule); introduction prohibited", legal_status_ke),
+    restriction_type = if_else(prefName == "Datura tatula",
+      "Prohibited; active control required", restriction_type),
+    governing_law    = if_else(prefName == "Datura tatula",
+      "Suppression of Noxious Weeds Act Cap 325 (Schedule)", governing_law),
+    Note = if_else(prefName == "Datura tatula",
+      paste0(
+        "Named in the Schedule to the Suppression of Noxious Weeds Act, Cap 325. ",
+        "Modern taxonomy treats this as Datura stramonium var. tatula; retained as a distinct row to mirror the Schedule verbatim. ",
+        "Sources: Cap 325 Schedule http://kenyalaw.org/kl/fileadmin/pdfdownloads/Acts/SuppressionofNoxiousWeedsAct_Cap325.pdf | ",
+        "POWO https://powo.science.kew.org/?q=Datura%20tatula | ",
+        "GBIF https://www.gbif.org/species/2928753"
+      ), Note),
+
+    # Avena sterilis (Wild oat)
+    classification   = if_else(str_detect(prefName, "Avena sterilis"), "Prohibited", classification),
+    legal_status_ke  = if_else(str_detect(prefName, "Avena sterilis"),
+      "Declared noxious weed (Cap 325 Schedule); introduction prohibited", legal_status_ke),
+    restriction_type = if_else(str_detect(prefName, "Avena sterilis"),
+      "Prohibited; active control required", restriction_type),
+    governing_law    = if_else(str_detect(prefName, "Avena sterilis"),
+      "Suppression of Noxious Weeds Act Cap 325 (Schedule)", governing_law),
+    Note = if_else(str_detect(prefName, "Avena sterilis"),
+      paste0(
+        "Named in the Schedule to the Suppression of Noxious Weeds Act, Cap 325. ",
+        "Major weed of small grains (wheat, barley, oat); competes aggressively for water and nutrients; seed contaminant. ",
+        "Sources: Cap 325 Schedule http://kenyalaw.org/kl/fileadmin/pdfdownloads/Acts/SuppressionofNoxiousWeedsAct_Cap325.pdf | ",
+        "CABI https://www.cabidigitallibrary.org/doi/10.1079/cabicompendium.8185 | ",
+        "EPPO https://gd.eppo.int/taxon/AVEST/datasheet | ",
+        "GBIF https://www.gbif.org/species/2705286"
+      ), Note),
+
+    # Salvinia auriculata (the Schedule's verbatim name)
+    classification   = if_else(prefName == "Salvinia auriculata", "Prohibited", classification),
+    legal_status_ke  = if_else(prefName == "Salvinia auriculata",
+      "Declared noxious weed (Cap 325 Schedule); introduction prohibited", legal_status_ke),
+    restriction_type = if_else(prefName == "Salvinia auriculata",
+      "Prohibited introduction; active control", restriction_type),
+    governing_law    = if_else(prefName == "Salvinia auriculata",
+      "Suppression of Noxious Weeds Act Cap 325 (Schedule); EMCA 1999 s.42(d)", governing_law),
+    Note = if_else(prefName == "Salvinia auriculata",
+      paste0(
+        "Named verbatim in the Schedule to the Suppression of Noxious Weeds Act, Cap 325. ",
+        "Retained as a distinct row from S. molesta (the taxon actually dominant in Kenyan waters) so the Schedule's literal wording is preserved. ",
+        "EMCA 1999 s.42(d) additionally prohibits introduction of 'any part of a plant specimen, whether alien or indigenous, dead or alive, in any river, lake or wetland' without Director-General approval. ",
+        "Sources: Cap 325 Schedule http://kenyalaw.org/kl/fileadmin/pdfdownloads/Acts/SuppressionofNoxiousWeedsAct_Cap325.pdf | ",
+        "CABI https://www.cabidigitallibrary.org/doi/10.1079/cabicompendium.48444 | ",
+        "EMCA 1999 https://new.kenyalaw.org/akn/ke/act/1999/8/eng@2022-12-31 | ",
+        "GBIF https://www.gbif.org/species/5274861"
       ), Note)
   )
 
