@@ -1,6 +1,6 @@
 ---
 title: "Restricted and Protected Plant Species in India"
-subtitle: "Wildlife Protection Act Schedule VI, Biological Diversity Act, and CITES — A Comprehensive Reference"
+subtitle: "Wild Life (Protection) Act Schedule VI, Biological Diversity Act, and CITES — A Comprehensive Reference"
 author: "Kwiz Research"
 date: "`r format(Sys.Date(), '%d %B %Y')`"
 output:

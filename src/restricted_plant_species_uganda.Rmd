@@ -188,7 +188,7 @@ The **National Forestry and Tree Planting Act, 2003** (NFTPA) establishes the Na
 
 **East African sandalwood export ban (NFA Statutory Order 2004):** The NFA declared a complete ban on harvesting and export of *Osyris lanceolata* (East African sandalwood) following catastrophic over-exploitation driven by Middle Eastern demand.
 
-Full text: [ULII — NFTPA 2003](https://ulii.org/akn/ug/act/2003/5/eng@2023-12-31)
+Full text: [ULII — NFTPA 2003](https://ulii.org/en/akn/ug/act/2003/8/eng@2003-08-08)
 
 ## Uganda Wildlife Act, 2019 {#wildlife}
 
@@ -395,9 +395,9 @@ Water hyacinth (*Eichhornia crassipes*) is Uganda's most critical aquatic invasi
 
 | Resource | Link |
 |----------|------|
-| National Forestry and Tree Planting Act 2003 — ULII | [ulii.org](https://ulii.org/akn/ug/act/2003/5/eng@2023-12-31) |
+| National Forestry and Tree Planting Act 2003 — ULII | [ulii.org](https://ulii.org/en/akn/ug/act/2003/8/eng@2003-08-08) |
 | Plant Protection and Health Act 2016 — ULII | [ulii.org](https://ulii.org/akn/ug/act/2016/6/eng@2023-12-31) |
-| National Environment Act 2019 — ULII | [ulii.org](https://ulii.org/akn/ug/act/2019/5/eng@2023-12-31) |
+| National Environment Act 2019 — ULII | [ulii.org](https://ulii.org/en/akn/ug/act/2019/5/eng@2019-03-07) |
 | Uganda Wildlife Authority | [ugandawildlife.org](https://www.ugandawildlife.org) |
 | National Forestry Authority | [nfa.go.ug](https://www.nfa.go.ug) |
 | GBIF Uganda | [gbif.org/country/UG](https://www.gbif.org/country/UG/summary) |

@@ -135,7 +135,7 @@ species <- tribble(
   "Giant quiver tree", "Aloidendron pillansii", "Magnoliopsida", "Endangered", "Appendix II", "Endangered (TOPS)", "Protected — no trade", "NEMBA TOPS Regulations 2007", "DFFE / SANBI", "Richtersveld; tallest aloe; <200 reproductive individuals", "https://www.saflii.org",
   "Pancake succulent", "Euphorbia obesa", "Magnoliopsida", "Vulnerable", "Appendix II", "Vulnerable (TOPS)", "Protected — permit required", "NEMBA TOPS Regulations 2007", "DFFE / SANBI", "Karoo endemic; heavily poached for succulent trade globally", "https://www.saflii.org",
   "Medusa's head euphorbia", "Euphorbia caput-medusae", "Magnoliopsida", "Least Concern", "Appendix II", "Protected (TOPS)", "Regulated collection/trade", "NEMBA TOPS Regulations 2007", "DFFE / SANBI", "W Cape endemic; all succulent Euphorbia CITES II; ornamental trade", "https://www.saflii.org",
-  "Living rocks", "Lithops spp.", "Magnoliopsida", "Various", "Appendix II", "Protected (TOPS)", "Regulated collection/trade", "NEMBA TOPS Regulations 2007", "DFFE / SANBI", "Entire genus; popular in succulent trade; poaching risk; Karoo/Namaqualand", "https://www.saflii.org",
+  "Living rocks", "Lithops spp.", "Magnoliopsida", "Various", "Not listed", "Protected (TOPS)", "Regulated collection/trade", "NEMBA TOPS Regulations 2007", "DFFE / SANBI", "Entire genus; popular in succulent trade; poaching risk; Karoo/Namaqualand", "https://www.saflii.org",
   "Conophytum (stone plants)", "Conophytum spp.", "Magnoliopsida", "Various", "Appendix II", "Protected (TOPS)", "Regulated collection/trade", "NEMBA TOPS Regulations 2007", "DFFE / SANBI", "Genus-level CITES II listing 2022 (CoP19); massive poaching for Asian market", "https://www.saflii.org",
   "Hoodia (appetite suppressant)", "Hoodia gordonii", "Magnoliopsida", "Least Concern", "Appendix II", "Protected (TOPS)", "Regulated collection/trade", "NEMBA TOPS Regulations 2007", "DFFE / SANBI", "Kalahari/Northern Cape; San traditional use; patented; ABS dispute", "https://www.saflii.org",
   "Drakensberg agapanthus", "Agapanthus walshii", "Magnoliopsida", "Vulnerable", "Not listed", "Vulnerable (TOPS)", "Protected — permit required", "NEMBA TOPS Regulations 2007", "DFFE / SANBI", "KZN endemic; heavily collected for horticulture", "https://www.saflii.org",
@@ -374,7 +374,7 @@ The **National Environmental Management: Biodiversity Act, No. 10 of 2004** (NEM
 
 **TOPS Regulations** (Government Notice R 151, 2 February 2007, as amended): Publish the current list of threatened and protected species with their listing categories. The list is reviewed by SANBI and DFFE and updated via Gazette.
 
-Full text: [SAFLII — NEMBA 2004](https://www.saflii.org/za/legis/num_act/nemba2004355/) | [DFFE](https://www.dffe.gov.za/legislation/actsregulations)
+Full text: [SAFLII — NEMBA 2004](https://www.saflii.org/za/legis/consol_act/nemba2004476/) | [DFFE](https://www.dffe.gov.za/legislation/actsregulations)
 
 <div class="alert alert-warning" role="alert">
 **⚠ Implementation Gap** — The TOPS Regulations were last comprehensively updated through GN 799/2022. However, SANBI's National Assessment of South Africa's Fauna and Flora (NASAFF, 2021) identified **~2,000 plant species** meeting threatened criteria under IUCN standards — far more than are currently listed in the TOPS Regulations. The TOPS list covers a fraction of IUCN-assessed threatened species, meaning the majority have no legal protection status in South Africa.
@@ -403,7 +403,7 @@ The **Alien and Invasive Species Regulations** (GN No. R. 1003, 30 September 202
 
 Categories 1a and 1b impose a legal duty on landowners to control listed species on their property. Failure to comply allows the responsible authority to carry out the work and recover costs from the landowner.
 
-Full text: [GN R. 1003/2020](https://www.gov.za/documents/national-environmental-management-biodiversity-act-alien-and-invasive-species-regulations)
+Full text: [GN R. 1003/2020](https://www.gov.za/documents/national-environmental-management-biodiversity-act-alien-and-invasive-species-lists-2020)
 
 ## CITES Implementation in South Africa {#cites}
 
@@ -688,10 +688,10 @@ The AIS Regulations impose a legal duty on private landowners to control Categor
 
 | Law | Link |
 |-----|------|
-| NEMBA, 2004 (Act No. 10 of 2004) | [SAFLII](https://www.saflii.org/za/legis/num_act/nemba2004355/) |
+| NEMBA, 2004 (Act No. 10 of 2004) | [SAFLII](https://www.saflii.org/za/legis/consol_act/nemba2004476/) |
 | NEMBA TOPS Regulations (GN R 151/2007) | [DFFE](https://www.dffe.gov.za/sites/default/files/legislations/nem_biodiversityact_threatspeciesregulations.pdf) |
-| NEMBA AIS Regulations (GN R 1003/2020) | [Gov.za](https://www.gov.za/documents/national-environmental-management-biodiversity-act-alien-and-invasive-species-regulations) |
-| National Forests Act, 1998 (No. 84 of 1998) | [SAFLII](https://www.saflii.org/za/legis/num_act/nfa1998209/) |
+| NEMBA AIS Regulations (GN R 1003/2020) | [Gov.za](https://www.gov.za/documents/national-environmental-management-biodiversity-act-alien-and-invasive-species-lists-2020) |
+| National Forests Act, 1998 (No. 84 of 1998) | [SAFLII](https://www.saflii.org/za/legis/consol_act/nfa1998194/) |
 | National Forests Act Protected Trees (GN R 1030/2004) | [DFFE](https://www.dffe.gov.za/sites/default/files/legislations/nfa_protectedtreeslist.pdf) |
 
 ## Regulatory Agencies
@@ -709,7 +709,7 @@ The AIS Regulations impose a legal duty on private landowners to control Categor
 |----------|------|
 | CITES Appendices | [cites.org/eng/app/appendices.php](https://cites.org/eng/app/appendices.php) |
 | IUCN Red List | [iucnredlist.org](https://www.iucnredlist.org) |
-| SANBI Biodiversity Advisor | [sanbi.org/biodiversity-advisor](https://www.sanbi.org/biodiversity-advisor/) |
+| SANBI Biodiversity Advisor | [sanbi.org/biodiversity-advisor](https://biodiversityadvisor.sanbi.org) |
 | BioNET-SA (GBIF node) | [biodiversityadvisor.sanbi.org](https://biodiversityadvisor.sanbi.org) |
 | Cycad Conservation Trust | [cycad.co.za](https://www.cycad.co.za) |
 
