@@ -74,7 +74,7 @@ lookup_wikidata_iucn <- function(binomials, batch_size = 25) {
       next
     }
 
-    payload <- content(resp, as = "parsed", simplifyVector = TRUE)
+    payload <- fromJSON(content(resp, as = "text", encoding = "UTF-8"), simplifyVector = TRUE)
     rows <- payload$results$bindings
     if (is.null(rows) || length(rows) == 0) next
 
@@ -137,8 +137,7 @@ gbif_new <- gbif |>
 # Add iucn_id column after GBIFusageKey if not already present
 if (!"iucn_id" %in% names(gbif_new)) {
   gbif_new <- gbif_new |>
-    mutate(iucn_id = unlist(id_map[prefName]) |>
-             {\(x) ifelse(is.null(x) | is.na(x), "", x)}()) |>
+    mutate(iucn_id = map_chr(prefName, ~id_map[[.x]] %||% "")) |>
     relocate(iucn_id, .after = GBIFusageKey)
 } else {
   gbif_new <- gbif_new |>
@@ -159,8 +158,7 @@ raw_new <- raw |>
 
 if (!"iucn_id" %in% names(raw_new)) {
   raw_new <- raw_new |>
-    mutate(iucn_id = unlist(id_map[scientific_name]) |>
-             {\(x) ifelse(is.null(x) | is.na(x), "", x)}()) |>
+    mutate(iucn_id = map_chr(scientific_name, ~id_map[[.x]] %||% "")) |>
     relocate(iucn_id, .after = scientific_name)
 }
 
