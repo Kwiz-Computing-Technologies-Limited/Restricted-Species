@@ -1,20 +1,21 @@
 #!/usr/bin/env Rscript
 # upgrade_iucn_urls.R
-# One-shot migration: replace the IUCN Red List search URLs (added in commit
-# a9d8bed for the 105 FCMA+EMCA rows) with direct species-page URLs keyed by
-# the IUCN Red List taxon ID, and record the numeric ID as a new `iucn_id`
-# column on the downstream CSV.
+# Replace IUCN Red List search URLs with direct species-page URLs in the
+# format /species/<taxon_id>/<assessment_id>. Single-ID URLs (e.g.
+# /species/48154088) 404 for many taxa, so both IDs are required for a
+# stable link.
 #
-# Sources:
-#   Wikidata SPARQL endpoint: https://query.wikidata.org/sparql
-#   IUCN ID property:         wdt:P627
-#   Taxon name property:      wdt:P225
+# Lookup strategy:
+#   1. Fetch IUCN taxon ID (P627) from Wikidata SPARQL.
+#   2. Fetch the *current* assessment ID from the IUCN public API
+#      (apiv3.iucnredlist.org). Requires a free token registered at
+#      https://apiv3.iucnredlist.org/api/v3/token.
 #
-# Run from the repository root:
-#   Rscript src/upgrade_iucn_urls.R
+# Usage:
+#   IUCN_TOKEN=<your-token> Rscript src/upgrade_iucn_urls.R
 #
-# Requires network access to query.wikidata.org. Safe to re-run; any row
-# that already has a direct IUCN species-page URL is skipped.
+# Re-runnable: rows that already carry a /species/<taxon>/<assessment> URL
+# are skipped.
 #
 # Touches:
 #   data/raw/species_raw.csv
@@ -26,31 +27,21 @@ suppressPackageStartupMessages({
   library(jsonlite)
 })
 
+token <- Sys.getenv("IUCN_TOKEN", unset = NA_character_)
+if (is.na(token) || nchar(token) == 0) {
+  stop("Set IUCN_TOKEN to your IUCN Red List API token.\n",
+       "Register a free token at: https://apiv3.iucnredlist.org/api/v3/token")
+}
+
 raw_csv  <- "data/raw/species_raw.csv"
 gbif_csv <- "output/tables/kenya_regulated_plants_gbif.csv"
-
 stopifnot(file.exists(raw_csv), file.exists(gbif_csv))
 
-# ── 1. Determine which binomials still need lookup ────────────────────────
-gbif <- read_csv(gbif_csv, col_types = cols(.default = col_character()))
+UA <- user_agent("KenyaRestrictedSpecies/1.0 (https://github.com/Kwiz-Computing-Technologies-Limited/restricted-species)")
 
-fcma_mask <- str_detect(gbif$governing_law %||% "", fixed("FCMA 2016")) &
-             str_detect(gbif$governing_law %||% "", fixed("EMCA 1999"))
-
-need_lookup <- gbif |>
-  filter(fcma_mask) |>
-  filter(!str_detect(coalesce(Note, ""),
-                     "iucnredlist\\.org/species/[0-9]+")) |>
-  pull(prefName) |>
-  unique()
-
-message(sprintf("[iucn] FCMA+EMCA rows: %d | needing IUCN ID lookup: %d",
-                sum(fcma_mask), length(need_lookup)))
-
-# ── 2. SPARQL: fetch IUCN IDs from Wikidata ────────────────────────────────
-lookup_wikidata_iucn <- function(binomials, batch_size = 25) {
-  results <- tibble(binomial = character(), iucn_id = character())
-
+# ── 1. Wikidata: binomial -> IUCN taxon ID ───────────────────────────────
+lookup_taxon_ids <- function(binomials, batch_size = 25) {
+  results <- tibble(binomial = character(), iucn_taxon_id = character())
   for (chunk in split(binomials, ceiling(seq_along(binomials) / batch_size))) {
     values <- paste0('"', chunk, '"', collapse = " ")
     query <- sprintf('
@@ -65,105 +56,103 @@ lookup_wikidata_iucn <- function(binomials, batch_size = 25) {
       body = list(query = query, format = "json"),
       encode = "form",
       add_headers(Accept = "application/sparql-results+json"),
-      user_agent("KenyaRestrictedSpecies/1.0 (https://github.com/Kwiz-Computing-Technologies-Limited/restricted-species)"),
-      times = 3, pause_base = 2
-    )
-
-    if (status_code(resp) != 200) {
-      warning(sprintf("Wikidata returned %d for batch of %d", status_code(resp), length(chunk)))
-      next
-    }
+      UA, times = 3, pause_base = 2)
+    if (status_code(resp) != 200) next
 
     payload <- fromJSON(content(resp, as = "text", encoding = "UTF-8"), simplifyVector = TRUE)
     rows <- payload$results$bindings
     if (is.null(rows) || length(rows) == 0) next
-
-    chunk_df <- tibble(
-      binomial = rows$binomial$value,
-      iucn_id  = rows$iucnId$value
-    )
-    results <- bind_rows(results, chunk_df)
-    Sys.sleep(1)  # polite
+    results <- bind_rows(results, tibble(
+      binomial      = rows$binomial$value,
+      iucn_taxon_id = rows$iucnId$value
+    ))
+    Sys.sleep(1)
   }
-
-  results |>
-    group_by(binomial) |>
-    slice(1) |>                     # take first ID if Wikidata has duplicates
-    ungroup()
+  results |> group_by(binomial) |> slice(1) |> ungroup()
 }
 
-if (length(need_lookup) > 0) {
-  ids <- lookup_wikidata_iucn(need_lookup)
-  message(sprintf("[iucn] Wikidata returned IDs for %d / %d binomials",
-                  nrow(ids), length(need_lookup)))
-} else {
-  ids <- tibble(binomial = character(), iucn_id = character())
+# ── 2. IUCN API: taxon ID -> latest assessment ID ────────────────────────
+lookup_assessment_id <- function(taxon_id) {
+  url <- sprintf("https://apiv3.iucnredlist.org/api/v3/species/id/%s?token=%s",
+                 taxon_id, token)
+  resp <- RETRY("GET", url, UA, times = 3, pause_base = 2)
+  if (status_code(resp) != 200) return(NA_character_)
+  payload <- fromJSON(content(resp, as = "text", encoding = "UTF-8"), simplifyVector = TRUE)
+  if (is.null(payload$result) || length(payload$result) == 0) return(NA_character_)
+  # The API returns assessment_id under different keys in different versions
+  asmt <- payload$result$assessment_id %||%
+          payload$result$published_year %||%   # fallback signal
+          NA_character_
+  if (is.null(asmt) || length(asmt) == 0 || all(is.na(asmt))) return(NA_character_)
+  as.character(asmt[1])
 }
 
-missing <- setdiff(need_lookup, ids$binomial)
-if (length(missing) > 0) {
-  message("[iucn] No Wikidata IUCN ID for ", length(missing),
-          " species (their URLs will keep the search fallback):")
-  message("       ", paste(missing, collapse = ", "))
+# ── 3. Read both CSVs and gather binomials needing lookup ────────────────
+gbif <- read_csv(gbif_csv, col_types = cols(.default = col_character()))
+raw  <- read_csv(raw_csv,  col_types = cols(.default = col_character()))
+
+# Anything currently citing an IUCN URL but NOT in the /<taxon>/<asmt> form
+need_pattern_old   <- "iucnredlist\\.org/(?:search|species/[0-9]+(?!/[0-9]))"
+need_pattern_done  <- "iucnredlist\\.org/species/[0-9]+/[0-9]+"
+
+needs_upgrade <- function(text) {
+  has_old  <- grepl(need_pattern_old,  text %||% "", perl = TRUE)
+  has_done <- grepl(need_pattern_done, text %||% "")
+  has_old & !has_done
 }
 
-# ── 3. URL rewriter ───────────────────────────────────────────────────────
-# Replace any occurrence of
-#   https://www.iucnredlist.org/search?query=<binomial>&searchType=species
-# with
-#   https://www.iucnredlist.org/species/<iucn_id>
-# (without assessment suffix; IUCN redirects to the latest assessment).
+binomials <- unique(c(
+  gbif$prefName[needs_upgrade(gbif$Note)],
+  raw$scientific_name[needs_upgrade(raw$notes)]
+)) |> discard(is.na)
 
-rewrite_urls <- function(text, binomial, id_map) {
+message(sprintf("[iucn] Binomials needing upgrade: %d", length(binomials)))
+
+# ── 4. Resolve taxon IDs then assessment IDs ─────────────────────────────
+ids <- lookup_taxon_ids(binomials)
+message(sprintf("[iucn] Wikidata taxon IDs: %d / %d", nrow(ids), length(binomials)))
+
+ids$assessment_id <- vapply(ids$iucn_taxon_id, function(x) {
+  Sys.sleep(0.6)  # polite to IUCN API (limit ~10k/day; 1 req/sec safe)
+  lookup_assessment_id(x)
+}, character(1))
+n_complete <- sum(!is.na(ids$assessment_id))
+message(sprintf("[iucn] Assessment IDs from IUCN API: %d / %d",
+                n_complete, nrow(ids)))
+
+direct_url_for <- function(binomial) {
+  row <- ids[ids$binomial == binomial, , drop = FALSE]
+  if (nrow(row) == 0 || is.na(row$assessment_id)) return(NA_character_)
+  sprintf("https://www.iucnredlist.org/species/%s/%s",
+          row$iucn_taxon_id, row$assessment_id)
+}
+search_url_for <- function(binomial) {
+  sprintf("https://www.iucnredlist.org/search?query=%s&searchType=species",
+          URLencode(binomial, reserved = TRUE))
+}
+
+# ── 5. URL rewriter ──────────────────────────────────────────────────────
+rewrite <- function(text, binomial) {
   if (is.na(text) || nchar(text) == 0) return(text)
-  id <- id_map[[binomial]]
-  if (is.null(id) || is.na(id)) return(text)
-
-  enc <- URLencode(binomial, reserved = TRUE)
-  search_url <- sprintf("https://www.iucnredlist.org/search?query=%s&searchType=species", enc)
-  direct_url <- sprintf("https://www.iucnredlist.org/species/%s", id)
-  str_replace_all(text, fixed(search_url), direct_url)
+  if (is.na(binomial) || nchar(binomial) == 0) return(text)
+  direct <- direct_url_for(binomial)
+  if (is.na(direct)) return(text)               # leave untouched if no asmt id
+  search <- search_url_for(binomial)
+  bad_single <- "https://www\\.iucnredlist\\.org/species/[0-9]+(?!/[0-9])"
+  text <- gsub(bad_single, direct, text, perl = TRUE)
+  text <- gsub(search, direct, text, fixed = TRUE)
+  text
 }
 
-id_map <- setNames(as.list(ids$iucn_id), ids$binomial)
-
-# ── 4. Update output/tables/kenya_regulated_plants_gbif.csv ───────────────
-gbif_new <- gbif |>
-  mutate(
-    Note = mapply(rewrite_urls, Note, prefName,
-                  MoreArgs = list(id_map = id_map))
-  )
-
-# Add iucn_id column after GBIFusageKey if not already present
-if (!"iucn_id" %in% names(gbif_new)) {
-  gbif_new <- gbif_new |>
-    mutate(iucn_id = map_chr(prefName, ~id_map[[.x]] %||% "")) |>
-    relocate(iucn_id, .after = GBIFusageKey)
-} else {
-  gbif_new <- gbif_new |>
-    mutate(iucn_id = coalesce(iucn_id, unlist(id_map[prefName])))
-}
+gbif_new <- gbif |> mutate(Note  = mapply(rewrite, Note,  prefName))
+raw_new  <- raw  |> mutate(notes = mapply(rewrite, notes, scientific_name))
 
 write_csv(gbif_new, gbif_csv, na = "")
-message(sprintf("[iucn] Rewrote %s (cols: %d -> %d)",
-                basename(gbif_csv), ncol(gbif), ncol(gbif_new)))
+write_csv(raw_new,  raw_csv,  na = "")
 
-# ── 5. Update data/raw/species_raw.csv ────────────────────────────────────
-raw <- read_csv(raw_csv, col_types = cols(.default = col_character()))
-raw_new <- raw |>
-  mutate(
-    notes = mapply(rewrite_urls, notes, scientific_name,
-                   MoreArgs = list(id_map = id_map))
-  )
-
-if (!"iucn_id" %in% names(raw_new)) {
-  raw_new <- raw_new |>
-    mutate(iucn_id = map_chr(scientific_name, ~id_map[[.x]] %||% "")) |>
-    relocate(iucn_id, .after = scientific_name)
-}
-
-write_csv(raw_new, raw_csv, na = "")
-message(sprintf("[iucn] Rewrote %s (cols: %d -> %d)",
-                basename(raw_csv), ncol(raw), ncol(raw_new)))
-
-message("\n[iucn] DONE. Commit both CSVs when satisfied.")
+message(sprintf("[iucn] DONE. Rewrote %s and %s",
+                basename(gbif_csv), basename(raw_csv)))
+message("[iucn] Binomials still on search URLs (no assessment ID resolved):")
+missed <- ids$binomial[is.na(ids$assessment_id)] |>
+  c(setdiff(binomials, ids$binomial))
+if (length(missed) > 0) message("        ", paste(missed, collapse = ", "))
